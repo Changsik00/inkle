@@ -4,7 +4,7 @@
 > 이 문서는 제품 전체의 목표와 원칙을 담는다. 실행 계획은 harness-kit 양식을 따른다.
 > - 지금 진행하는 단계의 작업 지도: `backlog/phase-01.md`
 > - 이후 단계와 보류 항목: `backlog/queue.md`
-> - 아키텍처 결정: `docs/decisions/README.md` (ADR-001 ~ 005)
+> - 아키텍처: `docs/architecture.md`, 결정은 `docs/decisions/README.md` (ADR-001 ~ 006)
 > - 벤치마킹 요약: 본 문서 §참고한 서비스
 > - 수동 실험 결과: `docs/experiments/01-manual-flow/findings.md`
 

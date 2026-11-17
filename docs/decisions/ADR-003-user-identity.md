@@ -2,7 +2,7 @@
 id: ADR-003
 type: decision
 date: 2026-11-17
-status: proposed
+status: accepted
 ---
 
 # ADR-003: 독자 단위 자료에는 처음부터 사용자 식별자를 둔다
@@ -35,7 +35,7 @@ status: proposed
 
 ## 📌 Status
 
-Proposed (2026-11-17, spec-01-02). PR 병합 시 accepted. 첫 적용: spec-01-03 프로젝트 뼈대 (로컬 사용자 생성).
+Accepted (2026-11-17, spec-01-02, PR #2 병합). 첫 적용: spec-01-03 프로젝트 뼈대 (로컬 사용자 생성).
 
 ## 🔗 Related
 

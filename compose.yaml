@@ -1,0 +1,66 @@
+# 로컬 개발 환경 (ADR-001). `docker compose up -d --wait` 로 웹 앱과 DB 가 뜬다.
+# 작업 프로세스는 호스트에서 `pnpm worker` 로 띄운다. 이 기기에 로그인된 Claude Code CLI 를 쓰기 때문이다 (ADR-004).
+name: inkle
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: inkle
+      POSTGRES_DB: inkle
+      # 로컬 전용이라 비밀번호 없이 접속을 허용한다. 포트는 이 기기 안쪽에만 연다.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inkle -d inkle"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  web:
+    build: .
+    # 뜰 때 마이그레이션을 적용한다 (이미 적용한 것은 건너뛴다).
+    command: ["sh", "-c", "pnpm db:migrate && pnpm dev --hostname 0.0.0.0"]
+    environment:
+      DATABASE_URL: postgres://inkle@db:5432/inkle
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health > /dev/null"]
+      interval: 3s
+      timeout: 5s
+      retries: 40
+      start_period: 10s
+
+  # 선택 항목. 구독 토큰(CLAUDE_CODE_OAUTH_TOKEN)을 .env 에 넣었을 때만 쓴다. 확인되지 않은 경로다.
+  # 실행: docker compose --profile container-worker up -d
+  worker:
+    profiles: ["container-worker"]
+    build: .
+    command: ["pnpm", "worker"]
+    environment:
+      DATABASE_URL: postgres://inkle@db:5432/inkle
+      LLM_WORKDIR: /llm-workdir
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
