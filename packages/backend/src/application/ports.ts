@@ -1,7 +1,9 @@
 // 애플리케이션이 바깥 세계에 기대하는 것 (ADR-006 §2). 구현은 src/infrastructure/ 에 있다.
 // 인자와 결과는 도메인 타입이다. SQL, 행, 연결 객체는 여기에 나타나지 않는다.
 import type { Book, Genre } from "../domain/book";
+import type { Answer, Interpretation } from "../domain/interpretation";
 import type { Job } from "../domain/job";
+import type { Session } from "../domain/session";
 import type { User } from "../domain/user";
 
 export interface HealthProbe {
@@ -39,4 +41,20 @@ export interface BookRepository {
   findByKey(key: string): Promise<Book | null>;
   /** 최근에 등록한 책부터 */
   list(): Promise<Book[]>;
+}
+
+export interface SessionRepository {
+  create(input: { userId: string; bookId: string }): Promise<Session>;
+  /** 그 사용자의 모임만 찾는다. 다른 사용자의 모임이면 null (ADR-003). */
+  findForUser(id: string, userId: string): Promise<Session | null>;
+  /** 그 사용자가 이 책으로 연 모임, 최근 순 */
+  listForBook(bookId: string, userId: string): Promise<Session[]>;
+}
+
+export interface InterpretationRepository {
+  /** 새 판을 덧붙인다. 판 번호는 그 모임의 마지막 판 + 1 (ADR-005: 고치지 않고 덧붙이기만) */
+  appendVersion(input: { sessionId: string; questionSetId: string; answers: Answer[] }): Promise<Interpretation>;
+  latest(sessionId: string): Promise<Interpretation | null>;
+  /** 모든 판, 오래된 순 */
+  listVersions(sessionId: string): Promise<Interpretation[]>;
 }

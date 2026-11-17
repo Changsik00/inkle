@@ -34,15 +34,15 @@
 ## Task 3: 유스케이스와 저장소
 
 ### 3-1. 테스트 작성 (TDD Red)
-- [ ] 계약: `SessionRepository` (만들기, 사용자 것만 찾기, 책별 목록 최근 순), `InterpretationRepository` (판 덧붙이기 1, 2, …, 최근 판, 판이 없으면 null)
-- [ ] `application/sessions.test.ts` (메모리): 모임 시작(없는 책은 NOT_FOUND), 조회(책·질문·최근 해석·단계), 다른 사용자의 모임은 NOT_FOUND, 저장(새 판, 규칙 위반 이유), `requireUnlocked`(저장 전 LOCKED, 후 통과)
-- [ ] Postgres: 계약 실행, 같은 모임에 동시에 저장해도 판 번호가 겹치지 않음
-- [ ] 테스트 실행 → Fail 확인
+- [x] 계약: `SessionRepository` (만들기, 사용자 것만 찾기, 책별 목록 최근 순), `InterpretationRepository` (판 덧붙이기 1, 2, …, 최근 판, 판이 없으면 null)
+- [x] `application/sessions.test.ts` (메모리): 모임 시작(없는 책은 NOT_FOUND), 조회(책·질문·최근 해석·단계), 다른 사용자의 모임은 NOT_FOUND, 저장(새 판, 규칙 위반 이유), `requireUnlocked`(저장 전 LOCKED, 후 통과)
+- [x] Postgres: 계약 실행, 같은 모임에 동시에 저장해도 판 번호가 겹치지 않음
+- [x] 테스트 실행 → Fail 확인
 
 ### 3-2. 구현 (TDD Green)
-- [ ] 포트, `application/sessions.ts`, `0003_sessions.sql`, Postgres·메모리 저장소, `container`, 테스트 문맥
-- [ ] 테스트 실행 → Pass 확인
-- [ ] Commit: `feat(spec-01-07): add session use cases and repositories`
+- [x] 포트, `application/sessions.ts`, `0003_sessions.sql`, Postgres·메모리 저장소, `container`, 테스트 문맥
+- [x] 테스트 실행 → Pass 확인
+- [x] Commit: `feat(spec-01-07): add session use cases and repositories`
 
 ---
 
