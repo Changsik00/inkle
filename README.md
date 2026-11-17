@@ -10,14 +10,18 @@
 
 ## 구성
 
-| 구성 요소 | 어디서 뜨나 | 하는 일 |
-|---|---|---|
-| 화면 (Next.js) | docker compose (`web`) | 화면. `/api/…` 요청은 API 서버로 넘긴다 |
-| API 서버 | docker compose (`api`) | HTTP API (엔드포인트 문서는 `/api/openapi.json`). 뜰 때 마이그레이션 적용 |
-| DB (Postgres) | docker compose | 모든 자료와 작업 대기열 |
-| 작업 프로세스 | 호스트 | 대기열의 작업을 처리한다. LLM 은 이 기기에 로그인된 Claude Code CLI 로 부른다 |
+pnpm 워크스페이스 모노레포다 (ADR-010). 실행 단위, 폴더 구조, 패키지 의존성 규칙은 `docs/architecture.md` §1, §2.
 
-실행 단위와 폴더 구조, 나중에 모노레포로 옮길 때의 대응표는 `docs/architecture.md` §1, §2 에 있다. 작업 프로세스를 호스트에서 띄우는 이유는 `docs/decisions/ADR-004-llm-grounding.md` §가정의 확인 결과에 있다.
+| 앱 / 패키지 | 어디서 뜨나 | 하는 일 |
+|---|---|---|
+| `apps/web` (`@inkle/web`) | docker compose (`web`) | 화면 (Next.js). `/api/…` 요청은 API 서버로 넘긴다 |
+| `apps/api` (`@inkle/api`) | docker compose (`api`) | HTTP API (엔드포인트 문서는 `/api/openapi.json`). 뜰 때 마이그레이션 적용 |
+| `apps/worker` (`@inkle/worker`) | 호스트 | 작업 프로세스. LLM 은 이 기기에 로그인된 Claude Code CLI 로 부른다 |
+| `packages/contract` (`@inkle/contract`) | - | HTTP 계약 (web 과 backend 가 함께 쓴다) |
+| `packages/backend` (`@inkle/backend`) | - | 서버 코드 (domain, application, infrastructure, rpc, 조립) |
+| DB (Postgres) | docker compose (`db`) | 모든 자료와 작업 대기열 |
+
+작업 프로세스를 호스트에서 띄우는 이유는 `docs/decisions/ADR-004-llm-grounding.md` §가정의 확인 결과에 있다.
 
 ## 준비물
 
@@ -33,6 +37,7 @@ API 키는 쓰지 않는다.
 ```bash
 pnpm install
 docker compose up -d --wait     # 화면(web), API 서버(api), DB. API 서버가 뜰 때 마이그레이션을 적용한다
+                                # 처음 한 번, 또는 의존성이 바뀌면: docker compose up -d --wait --build -V
 pnpm worker                     # 작업 프로세스 (호스트, 다른 터미널에서)
 ```
 
@@ -47,7 +52,7 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm db:migrate` | 아직 적용하지 않은 마이그레이션을 적용한다 (`src/backend/infrastructure/db/migrations/`) |
+| `pnpm db:migrate` | 아직 적용하지 않은 마이그레이션을 적용한다 (`packages/backend/src/infrastructure/db/migrations/`) |
 | `pnpm job:enqueue noop` | 시험용 작업을 하나 넣는다. 작업 프로세스가 처리하면 상태가 `done` 이 된다 |
 | `pnpm lint` | lint |
 | `pnpm typecheck` | 타입 검사 |
@@ -63,29 +68,23 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 
 ## 폴더
 
-`src` 는 backend · frontend · shared 로 나뉜다. backend 와 frontend 는 서로 가져오지 않고 shared(HTTP 계약)만 함께 쓴다 (ADR-008). backend 안은 세 계층이고 의존은 바깥에서 안쪽으로만 간다 (ADR-006). lint 가 이 규칙들을 막는다. 전체 그림은 `docs/architecture.md`.
-
 | 폴더 | 내용 |
 |---|---|
-| `src/app/` | Next.js 화면 라우트. 페이지는 frontend 를 배치하는 틀. `globals.css`(테마 토큰) |
-| `src/frontend/features/` | 기능별 화면 컴포넌트와 양식 (`books/`, `system/`) |
-| `src/frontend/ui/` | shadcn/ui 공통 부품 (Radix UI) |
-| `src/frontend/api-client/` | HTTP 클라이언트 (오류 정규화, 시간 제한, TanStack Query 연동) |
-| `src/frontend/testing/` | 브라우저 테스트 도우미 (MSW, 렌더링) |
-| `src/shared/contract/` | HTTP 계약: 엔드포인트, 요청·응답, 오류의 유일한 원본 (oRPC) |
-| `src/backend/domain/` | 타입과 순수한 규칙 |
-| `src/backend/application/` | 유스케이스 함수와 포트(`ports.ts`) |
-| `src/backend/infrastructure/` | Postgres 저장소, DB 연결과 마이그레이션 |
-| `src/backend/rpc/` | 계약 구현. 유스케이스를 부른다 |
-| `src/backend/server/` | API 서버 (`pnpm api`) |
-| `src/backend/container.ts` | 조립: 실제 구현을 만들어 묶는 유일한 곳 |
-| `src/backend/worker/`, `src/backend/cli/` | 작업 프로세스, `db:migrate`, `job:enqueue` |
-| `src/backend/testing/` | 메모리 저장소, 저장소 계약 테스트, 테스트 DB 도우미 |
+| `apps/web/src/app/` | 화면 라우트 (자료를 읽지 않는 틀), `globals.css` (테마 토큰) |
+| `apps/web/src/features/` | 기능별 화면 컴포넌트와 양식 |
+| `apps/web/src/ui/` | shadcn/ui 공통 부품 (Radix UI) |
+| `apps/web/src/api-client/` | HTTP 클라이언트 (오류 정규화, 시간 제한, TanStack Query 연동) |
+| `apps/web/src/testing/` | 브라우저 테스트 도우미 (MSW, 렌더링) |
+| `apps/api/src/` | API 서버 진입점, `db:migrate`, `job:enqueue` |
+| `apps/worker/src/` | 작업 프로세스 진입점 |
+| `packages/contract/src/` | HTTP 계약: 엔드포인트, 요청·응답, 오류의 유일한 원본 (oRPC) |
+| `packages/backend/src/` | `domain/`, `application/`(유스케이스, 포트), `infrastructure/`(Postgres, 마이그레이션), `rpc/`(계약 구현), `server/`(API 서버 생성), `worker/`(작업 처리기), `container.ts`(조립), `testing/` |
 | `e2e/` | Playwright 흐름 테스트 |
+| `tests/` | 저장소 수준 테스트 (패키지 의존성 규칙) |
 | `scripts/spike/` | 일회성 확인 스크립트 |
 | `docs/` | 목표, 아키텍처, 결정, 실험 기록 |
 | `backlog/`, `specs/` | 작업 계획 (harness-kit) |
 
 ## 테마
 
-색, 둥글기, 글꼴은 `src/app/globals.css` 의 토큰(CSS 변수)에서만 정한다. 값 하나를 바꾸면 모든 화면이 바뀐다. 화면 코드에서 `text-red-500` 같은 팔레트 색이나 `rounded-[13px]` 같은 눈금 밖 값을 쓰면 lint(`@shadcn/lint`)가 막는다. 공통 부품은 `pnpm dlx shadcn@latest add <부품>` 으로 `src/frontend/ui/` 에 추가한다.
+색, 둥글기, 글꼴은 `apps/web/src/app/globals.css` 의 토큰(CSS 변수)에서만 정한다. 값 하나를 바꾸면 모든 화면이 바뀐다. 화면 코드에서 `text-red-500` 같은 팔레트 색이나 `rounded-[13px]` 같은 눈금 밖 값을 쓰면 lint(`@shadcn/lint`)가 막는다. 공통 부품은 `apps/web` 에서 `pnpm dlx shadcn@latest add <부품>` 으로 `apps/web/src/ui/` 에 추가한다.

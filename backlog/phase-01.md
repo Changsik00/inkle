@@ -153,6 +153,7 @@
 - **참조**:
   - `docs/architecture.md` §2, §2-0, ADR-008, ADR-009
 - **연관 모듈**: 저장소 전체
+- **결과** (2026-11-18): ADR-010. `apps/web`, `apps/api`, `apps/worker`, `packages/contract`, `packages/backend`. 영역 경계는 패키지 의존성과 `tests/workspace.test.ts`.
 
 ### spec-01-06 — 디자인 시스템 (DESIGN.md)
 
@@ -160,7 +161,7 @@
 - **방향성**: 방향은 "여백의 노트" — 차가운 흰 종이, 책 제목과 인용은 명조·화면 글자는 고딕, 카드와 그림자 대신 가는 선, 글쓴이를 잉크 색으로 구분 (내 글 만년필 파랑, AI 흑연 회색, 외부 인용 명조와 왼쪽 선), 채점처럼 보이는 빨간 펜 금지. Google Labs 의 DESIGN.md 형식(alpha)을 따르고 `npx @google/design.md lint` 를 검사에 넣는다. 흔한 AI 기본값(보라 그라데이션, 그림자 카드, 가운데 정렬 히어로와 카드 3개, 이모지 제목, 그리고 2026년의 크림 바탕·주황·큰 이탤릭 세리프)을 하지 말 것으로 적는다. 토큰을 `globals.css` 에 맞추고 두 파일의 값이 같은지 테스트한다. 기존 화면을 다듬고 `CLAUDE.md` 에 지침을 넣는다. 명조 웹 글꼴의 크기와 불러오는 방식을 비교한다.
 - **참조**:
   - ADR-007 §4, google-labs-code/design.md
-- **연관 모듈**: `apps/web` (전환 뒤)
+- **연관 모듈**: `apps/web`
 
 ### spec-01-07 — 내 해석 쓰기
 
@@ -304,7 +305,7 @@ pnpm test                         # 단위·통합 테스트 (inkle_test 데이�
 
 - **선행 phase**: 없음
 - **외부 시스템**: Claude Code CLI (구독 로그인, 웹 검색 포함), 출처가 되는 외부 웹 페이지
-- **연관 ADR**: ADR-001 ~ ADR-006 (`docs/decisions/README.md`). 전체 구조는 `docs/architecture.md`
+- **연관 ADR**: ADR-001 ~ ADR-010 (`docs/decisions/README.md`). 전체 구조는 `docs/architecture.md`
 
 ## 📝 위험 요소 및 완화
 

@@ -55,9 +55,9 @@
 
 ## Task 5: 문서
 
-- [ ] `docs/decisions/ADR-010-monorepo.md`, ADR-008 대체 표시, ADR-006·007·009 경로
-- [ ] `docs/architecture.md` (§1 실행 단위, §2 구조를 모노레포 기준으로, §2-0 은 완료 기록으로), `README.md`, `backlog/phase-01.md`
-- [ ] Commit: `docs(spec-01-05): document monorepo layout`
+- [x] `docs/decisions/ADR-010-monorepo.md`, ADR-008 대체 표시, ADR-006·007·009 경로
+- [x] `docs/architecture.md` (§1 실행 단위, §2 구조를 모노레포 기준으로, §2-0 은 완료 기록으로), `README.md`, `backlog/phase-01.md`
+- [x] Commit: `docs(spec-01-05): document monorepo layout`
 
 ---
 
