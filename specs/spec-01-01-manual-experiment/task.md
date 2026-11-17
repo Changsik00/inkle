@@ -41,28 +41,22 @@
 
 ---
 
-## Task 3: 책 2 수행과 기록
+## Task 3: 책 2 수행과 기록 — 생략
 
-### 3-1. 사용자 수행 (에이전트 대기)
-- [ ] 책 1 에서 드러난 프롬프트 문제를 고칠지 사용자와 확인 (고치면 `prompts.md` 에 변경 이력 기록)
-- [ ] 사용자가 책 2 로 수행하고 대화 원문을 전달 (배경 노출 시점은 책 1 과 반대로)
-
-### 3-2. 기록 정리
-- [ ] `docs/experiments/01-manual-flow/book-2.md`
-- [ ] Commit: `docs(spec-01-01): record experiment for book 2`
+> 사용자 결정(2026-11-17): 책 1 로 감을 잡았으므로 책 2 는 하지 않는다. 비문학과 순서 B 는 미검증으로 `findings.md` 에 기록한다.
 
 ---
 
 ## Task 4: 결과 정리와 판단
 
 ### 4-1. 결과 문서
-- [ ] `docs/experiments/01-manual-flow/findings.md` — 두 권 비교, 판단 기준 대비 결과, 열린 질문 세 가지의 답, spec-01-02 로 넘길 입력
-- [ ] 사용자가 점검 1 판단 (계속 / 수정 후 재실험 / 중단)
+- [x] `docs/experiments/01-manual-flow/findings.md` — 리허설과 책 1 정리, 판단 기준 대비 결과, 열린 질문 세 가지의 답, spec-01-02 로 넘길 입력
+- [x] 사용자가 점검 1 판단 (계속 / 수정 후 재실험 / 중단) → 계속
 
 ### 4-2. 목표와 계획 반영
-- [ ] `docs/goals.md` — 답이 나온 열린 질문 정리
-- [ ] `backlog/phase-01.md` — 결정 기록 추가, 필요 시 이후 spec 방향성 수정
-- [ ] Commit: `docs(spec-01-01): add findings and update goals`
+- [x] `docs/goals.md` — 답이 나온 열린 질문 정리
+- [x] `backlog/phase-01.md` — 결정 기록 추가, 필요 시 이후 spec 방향성 수정
+- [x] Commit: `docs(spec-01-01): add findings and update goals`
 
 ---
 
