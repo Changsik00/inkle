@@ -33,15 +33,15 @@
 ## Task 3: 코드 옮기기
 
 ### 3-1. 이동
-- [ ] 대응표대로 `git mv`. 패키지 안의 가져오기를 상대 경로로, 패키지 사이는 `@inkle/contract`, `@inkle/backend` 로
-- [ ] 의존성을 각 `package.json` 으로 나누고 루트에는 공통 개발 도구만
-- [ ] 설정: 루트 `vitest.config.mts`(projects), 각 패키지의 Vitest 설정, `eslint.config.mjs`(경로별 규칙), `playwright.config.ts`, `apps/web/next.config.ts`·`components.json`, 마이그레이션 경로, MSW 워커 위치
-- [ ] 규칙 테스트를 나눈다: backend 계층(`packages/backend`), 화면 규칙(`apps/web`)
-- [ ] 루트 명령 (`lint`, `typecheck`, `test`, `test:unit`, `test:e2e`, `build`, `db:migrate`, `worker`, `job:enqueue`)
+- [x] 대응표대로 `git mv`. 패키지 안의 가져오기를 상대 경로로, 패키지 사이는 `@inkle/contract`, `@inkle/backend` 로
+- [x] 의존성을 각 `package.json` 으로 나누고 루트에는 공통 개발 도구만
+- [x] 설정: 루트 `vitest.config.mts`(projects), 각 패키지의 Vitest 설정, `eslint.config.mjs`(경로별 규칙), `playwright.config.ts`, `apps/web/next.config.ts`·`components.json`, 마이그레이션 경로, MSW 워커 위치
+- [x] 규칙 테스트를 나눈다: backend 계층(`packages/backend`), 화면 규칙(`apps/web`)
+- [x] 루트 명령 (`lint`, `typecheck`, `test`, `test:unit`, `test:e2e`, `build`, `db:migrate`, `worker`, `job:enqueue`)
 
 ### 3-2. 확인
-- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test:unit` 통과
-- [ ] Commit: `refactor(spec-01-05): move code into apps and packages`
+- [x] `pnpm lint`, `pnpm typecheck`, `pnpm test:unit` 통과
+- [x] Commit: `refactor(spec-01-05): move code into apps and packages`
 
 ---
 
