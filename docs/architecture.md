@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-18 (spec-01-06, 디자인 시스템).
+> 마지막 갱신: 2026-11-18 (spec-01-07, 모임과 내 해석).
 
 ## 1. 한눈에
 
@@ -142,7 +142,9 @@ flowchart TB
 | `UserRepository` | 사용자 찾기 | `PostgresUserRepository` | 현재 |
 | `JobRepository` | 작업 넣기, 가져가기, 끝내기, 실패 기록 | `PostgresJobRepository` | 현재 |
 | `BookRepository` | 책 만들기, 찾기(번호, 정규화한 키), 목록 | `PostgresBookRepository` | 현재 |
-| 모임, 내 해석, 출처, 시선 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-07 ~) |
+| `SessionRepository` | 모임 만들기, 사용자 것만 찾기, 책별 목록 | `PostgresSessionRepository` | 현재 |
+| `InterpretationRepository` | 내 해석의 판 덧붙이기, 최근 판, 모든 판 | `PostgresInterpretationRepository` | 현재 |
+| 출처, 배경, 시선, 비교 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-08 ~) |
 | `LlmClient` | 지시문과 결과 형식을 주고 결과를 받는다 | Claude Code CLI (이후 Claude API) | 예정 (spec-01-08) |
 | `PageFetcher` | 주소를 열어 본문 글자를 받는다 | HTTP 요청 + 본문 추출 | 예정 (spec-01-08) |
 
@@ -174,6 +176,14 @@ sequenceDiagram
 ```
 
 화면은 HTTP API 로만 자료를 읽고 쓴다 (ADR-001 §4).
+
+### 먼저 쓰고, 그다음 본다 (현재: 문)
+
+phase-01 성공 기준 5. 모임의 단계는 저장된 내 해석이 있는지로 정해진다 (`writing` → `interpretation_saved`).
+
+- 문(門)은 애플리케이션 층의 `requireUnlocked` 하나다 (`packages/backend/src/application/sessions.ts`). 내 해석 전이면 `locked`, 다른 사용자의 모임이면 `not_found`.
+- 배경·다른 시선·비교를 읽는 API(spec-01-09, 10)는 모두 이 함수를 거친다.
+- 모임 조회(`GET /api/sessions/{id}`)는 단계와 무관하게 책, 질문 묶음, 최근 내 해석만 담는다. 다음 단계의 자료는 담지 않는다.
 
 ### 작업 (현재: 시험용 작업)
 
@@ -207,7 +217,8 @@ ADR-002. 자료는 두 층이다.
 |---|---|:---:|---|
 | 책 단위 | 책 | 없음 | 현재 (spec-01-04) |
 | 책 단위 | 출처, 배경 항목, 시선 | 없음 | 예정 |
-| 독자 단위 | 모임, 내 해석, 연결, 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
+| 독자 단위 | 모임, 내 해석(판) | 있음 (ADR-003) | 현재 (spec-01-07) |
+| 독자 단위 | 연결, 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
 | 운영 | 사용자, 작업 대기열, 적용한 마이그레이션 | - | 현재 |
 
 - 모든 글에 글쓴이(나 / AI / 외부 사람)를 따로 저장한다 (ADR-002 §3).
@@ -263,7 +274,7 @@ flowchart LR
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
-화면의 의존 규칙은 ADR-007 §7. 글쓰기와 글쓴이 표시의 공통 규칙은 ADR-007 §5 (spec-01-07, 07 에서 만든다).
+화면의 의존 규칙은 ADR-007 §7. 글쓰기 공통 규칙(ADR-007 §5)은 `apps/web/src/features/writing/use-draft.ts` (spec-01-07). 글쓴이 표시 컴포넌트는 spec-01-10 에서 만든다.
 
 ## 7. 결정 목록
 

@@ -66,6 +66,7 @@
 | `spec-01-04` | book-registration | P? | Merged | `specs/spec-01-04-book-registration/` |
 | `spec-01-05` | monorepo | P? | Merged | `specs/spec-01-05-monorepo/` |
 | `spec-01-06` | design-system | P? | Merged | `specs/spec-01-06-design-system/` |
+| `spec-01-07` | interpretation | P? | Merged | `specs/spec-01-07-interpretation/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
@@ -171,6 +172,7 @@
 - **참조**:
   - `docs/goals.md` §원칙 "먼저 쓰고, 그다음 본다"
 - **연관 모듈**: 읽기 기록 도메인
+- **결과** (2026-11-18): 모임(`sessions`)과 내 해석의 판(`interpretation_versions`). 질문 넷(`fiction-v1`), 하나 이상 답하면 저장. 문(門)은 `requireUnlocked`. 화면은 `/sessions/{id}/interpretation`, 임시 저장은 `use-draft`.
 
 ### spec-01-08 — 자료 수집
 

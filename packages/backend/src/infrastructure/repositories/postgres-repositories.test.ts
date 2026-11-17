@@ -1,11 +1,13 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { registerBook } from "../../application/books";
 import { PostgresBookRepository } from "./postgres-book-repository";
+import { PostgresInterpretationRepository, PostgresSessionRepository } from "./postgres-session-repository";
 import { PostgresHealthProbe } from "./postgres-health-probe";
 import { PostgresJobRepository } from "./postgres-job-repository";
 import { PostgresUserRepository } from "./postgres-user-repository";
 import { describeBookRepositoryContract } from "../../testing/contracts/book-repository.contract";
 import { describeJobRepositoryContract } from "../../testing/contracts/job-repository.contract";
+import { describeSessionRepositoryContract, type SessionFixture } from "../../testing/contracts/session-repository.contract";
 import { describeUserRepositoryContract } from "../../testing/contracts/user-repository.contract";
 import { freshTestDatabase, testSql } from "../../testing/postgres";
 import postgres from "postgres";
@@ -29,6 +31,41 @@ describeUserRepositoryContract("Postgres", async () => {
 describeBookRepositoryContract("Postgres", async () => {
   await freshTestDatabase(sql);
   return new PostgresBookRepository(sql);
+});
+
+const OTHER_USER = "00000000-0000-4000-8000-000000000002";
+
+async function sessionFixture(): Promise<SessionFixture> {
+  await freshTestDatabase(sql);
+  await sql`insert into users (id, display_name) values (${OTHER_USER}, '다른 사용자')`;
+  const books = new PostgresBookRepository(sql);
+  const make = async (title: string) => (await registerBook(books, { title, author: "시험" })).status === "created";
+  await make("첫째 책");
+  await make("둘째 책");
+  const [first, second] = (await books.list()).reverse();
+  return {
+    sessions: new PostgresSessionRepository(sql),
+    interpretations: new PostgresInterpretationRepository(sql),
+    userId: "00000000-0000-4000-8000-000000000001",
+    otherUserId: OTHER_USER,
+    bookId: first.id,
+    otherBookId: second.id,
+  };
+}
+
+describeSessionRepositoryContract("Postgres", sessionFixture);
+
+describe("내 해석 판의 동시성", () => {
+  it("같은 모임에 동시에 저장해도 판 번호가 겹치지 않는다", async () => {
+    const f = await sessionFixture();
+    const s = await f.sessions.create({ userId: f.userId, bookId: f.bookId });
+    const saved = await Promise.all(
+      Array.from({ length: 5 }, (_, i) =>
+        f.interpretations.appendVersion({ sessionId: s.id, questionSetId: "fiction-v1", answers: [{ questionId: "about", text: String(i) }] }),
+      ),
+    );
+    expect(saved.map((v) => v.version).sort()).toEqual([1, 2, 3, 4, 5]);
+  });
 });
 
 describe("책 등록의 동시성", () => {
