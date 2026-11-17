@@ -1,13 +1,13 @@
 // 작업 프로세스의 진입점 (`pnpm worker`). 호스트에서 실행한다 (ADR-004 §가정의 확인 결과).
 import { setTimeout as sleep } from "node:timers/promises";
-import { getSql } from "@/db/client";
-import { runNextJob } from "@/domain/jobs";
+import { runNextJob } from "@/application/jobs";
+import { container } from "@/server/container";
 import { handlers } from "@/worker/handlers";
 
 const IDLE_WAIT_MS = 1000;
 
 async function main() {
-  const sql = getSql();
+  const c = container();
   let stopping = false;
   const stop = () => {
     stopping = true;
@@ -18,7 +18,7 @@ async function main() {
   console.log(`작업 프로세스 시작. 처리기: ${Object.keys(handlers).join(", ")}`);
   while (!stopping) {
     try {
-      const id = await runNextJob(sql, handlers);
+      const id = await runNextJob(c.jobs, handlers);
       if (id !== null) {
         console.log(`작업 ${id} 처리`);
         continue;
@@ -29,7 +29,7 @@ async function main() {
     }
     await sleep(IDLE_WAIT_MS);
   }
-  await sql.end();
+  await c.close();
   console.log("작업 프로세스 종료");
 }
 

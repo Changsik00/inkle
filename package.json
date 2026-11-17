@@ -10,9 +10,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "tsx --tsconfig tsconfig.json src/db/migrate-cli.ts",
+    "db:migrate": "tsx --tsconfig tsconfig.json src/cli/migrate.ts",
     "worker": "tsx --tsconfig tsconfig.json src/worker/main.ts",
-    "job:enqueue": "tsx --tsconfig tsconfig.json src/worker/enqueue-cli.ts"
+    "job:enqueue": "tsx --tsconfig tsconfig.json src/cli/enqueue-job.ts",
+    "test:unit": "vitest run --exclude \"src/infrastructure/**\""
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

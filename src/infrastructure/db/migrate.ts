@@ -1,8 +1,8 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import type { Sql } from "@/db/client";
+import type { Sql } from "@/infrastructure/db/client";
 
-const MIGRATIONS_DIR = path.join(process.cwd(), "src", "db", "migrations");
+const MIGRATIONS_DIR = path.join(process.cwd(), "src", "infrastructure", "db", "migrations");
 
 // 여러 프로세스가 동시에 실행해도 한 번만 적용되도록 잡는 잠금의 번호. 값 자체에는 뜻이 없다.
 const MIGRATION_LOCK_KEY = 4_651_201;

@@ -1,6 +1,6 @@
-// `pnpm db:migrate` 의 진입점.
-import { getSql } from "@/db/client";
-import { migrate } from "@/db/migrate";
+// `pnpm db:migrate` 의 진입점. 마이그레이션은 인프라의 일이라 container 를 거치지 않는다.
+import { getSql } from "@/infrastructure/db/client";
+import { migrate } from "@/infrastructure/db/migrate";
 
 async function main() {
   const sql = getSql();

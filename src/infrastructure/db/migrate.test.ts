@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
-import { migrate } from "@/db/migrate";
-import { resetTestDatabase, testSql } from "@/db/testing";
+import { migrate } from "@/infrastructure/db/migrate";
+import { resetTestDatabase, testSql } from "@/testing/postgres";
 
 const sql = testSql();
 

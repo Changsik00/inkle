@@ -6,7 +6,7 @@
 
 - 제품 목표와 원칙: `docs/goals.md`
 - 지금 단계의 계획: `backlog/phase-01.md`
-- 아키텍처 결정: `docs/decisions/README.md`
+- 아키텍처: `docs/architecture.md` (결정과 이유는 `docs/decisions/README.md`)
 
 ## 구성
 
@@ -44,11 +44,12 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 
 | 명령 | 하는 일 |
 |---|---|
-| `pnpm db:migrate` | 아직 적용하지 않은 마이그레이션을 적용한다 (`src/db/migrations/`) |
+| `pnpm db:migrate` | 아직 적용하지 않은 마이그레이션을 적용한다 (`src/infrastructure/db/migrations/`) |
 | `pnpm job:enqueue noop` | 시험용 작업을 하나 넣는다. 작업 프로세스가 처리하면 상태가 `done` 이 된다 |
 | `pnpm lint` | lint |
 | `pnpm typecheck` | 타입 검사 |
-| `pnpm test` | 테스트. DB 가 떠 있어야 한다 (`docker compose up -d --wait db`). 개발 DB 가 아니라 `inkle_test` 데이터베이스를 비우고 쓴다 |
+| `pnpm test:unit` | DB 없이 도는 테스트만 (유스케이스, 메모리 저장소, 의존 규칙) |
+| `pnpm test` | 전체 테스트. DB 가 떠 있어야 한다 (`docker compose up -d --wait db`). 개발 DB 가 아니라 `inkle_test` 데이터베이스를 비우고 쓴다 |
 
 ## 환경 변수
 
@@ -58,12 +59,18 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 
 ## 폴더
 
-| 폴더 | 내용 |
-|---|---|
-| `src/app/` | 화면과 HTTP API (`api/`) |
-| `src/domain/` | 자료를 읽고 쓰는 함수. 화면과 작업 프로세스는 이 층만 부른다 |
-| `src/db/` | DB 연결과 마이그레이션 |
-| `src/worker/` | 작업 프로세스와 작업 종류별 처리기 |
-| `scripts/spike/` | 일회성 확인 스크립트. 제품 코드가 쓰지 않는다 |
-| `docs/` | 목표, 결정, 실험 기록 |
-| `backlog/`, `specs/` | 작업 계획 (harness-kit) |
+서버 코드는 세 계층으로 나뉘고, 의존은 바깥에서 안쪽으로만 간다 (ADR-006, `docs/architecture.md` §2). lint 가 이 규칙을 막는다.
+
+| 폴더 | 계층 | 내용 |
+|---|---|---|
+| `src/domain/` | 도메인 | 타입과 순수한 규칙. DB 도 프레임워크도 모른다 |
+| `src/application/` | 애플리케이션 | 유스케이스 함수와 포트(`ports.ts`: 저장소와 외부 시스템의 인터페이스) |
+| `src/infrastructure/` | 인프라 | 포트의 구현(Postgres 저장소), DB 연결과 마이그레이션 |
+| `src/server/container.ts` | 조립 | 실제 구현을 만들어 묶는 유일한 곳 |
+| `src/app/` | 진입점 | 화면과 HTTP API (`api/`) |
+| `src/worker/` | 진입점 | 작업 프로세스와 작업 종류별 처리기 |
+| `src/cli/` | 진입점 | `db:migrate`, `job:enqueue` |
+| `src/testing/` | 테스트 | 메모리 저장소, 저장소 계약 테스트, 테스트 DB 도우미 |
+| `scripts/spike/` | - | 일회성 확인 스크립트. 제품 코드가 쓰지 않는다 |
+| `docs/` | - | 목표, 아키텍처, 결정, 실험 기록 |
+| `backlog/`, `specs/` | - | 작업 계획 (harness-kit) |

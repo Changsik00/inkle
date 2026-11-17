@@ -1,5 +1,5 @@
 import postgres from "postgres";
-import { databaseUrl } from "@/db/config";
+import { databaseUrl } from "@/infrastructure/db/config";
 
 export type Sql = postgres.Sql;
 

@@ -148,18 +148,18 @@
 ## Task 10: 계층과 저장소로 옮기기
 
 ### 10-1. 테스트 작성 (TDD Red)
-- [ ] 저장소 계약 테스트 (`src/testing/contracts/`): 메모리와 Postgres 양쪽에 돌린다
-- [ ] 유스케이스 테스트를 메모리 저장소로 다시 쓴다 (DB 없음)
-- [ ] 의존 규칙 lint: `domain`, `application` 에서 `postgres`, `infrastructure` 를 가져오면 실패
-- [ ] 테스트 실행 → Fail 확인
+- [x] 저장소 계약 테스트 (`src/testing/contracts/`): 메모리와 Postgres 양쪽에 돌린다
+- [x] 유스케이스 테스트를 메모리 저장소로 다시 쓴다 (DB 없음)
+- [x] 의존 규칙 lint: `domain`, `application` 에서 `postgres`, `infrastructure` 를 가져오면 실패
+- [x] 테스트 실행 → Fail 확인
 
 ### 10-2. 구현 (TDD Green)
-- [ ] `src/domain/`, `src/application/` (ports, 유스케이스), `src/infrastructure/` (db, repositories), `src/server/container.ts`
-- [ ] 진입점(`src/app/api/health`, `src/worker/`, `db:migrate`, `job:enqueue`)이 container 를 거치도록
-- [ ] 메모리 저장소 (`src/testing/in-memory/`)
-- [ ] 테스트, lint, 타입 검사 통과. compose 와 `pnpm worker` 로 동작이 같은지 확인
-- [ ] README 의 폴더 표 갱신
-- [ ] Commit: `refactor(spec-01-03): split server into layers with repositories`
+- [x] `src/domain/`, `src/application/` (ports, 유스케이스), `src/infrastructure/` (db, repositories), `src/server/container.ts`
+- [x] 진입점(`src/app/api/health`, `src/worker/`, `db:migrate`, `job:enqueue`)이 container 를 거치도록
+- [x] 메모리 저장소 (`src/testing/in-memory/`)
+- [x] 테스트, lint, 타입 검사 통과. compose 와 `pnpm worker` 로 동작이 같은지 확인
+- [x] README 의 폴더 표 갱신
+- [x] Commit: `refactor(spec-01-03): split server into layers with repositories`
 
 ---
 

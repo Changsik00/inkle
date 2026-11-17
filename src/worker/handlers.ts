@@ -1,4 +1,4 @@
-import type { JobHandlers } from "@/domain/jobs";
+import type { JobHandlers } from "@/application/jobs";
 
 // 작업 종류별 처리기. 이후 spec 이 여기에 처리기를 추가한다 (예: spec-01-06 의 자료 수집).
 export const handlers: JobHandlers = {
