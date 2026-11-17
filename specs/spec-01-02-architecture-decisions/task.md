@@ -52,17 +52,17 @@
 ## Task 5: ADR-004 LLM 근거와 출처 검증
 
 ### 5-1. 공식 문서 확인
-- [ ] Claude Code CLI 의 비대화 실행, 출력 형식, 허용 도구 제한, 컨테이너 안에서의 로그인 방법을 공식 문서에서 확인
+- [x] Claude Code CLI 의 비대화 실행, 출력 형식, 허용 도구 제한, 컨테이너 안에서의 로그인 방법을 공식 문서에서 확인
 
 ### 5-2. 작성
-- [ ] 검색 → 가져오기 → 문장 대조 단계와, 대조를 코드로 하는 방식
-- [ ] LLM 호출 경계: 지금은 Claude Code CLI, 나중에 Claude API. 바꾸는 조건
-- [ ] 선택지 비교: Claude Code CLI / Claude API / CLI 의 웹 가져오기에 맡기기와 앱이 직접 가져오기
-- [ ] 출처의 종류, 오독 근거의 종류, 번역된 인용의 처리
-- [ ] 비동기 수집, 내 해석 저장 전 비노출을 막는 층
-- [ ] 접근이 거부되는 사이트, 예상 비용, 검증이 필요한 가정
-- [ ] `docs/decisions/ADR-004-llm-grounding.md`
-- [ ] Commit: `docs(spec-01-02): add adr-004 llm grounding`
+- [x] 검색 → 가져오기 → 문장 대조 단계와, 대조를 코드로 하는 방식
+- [x] LLM 호출 경계: 지금은 Claude Code CLI, 나중에 Claude API. 바꾸는 조건
+- [x] 선택지 비교: Claude Code CLI / Claude API / CLI 의 웹 가져오기에 맡기기와 앱이 직접 가져오기
+- [x] 출처의 종류, 오독 근거의 종류, 번역된 인용의 처리
+- [x] 비동기 수집, 내 해석 저장 전 비노출을 막는 층
+- [x] 접근이 거부되는 사이트, 예상 비용, 검증이 필요한 가정
+- [x] `docs/decisions/ADR-004-llm-grounding.md`
+- [x] Commit: `docs(spec-01-02): add adr-004 llm grounding`
 
 ---
 
