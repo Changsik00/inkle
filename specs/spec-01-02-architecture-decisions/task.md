@@ -20,11 +20,11 @@
 ## Task 2: ADR-001 앱 구조와 스택
 
 ### 2-1. 작성
-- [ ] 선택지 비교: Next.js 단일 앱 / 프론트와 백엔드 분리 / 서버 렌더링 없는 단일 페이지 앱
-- [ ] 작업 프로세스와 대기열 방식, 모바일 앱에 대한 가정
-- [ ] 미커밋 Next.js 뼈대를 살릴지 판단
-- [ ] `docs/decisions/ADR-001-app-structure.md`
-- [ ] Commit: `docs(spec-01-02): add adr-001 app structure`
+- [x] 선택지 비교: Next.js 단일 앱 / 프론트와 백엔드 분리 / 서버 렌더링 없는 단일 페이지 앱
+- [x] 작업 프로세스와 대기열 방식, 모바일 앱에 대한 가정
+- [x] 미커밋 Next.js 뼈대를 살릴지 판단
+- [x] `docs/decisions/ADR-001-app-structure.md`
+- [x] Commit: `docs(spec-01-02): add adr-001 app structure`
 
 ---
 
