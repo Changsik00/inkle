@@ -30,6 +30,8 @@ describe("backend · frontend · shared 의 경계 (ADR-008)", { timeout: 60_000
     ["src/shared/contract/probe.ts", 'import postgres from "postgres";'],
     ["src/app/books/page.tsx", 'import { container } from "@/backend/container";'],
     ["src/app/books/page.tsx", 'import { listBooks } from "@/backend/application/books";'],
+    // API 는 별도 서버다 (ADR-009). src/app 에는 backend 를 부르는 입구가 없다.
+    ["src/app/api/probe/route.ts", 'import { container } from "@/backend/container";'],
   ])("%s 에서 막는다: %s", async (filePath, source) => {
     expect(await restrictedImports(filePath, source)).toBeGreaterThan(0);
   });
@@ -40,7 +42,6 @@ describe("backend · frontend · shared 의 경계 (ADR-008)", { timeout: 60_000
     ["src/frontend/features/books/probe.tsx", 'import type { BookDto } from "@/shared/contract/books";'],
     ["src/frontend/api-client/probe.ts", 'import { contract } from "@/shared/contract";'],
     ["src/backend/rpc/probe.ts", 'import { contract } from "@/shared/contract";'],
-    ["src/app/api/probe/route.ts", 'import { container } from "@/backend/container";'],
     ["src/app/books/page.tsx", 'import { BookList } from "@/frontend/features/books/book-list";'],
   ])("%s 에서 허용한다: %s", async (filePath, source) => {
     expect(await restrictedImports(filePath, source)).toBe(0);
@@ -71,6 +72,7 @@ describe("backend 안의 계층 (ADR-006)", { timeout: 60_000 }, () => {
     ["src/backend/infrastructure/probe.ts", 'import postgres from "postgres";'],
     ["src/backend/container.ts", 'import { getSql } from "@/backend/infrastructure/db/client";'],
     ["src/backend/rpc/probe.ts", 'import { registerBook } from "@/backend/application/books";'],
+    ["src/backend/server/probe.ts", 'import { container } from "@/backend/container";'],
   ])("%s 에서 허용한다: %s", async (filePath, source) => {
     expect(await restrictedImports(filePath, source)).toBe(0);
   });

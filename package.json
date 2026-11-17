@@ -14,7 +14,8 @@
     "worker": "tsx --tsconfig tsconfig.json src/backend/worker/main.ts",
     "job:enqueue": "tsx --tsconfig tsconfig.json src/backend/cli/enqueue-job.ts",
     "test:unit": "vitest run --exclude \"src/backend/infrastructure/**\"",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "api": "tsx watch --tsconfig tsconfig.json src/backend/server/main.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.7",

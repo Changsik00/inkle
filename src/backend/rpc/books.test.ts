@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { AUTHOR_MAX, TITLE_MAX } from "@/backend/domain/book";
 import { BOOK_AUTHOR_MAX, BOOK_TITLE_MAX } from "@/shared/contract/books";
 import type { RpcContext } from "@/backend/rpc/context";
-import { handleApiRequest } from "@/backend/rpc/handler";
 import { router } from "@/backend/rpc/router";
 import { testRpcContext } from "@/backend/testing/rpc";
 
@@ -51,38 +50,5 @@ describe("books (처리 함수)", () => {
 
   it("계약의 길이 제한은 도메인 규칙과 같다", () => {
     expect([BOOK_TITLE_MAX, BOOK_AUTHOR_MAX]).toEqual([TITLE_MAX, AUTHOR_MAX]);
-  });
-});
-
-describe("books (HTTP)", () => {
-  const call = (method: string, path: string, body?: string) =>
-    handleApiRequest(
-      new Request(`http://inkle.test/api${path}`, {
-        method,
-        body,
-        headers: body ? { "content-type": "application/json" } : undefined,
-      }),
-      context,
-    );
-
-  it("POST /api/books 는 201, 같은 책은 409", async () => {
-    const body = JSON.stringify({ title: "노인과 바다", author: "헤밍웨이" });
-    expect((await call("POST", "/books", body)).status).toBe(201);
-    expect((await call("POST", "/books", body)).status).toBe(409);
-  });
-
-  it("GET /api/books 는 200 과 목록", async () => {
-    const res = await call("GET", "/books");
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ books: [] });
-  });
-
-  it("깨진 JSON 이나 빠진 필드는 400", async () => {
-    expect((await call("POST", "/books", "{not json")).status).toBe(400);
-    expect((await call("POST", "/books", JSON.stringify({ title: "x" }))).status).toBe(400);
-  });
-
-  it("없는 책은 404", async () => {
-    expect((await call("GET", "/books/00000000-0000-4000-8000-0000000000aa")).status).toBe(404);
   });
 });

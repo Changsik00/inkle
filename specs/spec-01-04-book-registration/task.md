@@ -146,7 +146,7 @@
 
 ---
 
-## Task 10: Ship (필수, 다시)
+## Task 10: Ship (2차, 완료)
 
 ### 🚦 Pre-Push Quality Gate
 
@@ -164,3 +164,51 @@
 
 - [x] `git push -u origin spec-01-04-book-registration`
 - [x] PR #4 본문 갱신 (`gh pr edit`)
+
+---
+
+> **계획 변경 2** (2026-11-17, PR #4 리뷰): API 를 별도 서버로 나누고, 현재 구조와 모노레포 전환 참고를 문서로 남긴다.
+
+## Task 11: API 를 별도 서버로
+
+### 11-1. 테스트 작성 (TDD Red)
+- [x] `src/backend/server/http-server.test.ts`: 실제 HTTP 서버를 띄워 상태 확인, 책 API(201, 409, 400, 깨진 JSON, 404), `/api/openapi.json`, 없는 주소 404
+- [x] `src/architecture.test.ts`: `src/app/` 어디에서도 backend 를 가져오지 못한다
+- [x] 테스트 실행 → Fail 확인
+
+### 11-2. 구현 (TDD Green)
+- [x] `src/backend/server/` (서버 생성, 진입점), `pnpm api`
+- [x] `src/app/api/` 삭제, `next.config.ts` rewrites, compose 에 `api` 컨테이너
+- [x] lint 규칙, E2E 설정
+- [x] lint, 타입 검사, 전체 테스트, E2E, 빌드, compose 확인
+- [x] Commit: `refactor(spec-01-04): run the api as a separate server`
+
+---
+
+## Task 12: 아키텍처 문서
+
+- [ ] `docs/decisions/ADR-009-separate-api-server.md`, ADR-001·007·008 고침
+- [ ] `docs/architecture.md`: 현재 구조(실행 단위, 폴더, 요청 흐름)와 모노레포로 옮길 때의 대응표
+- [ ] `README.md`
+- [ ] Commit: `docs(spec-01-04): document current structure and monorepo migration path`
+
+---
+
+## Task 13: Ship (필수, 세 번째)
+
+### 🚦 Pre-Push Quality Gate
+
+- [ ] **전체 테스트 실행** → 모두 PASS (`pnpm test`, `pnpm test:e2e`)
+- [ ] lint, 타입 검사, 빌드
+- [ ] spec.md 의 수동 검증 시나리오 6개 (토큰 하나를 바꿔 전체가 바뀌는지 포함)
+
+### 📝 산출물 작성
+
+- [ ] **walkthrough.md 갱신** (계획 변경)
+- [ ] **pr_description.md 갱신**
+- [ ] Commit: `docs(spec-01-04): ship walkthrough and pr description`
+
+### 🚀 Push & PR
+
+- [ ] `git push -u origin spec-01-04-book-registration`
+- [ ] PR #4 본문 갱신 (`gh pr edit`)

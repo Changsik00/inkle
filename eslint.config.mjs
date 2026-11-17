@@ -39,10 +39,10 @@ const eslintConfig = defineConfig([
   },
   {
     files: ["src/app/**/*.{ts,tsx}"],
-    ignores: ["src/app/api/**", "**/*.test.{ts,tsx}"],
+    ignores: ["**/*.test.{ts,tsx}"],
     rules: restrict(
       [...area("backend"), "postgres"],
-      "페이지와 레이아웃은 frontend 를 배치하는 틀이다. backend 는 src/app/api/ 의 route 파일만 부른다 (ADR-007, ADR-008).",
+      "src/app 은 화면 라우트만 둔다. API 는 별도 서버(src/backend/server)다 (ADR-008, ADR-009).",
     ),
   },
 
@@ -51,7 +51,7 @@ const eslintConfig = defineConfig([
     files: ["src/backend/domain/**/*.ts"],
     ignores: ["**/*.test.ts"],
     rules: restrict(
-      [...area("frontend"), ...backendPart("application", "infrastructure", "rpc", "worker", "cli", "testing", "container"), ...react, ...next, "postgres"],
+      [...area("frontend"), ...backendPart("application", "infrastructure", "rpc", "server", "worker", "cli", "testing", "container"), ...react, ...next, "postgres"],
       "도메인은 다른 계층과 DB·프레임워크를 가져오지 않는다 (ADR-006).",
     ),
   },
@@ -59,7 +59,7 @@ const eslintConfig = defineConfig([
     files: ["src/backend/application/**/*.ts"],
     ignores: ["**/*.test.ts"],
     rules: restrict(
-      [...area("frontend"), ...backendPart("infrastructure", "rpc", "worker", "cli", "testing", "container"), ...react, ...next, "postgres"],
+      [...area("frontend"), ...backendPart("infrastructure", "rpc", "server", "worker", "cli", "testing", "container"), ...react, ...next, "postgres"],
       "애플리케이션은 포트(ports.ts)로만 바깥에 닿는다. 인프라·조립·진입점과 DB·프레임워크를 가져오지 않는다 (ADR-006).",
     ),
   },
@@ -67,12 +67,12 @@ const eslintConfig = defineConfig([
     files: ["src/backend/infrastructure/**/*.ts"],
     ignores: ["**/*.test.ts"],
     rules: restrict(
-      [...area("frontend"), ...backendPart("rpc", "worker", "cli", "testing", "container"), ...react, ...next],
+      [...area("frontend"), ...backendPart("rpc", "server", "worker", "cli", "testing", "container"), ...react, ...next],
       "인프라는 조립과 진입점을 가져오지 않는다 (ADR-006).",
     ),
   },
   {
-    files: ["src/backend/*.ts", "src/backend/rpc/**/*.ts", "src/backend/worker/**/*.ts", "src/backend/cli/**/*.ts"],
+    files: ["src/backend/*.ts", "src/backend/rpc/**/*.ts", "src/backend/server/**/*.ts", "src/backend/worker/**/*.ts", "src/backend/cli/**/*.ts"],
     ignores: ["**/*.test.ts"],
     rules: restrict([...area("frontend"), ...react, ...next], "backend 는 frontend 와 React·Next.js 를 가져오지 않는다 (ADR-008)."),
   },
