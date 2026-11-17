@@ -63,17 +63,17 @@
 ## Task 5: 화면
 
 ### 5-1. 테스트 작성 (TDD Red)
-- [ ] `use-draft.test.tsx`: 임시 저장, 다시 열면 복원, 지우기, 저장하지 않은 글이 있으면 `beforeunload` 에서 묻기
-- [ ] `interpretation-form.test.tsx`: 질문 넷, 빈 저장은 막고 이유, 저장 요청의 내용, 저장 뒤 읽기 모드와 "고쳐 쓰기", 서버 오류
-- [ ] `book-detail.test.tsx`: "모임 시작"이 눌리고 모임을 만든 뒤 이동, 지난 모임 목록
-- [ ] `e2e/interpretation.spec.ts`: 모임 시작 → 쓰기 → 새로고침해도 임시본 → 저장 → 새로고침해도 남음 → 고쳐 쓰기 → 책 정보의 지난 모임
-- [ ] 테스트 실행 → Fail 확인
+- [x] `use-draft.test.tsx`: 임시 저장, 다시 열면 복원, 지우기, 저장하지 않은 글이 있으면 `beforeunload` 에서 묻기
+- [x] `interpretation-form.test.tsx`: 질문 넷, 빈 저장은 막고 이유, 저장 요청의 내용, 저장 뒤 읽기 모드와 "고쳐 쓰기", 서버 오류
+- [x] `book-detail.test.tsx`: "모임 시작"이 눌리고 모임을 만든 뒤 이동, 지난 모임 목록
+- [x] `e2e/interpretation.spec.ts`: 모임 시작 → 쓰기 → 새로고침해도 임시본 → 저장 → 새로고침해도 남음 → 고쳐 쓰기 → 책 정보의 지난 모임
+- [x] 테스트 실행 → Fail 확인
 
 ### 5-2. 구현 (TDD Green)
-- [ ] `ui/textarea.tsx` (shadcn, DESIGN.md 에 맞게), `features/writing/use-draft.ts`, `features/sessions/*`, 페이지 둘, 책 정보 수정
-- [ ] 테스트 실행 → Pass 확인. lint(`@shadcn/lint`), E2E, 빌드
-- [ ] 스크린숏 (`docs/design/screens/interpretation-*.png`)
-- [ ] Commit: `feat(spec-01-07): add interpretation writing screen`
+- [x] `ui/textarea.tsx` (shadcn, DESIGN.md 에 맞게), `features/writing/use-draft.ts`, `features/sessions/*`, 페이지 둘, 책 정보 수정
+- [x] 테스트 실행 → Pass 확인. lint(`@shadcn/lint`), E2E, 빌드
+- [x] 스크린숏 (`docs/design/screens/interpretation-*.png`)
+- [x] Commit: `feat(spec-01-07): add interpretation writing screen`
 
 ---
 

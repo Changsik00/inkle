@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   // 화면과 API 는 다른 서버다 (ADR-009). 브라우저는 같은 주소의 /api 를 부르고, Next.js 가 API 서버로 넘긴다.
   // 화면 코드와 HTTP 클라이언트는 이 사실을 모른다.
+  // /sessions/{id} 는 지금 단계의 주소로 보낸다. 지금은 단계가 내 해석 하나뿐이다 (spec-01-07).
+  async redirects() {
+    return [{ source: "/sessions/:sessionId", destination: "/sessions/:sessionId/interpretation", permanent: false }];
+  },
   async rewrites() {
     const apiOrigin = process.env.API_ORIGIN ?? "http://localhost:4000";
     return [{ source: "/api/:path*", destination: `${apiOrigin}/api/:path*` }];

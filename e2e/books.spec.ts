@@ -15,7 +15,7 @@ test("책을 등록하면 책 정보로 가고 목록에 나타난다. 같은 �
   await expect(page).toHaveURL(/\/books\/[0-9a-f-]{36}$/);
   const bookUrl = page.url();
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
-  await expect(page.getByRole("button", { name: "모임 시작" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "모임 시작" })).toBeEnabled();
 
   await page.goto("/");
   await expect(page.getByRole("link", { name: new RegExp(title) })).toBeVisible();
