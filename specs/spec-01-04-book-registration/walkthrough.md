@@ -23,7 +23,11 @@
 | 계약의 자리 | frontend 안 / backend 안 / shared | `src/shared/contract/` | 서버와 화면이 함께 쓰는 유일한 것 |
 | HTTP 클라이언트 폴더 이름 | `http/client` / `api-client` | `src/frontend/api-client/` | 계약과 떨어지면서 무엇인지 이름으로 드러나게 |
 
-새 ADR: ADR-007 프론트 구조, ADR-008 src 배치.
+| API 의 입구 (PR #4 리뷰) | Next.js route 파일 / 루트 app 폴더 / 라우트 그룹 / 별도 서버 | 별도 API 서버 (`src/backend/server/`), Next.js 는 rewrites 로 넘김 | 사용자 결정. `src/app` 은 화면만, 배포 분리에 가까워짐 |
+| API 서버의 HTTP 층 | Hono 등 / Node `http` + oRPC 처리기 | Node `http` | 계약 처리와 문서 하나뿐이라 충분하다 |
+| 마이그레이션 적용 위치 | web / api | api | web 은 DB 에 닿지 않는다 |
+
+새 ADR: ADR-007 프론트 구조, ADR-008 src 배치, ADR-009 별도 API 서버.
 
 ## 💬 사용자 협의
 
@@ -31,6 +35,10 @@
   - **합의**: 처음 안(TanStack Query, 기능 폴더)에서 출발해 사용자 요청으로 넓혔다. Radix 기반 UI 와 lint → shadcn/ui 와 `@shadcn/lint`. Tailwind 가 기본인지, 테마를 한곳에서 바꾸는지 → 토큰과 lint 로 강제. 최신 흐름의 라우터·상태·HTTP·테스트 → nuqs, React Hook Form, oRPC, Vitest 브라우저 모드, MSW, Playwright, React Compiler. 엔드포인트와 요청·응답 관리, HTTP 클라이언트 → 계약 하나와 `src/http/client/`.
 - **주제**: src 배치 (PR #4 리뷰)
   - **합의**: 사용자가 "src 아래 백엔드와 프론트가 섞여 있으니 구분하자"고 요청했다. src 안에서 backend · frontend · shared 로 나누고, PR #4 병합 전에 이 spec 에서 하기로 골랐다.
+- **주제**: 배포 때의 분리 (PR #4 리뷰)
+  - **합의**: 지금은 Next.js 가 서버와 화면을 함께 운영하지만, 배포 때는 화면 정적 + API 분리(모노레포)가 나을 수 있다. ADR-008 §다시 볼 때와 `docs/goals.md` 열린 질문에 기록했다.
+- **주제**: `src/app/api` 가 헷갈림 (PR #4 리뷰)
+  - **합의**: API 를 별도 서버로 띄운다. 현재 구조와 모노레포로 옮길 때의 대응표를 `docs/architecture.md` §2 에 정리한다.
 - **주제**: DESIGN.md (PR #4 리뷰)
   - **합의**: "AI 가 만든 느낌을 피하는" 디자인 문서를 만든다. 방향은 "여백의 노트", 작업은 PR #4 병합 뒤 새 spec 에서 한다.
 - **주제**: oRPC 판 (Task 3)
@@ -43,9 +51,11 @@
 - **결과**: ✅ Passed
 ```text
  Test Files  18 passed (18)
-      Tests  148 passed (148)
+      Tests  152 passed (152)
   4 passed (Playwright)
 ```
+
+마지막으로 API 서버를 분리한 뒤 다시 돌린 결과다 (Test Files 19). API 서버 테스트는 실제 HTTP 서버를 띄워 부른다. compose 로 web · api · db 를 띄워 E2E 가 rewrites 를 거쳐 통과했고, DB 를 멈추면 `/api/health` 가 web 을 거쳐서도 503 이었다.
 
 src 배치를 바꾼 뒤 다시 돌린 결과다. 경계 규칙 테스트가 늘었다 (frontend ↔ backend, shared). 이동 뒤에도 compose, `pnpm worker`, `pnpm job:enqueue`, `pnpm db:migrate`, `pnpm build` 가 그대로 동작했다.
 
@@ -72,7 +82,7 @@ src 배치를 바꾼 뒤 다시 돌린 결과다. 경계 규칙 테스트가 늘
 
 ## 🔍 발견 사항
 
-- **이 spec 을 두 번 ship 했다.** 첫 ship 뒤 리뷰에서 src 배치를 바꾸기로 해, 상태 파일의 spec 과 Plan Accept 를 사용자 승인에 따라 되돌리고 phase 표를 `In Progress` 로 되돌렸다.
+- **이 spec 을 세 번 ship 했다.** 첫 ship 뒤 리뷰에서 src 배치, 이어서 API 서버 분리를 하기로 해 그때마다 상태 파일의 spec 과 Plan Accept 를 사용자 승인에 따라 되돌리고 phase 표를 `In Progress` 로 되돌렸다.
 
 - **`@shadcn/lint` 가 바로 효과를 냈다.** 뼈대의 `text-zinc-600` 을 오류로 잡았다.
 - **공식 문서와 실제 판이 달랐다.** oRPC 문서는 2.0 베타, Vitest 는 4 가 아니라 5, MSW 는 3 (옵션 이름 `onUnhandledRequest` → `onUnhandledFrame`, 두 번 `start` 하면 오류).
