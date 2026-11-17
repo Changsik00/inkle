@@ -15,6 +15,9 @@ RUN mkdir -p /app /llm-workdir && chown node:node /app /llm-workdir
 USER node
 WORKDIR /app
 
+# compose 가 .next 를 이름 없는 볼륨으로 덮는다. 이미지에 node 소유로 미리 만들어 두어야 볼륨도 같은 소유가 된다.
+RUN mkdir -p /app/.next
+
 COPY --chown=node:node package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 

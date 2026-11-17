@@ -59,14 +59,14 @@
 ## Task 4: compose 와 상태 확인
 
 ### 4-1. 테스트 작성 (TDD Red)
-- [ ] `src/db/` 연결 테스트, 상태 확인 함수 테스트 (DB 연결됨 / 안 됨)
-- [ ] 테스트 실행 → Fail 확인
+- [x] `src/db/` 연결 테스트, 상태 확인 함수 테스트 (DB 연결됨 / 안 됨)
+- [x] 테스트 실행 → Fail 확인
 
 ### 4-2. 구현 (TDD Green)
-- [ ] `compose.yaml` (web, db, 이름 붙은 볼륨, 시험용 데이터베이스. worker 는 토큰이 있을 때만 쓰는 선택 항목)
-- [ ] `src/db/` 연결, `src/app/api/health/route.ts`
-- [ ] 테스트 실행 → Pass 확인. `docker compose up -d --wait` 뒤 `curl` 로 확인
-- [ ] Commit: `feat(spec-01-03): add docker compose with web, worker and db`
+- [x] `compose.yaml` (web, db, 이름 붙은 볼륨, 시험용 데이터베이스. worker 는 토큰이 있을 때만 쓰는 선택 항목)
+- [x] `src/db/` 연결, `src/app/api/health/route.ts`
+- [x] 테스트 실행 → Pass 확인. `docker compose up -d --wait` 뒤 `curl` 로 확인
+- [x] Commit: `feat(spec-01-03): add docker compose with web, worker and db`
 
 ---
 
