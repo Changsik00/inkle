@@ -42,10 +42,10 @@
 ## Task 4: ADR-003 사용자 식별
 
 ### 4-1. 작성
-- [ ] 선택지 비교: 처음부터 식별자 / 인증을 붙일 때 추가
-- [ ] 식별자를 두는 범위 (독자 단위 자료만)
-- [ ] `docs/decisions/ADR-003-user-identity.md`
-- [ ] Commit: `docs(spec-01-02): add adr-003 user identity`
+- [x] 선택지 비교: 처음부터 식별자 / 인증을 붙일 때 추가
+- [x] 식별자를 두는 범위 (독자 단위 자료만)
+- [x] `docs/decisions/ADR-003-user-identity.md`
+- [x] Commit: `docs(spec-01-02): add adr-003 user identity`
 
 ---
 
