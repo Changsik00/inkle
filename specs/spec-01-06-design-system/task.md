@@ -67,17 +67,17 @@
 
 ### 🚦 Pre-Push Quality Gate
 
-- [ ] **전체 테스트 실행** → 모두 PASS (`pnpm test`, `pnpm test:e2e`)
-- [ ] lint (DESIGN.md 포함), 타입 검사, 빌드
-- [ ] spec.md 의 수동 검증 시나리오 4개
+- [x] **전체 테스트 실행** → 모두 PASS (`pnpm test`, `pnpm test:e2e`)
+- [x] lint (DESIGN.md 포함), 타입 검사, 빌드
+- [x] spec.md 의 수동 검증 시나리오 4개
 
 ### 📝 산출물 작성
 
-- [ ] **walkthrough.md 작성**
-- [ ] **pr_description.md 작성**
-- [ ] Commit: `docs(spec-01-06): ship walkthrough and pr description`
+- [x] **walkthrough.md 작성**
+- [x] **pr_description.md 작성**
+- [x] Commit: `docs(spec-01-06): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
-- [ ] `git push -u origin spec-01-06-design-system`
-- [ ] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
+- [x] `git push -u origin spec-01-06-design-system`
+- [x] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
