@@ -1,4 +1,4 @@
-# feat(spec-01-04): 프론트 구조(ADR-007)와 책 등록
+# feat(spec-01-04): 프론트 구조(ADR-007), src 배치(ADR-008)와 책 등록
 
 ## 📋 Summary
 
@@ -13,6 +13,7 @@
 - [x] **테스트**: Vitest 프로젝트 둘(Node, 브라우저 모드 + MSW), Playwright E2E, 의존 규칙과 UI 규칙의 lint 테스트
 - [x] **책 등록**: 도메인 규칙(다듬기, 같은 책 키, 길이), 유스케이스, 저장소(메모리, Postgres, 계약 테스트), `0002_books.sql`, API(`GET/POST /api/books`, `GET /api/books/{bookId}`), 화면(목록, 등록, 책 정보)
 - [x] 상태 확인 API 를 계약으로 옮김 (`/api/health`, 동작 같음)
+- [x] **src 배치 (리뷰 반영, ADR-008)**: `src/backend/`, `src/frontend/`, `src/shared/`. backend 와 frontend 는 서로 가져오지 않고 shared(HTTP 계약)만 함께 쓴다. `src/app/` 은 Next.js 라우트의 얕은 입구. lint 와 테스트로 강제
 
 ### Phase 컨텍스트
 - **Phase**: `phase-01`
@@ -20,11 +21,12 @@
 
 ## 🎯 Key Review Points
 
-1. **Server Actions 를 쓰지 않는다.** 최근 흐름과 다르지만 ADR-001 의 "화면은 HTTP API 로만"을 유지했다 (모바일 가정, 성공 기준 5 의 API 검증).
-2. **oRPC 1.16.2.** 공식 문서가 2.0 베타 기준이라 1.x 사용법은 패키지 타입으로 확인했다. 2.0 정식판이 나오면 판 올림이 필요하다.
-3. **의존성이 크게 늘었다.** 목록은 `walkthrough.md` §발견 사항.
-4. **같은 책 판정**: 다듬은 제목과 작가를 NFC 정규화하고 대소문자를 무시한 키에 유일 인덱스. 번역본과 판본은 구분하지 않는다. 동시에 등록해도 하나만 생긴다.
-5. **E2E 는 개발 DB 에 시험용 책을 남긴다** (`E2E 시험용 책 …`).
+1. **src 배치 (ADR-008).** 경로가 모두 바뀌었다. 동작은 같고, 규칙 테스트가 경계를 확인한다.
+2. **Server Actions 를 쓰지 않는다.** 최근 흐름과 다르지만 ADR-001 의 "화면은 HTTP API 로만"을 유지했다 (모바일 가정, 성공 기준 5 의 API 검증).
+3. **oRPC 1.16.2.** 공식 문서가 2.0 베타 기준이라 1.x 사용법은 패키지 타입으로 확인했다. 2.0 정식판이 나오면 판 올림이 필요하다.
+4. **의존성이 크게 늘었다.** 목록은 `walkthrough.md` §발견 사항.
+5. **같은 책 판정**: 다듬은 제목과 작가를 NFC 정규화하고 대소문자를 무시한 키에 유일 인덱스. 번역본과 판본은 구분하지 않는다. 동시에 등록해도 하나만 생긴다.
+6. **E2E 는 개발 DB 에 시험용 책을 남긴다** (`E2E 시험용 책 …`).
 
 ## 🧪 Verification
 
@@ -36,7 +38,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
 
 **결과 요약**:
 - ✅ lint, 타입 검사, 빌드
-- ✅ Vitest 140개 (18 파일, Node + 브라우저 Chromium)
+- ✅ Vitest 148개 (18 파일, Node + 브라우저 Chromium)
 - ✅ Playwright 4개
 
 ### 수동 검증 시나리오
@@ -49,32 +51,42 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
 
 ## 📦 Files Changed
 
+경로는 ADR-008 의 배치 기준이다.
+
 ### 🆕 New Files
-- `docs/decisions/ADR-007-frontend-structure.md`
-- `src/http/contract/` (health, books), `src/http/client/` (클라이언트, 오류, QueryClient)
-- `src/server/rpc/` (구현, 라우터, 처리기, OpenAPI 문서)와 테스트, 스냅샷
-- `src/app/api/[...rest]/route.ts`, `src/app/api/openapi.json/route.ts`, `src/app/providers.tsx`, `src/app/books/`, `src/app/not-found.tsx`
-- `src/features/books/`, `src/features/system/`, `src/ui/` (shadcn/ui 부품)
-- `src/domain/book.ts`, `src/application/books.ts`, `src/infrastructure/db/migrations/0002_books.sql`, `src/infrastructure/repositories/postgres-book-repository.ts`
-- `src/testing/` (책 저장소 메모리 구현과 계약, RPC 문맥, 브라우저 테스트 도우미, MSW 워커)
+- `docs/decisions/ADR-007-frontend-structure.md`, `docs/decisions/ADR-008-src-layout.md`
+- `src/shared/contract/` (health, books)
+- `src/frontend/`: `api-client/` (클라이언트, 오류, QueryClient), `features/` (books, system), `ui/` (shadcn/ui 부품), `providers.tsx`, `testing/` (MSW, 렌더링)
+- `src/backend/rpc/` (계약 구현, 라우터, 처리기, OpenAPI 문서, 테스트와 스냅샷)
+- `src/backend/domain/book.ts`, `src/backend/application/books.ts`, `src/backend/infrastructure/db/migrations/0002_books.sql`, `src/backend/infrastructure/repositories/postgres-book-repository.ts`
+- `src/backend/testing/` (책 저장소 메모리 구현과 계약, RPC 문맥)
+- `src/app/api/[...rest]/route.ts`, `src/app/api/openapi.json/route.ts`, `src/app/books/`, `src/app/not-found.tsx`
 - `e2e/`, `playwright.config.ts`, `components.json`
 
+### 🔀 Moved
+- `src/domain`, `src/application`, `src/infrastructure`, `src/worker`, `src/cli` → `src/backend/…`
+- `src/server/container.ts` → `src/backend/container.ts`
+- `src/testing/{contracts,in-memory,postgres.ts}` → `src/backend/testing/`
+- `src/product.ts` → `src/shared/product.ts`
+
 ### 🛠 Modified Files
-- `eslint.config.mjs`: 화면의 의존 규칙, `fetch` 금지, `@shadcn/lint`
+- `eslint.config.mjs`: 영역 경계, backend 계층, 화면의 `fetch` 금지, `@shadcn/lint`
+- `src/architecture.test.ts`: 경계와 UI 규칙의 확인
 - `vitest.config.mts`: Node 와 브라우저 프로젝트
 - `next.config.ts`: `typedRoutes`, `reactCompiler`
 - `src/app/globals.css`, `layout.tsx`, `page.tsx`: 토큰, 제공자, 시스템 글꼴, 책 목록
-- `src/application/ports.ts`, `src/server/container.ts`: `BookRepository`
-- `README.md`, `docs/architecture.md`, `backlog/phase-01.md`
+- `package.json`: 의존성, 스크립트 경로
+- `README.md`, `docs/architecture.md`, `docs/decisions/ADR-006`, `backlog/phase-01.md`
 
 ### 🗑 Deleted Files
-- `src/app/api/health/route.ts` (계약으로 옮김), `src/app/health-status.tsx` (`src/features/system/` 로 옮김)
+- `src/app/api/health/route.ts` (계약으로 옮김), `src/app/health-status.tsx` (`src/frontend/features/system/` 로 옮김)
 
 ## ✅ Definition of Done
 
 - [x] ADR-007 과 `docs/architecture.md` §6
 - [x] 모든 테스트 PASS, lint 와 타입 검사 통과, 빌드 성공
 - [x] 수동 검증 시나리오 6개 확인
+- [x] src 배치 (계획 변경)
 - [x] `walkthrough.md` ship commit 완료
 - [x] `pr_description.md` ship commit 완료
 - [x] 사용자 검토 요청 알림 완료
@@ -84,6 +96,6 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
 - Phase: `backlog/phase-01.md`
 - Walkthrough: `specs/spec-01-04-book-registration/walkthrough.md`
 - 아키텍처: `docs/architecture.md`
-- ADR: `docs/decisions/ADR-007-frontend-structure.md`
+- ADR: `docs/decisions/ADR-007-frontend-structure.md`, `docs/decisions/ADR-008-src-layout.md`
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -19,12 +19,20 @@
 | 화면 테스트 렌더러 | Testing Library / `vitest-browser-react` | 후자 | Vitest 5 문서가 권한다 |
 | 글꼴 | Geist / 시스템 글꼴 | 시스템 글꼴 (토큰 `--app-font-sans`) | 한국어 화면. shadcn 초기화가 만든 `--font-sans` 순환 참조도 함께 고쳤다 |
 
-새 ADR: ADR-007 프론트 구조.
+| `src` 배치 (PR #4 리뷰) | 같은 단에 섞음 / src 안에서 backend·frontend·shared / 모노레포 | src 안에서 나눔 | 사용자 결정. 모노레포는 설정이 크게 늘고 ADR-001 을 바꿔야 한다 |
+| 계약의 자리 | frontend 안 / backend 안 / shared | `src/shared/contract/` | 서버와 화면이 함께 쓰는 유일한 것 |
+| HTTP 클라이언트 폴더 이름 | `http/client` / `api-client` | `src/frontend/api-client/` | 계약과 떨어지면서 무엇인지 이름으로 드러나게 |
+
+새 ADR: ADR-007 프론트 구조, ADR-008 src 배치.
 
 ## 💬 사용자 협의
 
 - **주제**: 프론트 구조 (Plan 단계)
   - **합의**: 처음 안(TanStack Query, 기능 폴더)에서 출발해 사용자 요청으로 넓혔다. Radix 기반 UI 와 lint → shadcn/ui 와 `@shadcn/lint`. Tailwind 가 기본인지, 테마를 한곳에서 바꾸는지 → 토큰과 lint 로 강제. 최신 흐름의 라우터·상태·HTTP·테스트 → nuqs, React Hook Form, oRPC, Vitest 브라우저 모드, MSW, Playwright, React Compiler. 엔드포인트와 요청·응답 관리, HTTP 클라이언트 → 계약 하나와 `src/http/client/`.
+- **주제**: src 배치 (PR #4 리뷰)
+  - **합의**: 사용자가 "src 아래 백엔드와 프론트가 섞여 있으니 구분하자"고 요청했다. src 안에서 backend · frontend · shared 로 나누고, PR #4 병합 전에 이 spec 에서 하기로 골랐다.
+- **주제**: DESIGN.md (PR #4 리뷰)
+  - **합의**: "AI 가 만든 느낌을 피하는" 디자인 문서를 만든다. 방향은 "여백의 노트", 작업은 PR #4 병합 뒤 새 spec 에서 한다.
 - **주제**: oRPC 판 (Task 3)
   - **합의**: 1.x 안정판.
 
@@ -35,9 +43,11 @@
 - **결과**: ✅ Passed
 ```text
  Test Files  18 passed (18)
-      Tests  140 passed (140)
+      Tests  148 passed (148)
   4 passed (Playwright)
 ```
+
+src 배치를 바꾼 뒤 다시 돌린 결과다. 경계 규칙 테스트가 늘었다 (frontend ↔ backend, shared). 이동 뒤에도 compose, `pnpm worker`, `pnpm job:enqueue`, `pnpm db:migrate`, `pnpm build` 가 그대로 동작했다.
 
 | 추가된 테스트 | 확인하는 것 |
 |---|---|
@@ -62,6 +72,8 @@
 
 ## 🔍 발견 사항
 
+- **이 spec 을 두 번 ship 했다.** 첫 ship 뒤 리뷰에서 src 배치를 바꾸기로 해, 상태 파일의 spec 과 Plan Accept 를 사용자 승인에 따라 되돌리고 phase 표를 `In Progress` 로 되돌렸다.
+
 - **`@shadcn/lint` 가 바로 효과를 냈다.** 뼈대의 `text-zinc-600` 을 오류로 잡았다.
 - **공식 문서와 실제 판이 달랐다.** oRPC 문서는 2.0 베타, Vitest 는 4 가 아니라 5, MSW 는 3 (옵션 이름 `onUnhandledRequest` → `onUnhandledFrame`, 두 번 `start` 하면 오류).
 - **E2E 는 개발 DB 에 시험용 책을 남긴다.** 제목이 `E2E 시험용 책 …` 이라 지울 수 있다. E2E 용 DB 를 따로 둘지는 흐름이 길어지면 다시 본다.
@@ -72,6 +84,8 @@
 - shadcn/ui 는 `cn` 을 자체 패키지(`cn`)에서 가져온다. `src/ui/utils.ts` 는 그것을 다시 내보낸다.
 
 ## 🚧 이월 항목
+
+- DESIGN.md 와 디자인 시스템 (여백의 노트) → 다음 spec (사용자 결정)
 
 - 글쓰기 공통 훅(임시 저장, 이탈 방지) → spec-01-05 (ADR-007 §5)
 - 글쓴이와 출처 표시 컴포넌트 → spec-01-07 (ADR-007 §5)
