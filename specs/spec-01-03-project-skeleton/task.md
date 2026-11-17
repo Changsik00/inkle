@@ -40,19 +40,19 @@
 > 선행 조건: 사용자가 `.env` 에 `CLAUDE_CODE_OAUTH_TOKEN` 을 넣었다. 없으면 멈추고 요청한다.
 
 ### 3-1. 이미지
-- [ ] `Dockerfile` (Node 22, pnpm, Claude Code CLI), `.dockerignore`. CLI 설치 방법은 공식 문서에서 확인
+- [x] `Dockerfile` (Node 22, pnpm, Claude Code CLI), `.dockerignore`. CLI 설치 방법은 공식 문서에서 확인
 
 ### 3-2. 확인
-- [ ] 가정 1: 컨테이너 안에서 토큰으로 `claude -p` 가 동작한다
-- [ ] 가정 2: 웹 검색 도구만 켜고 검색 결과의 주소를 받는다
-- [ ] 가정 3: `--json-schema` 가 한국어가 섞인 결과에서 형식을 지킨다 (3회)
-- [ ] 가정 4: 실험에서 쓴 출처 주소들의 본문을 HTTP 요청으로 글자로 뽑는다 (한국어 5곳 이상, 영어 3곳 이상). 뽑힌 본문에서 실험 때 확인한 문장이 찾아지는지 본다
+- [-] 가정 1: 컨테이너 안에서 토큰으로 `claude -p` 가 동작한다 — 사용자 결정으로 토큰을 쓰지 않음. 호스트의 로그인된 CLI 로 대신 확인
+- [x] 가정 2: 웹 검색 도구만 켜고 검색 결과의 주소를 받는다
+- [x] 가정 3: `--json-schema` 가 한국어가 섞인 결과에서 형식을 지킨다 (3회)
+- [x] 가정 4: 실험에서 쓴 출처 주소들의 본문을 HTTP 요청으로 글자로 뽑는다 (한국어 5곳 이상, 영어 3곳 이상). 뽑힌 본문에서 실험 때 확인한 문장이 찾아지는지 본다
 
 ### 3-3. 기록
-- [ ] `docs/experiments/02-cli-assumptions/README.md` 에 실행 명령, 결과, 걸린 시간, 비용 추정치
-- [ ] ADR-004 의 가정 표에 결과 반영
-- [ ] **하나라도 틀리면 여기서 멈추고 보고**
-- [ ] Commit: `chore(spec-01-03): verify adr-004 assumptions in container`
+- [x] `docs/experiments/02-cli-assumptions/README.md` 에 실행 명령, 결과, 걸린 시간, 비용 추정치
+- [x] ADR-004 의 가정 표에 결과 반영
+- [x] **하나라도 틀리면 여기서 멈추고 보고** — 틀린 것 없음. 가정 1 은 미확인이라 대안(호스트 실행) 적용
+- [x] Commit: `chore(spec-01-03): verify adr-004 assumptions in container`
 
 ---
 
@@ -63,7 +63,7 @@
 - [ ] 테스트 실행 → Fail 확인
 
 ### 4-2. 구현 (TDD Green)
-- [ ] `compose.yaml` (web, worker, db, 이름 붙은 볼륨, 시험용 데이터베이스)
+- [ ] `compose.yaml` (web, db, 이름 붙은 볼륨, 시험용 데이터베이스. worker 는 토큰이 있을 때만 쓰는 선택 항목)
 - [ ] `src/db/` 연결, `src/app/api/health/route.ts`
 - [ ] 테스트 실행 → Pass 확인. `docker compose up -d --wait` 뒤 `curl` 로 확인
 - [ ] Commit: `feat(spec-01-03): add docker compose with web, worker and db`
@@ -97,7 +97,7 @@
 ### 6-2. 구현 (TDD Green)
 - [ ] `src/domain/` 의 작업 함수, `src/worker/` 진입점과 시험용 처리기
 - [ ] 테스트 실행 → Pass 확인
-- [ ] compose 에서 시험용 작업을 넣어 처리되는지, 재시작 뒤 기록이 남는지 확인
+- [ ] `pnpm worker` 를 호스트에서 띄우고 시험용 작업을 넣어 처리되는지, compose 재시작 뒤 기록이 남는지 확인
 - [ ] Commit: `feat(spec-01-03): add job queue and worker process`
 
 ---
