@@ -71,7 +71,7 @@ status: proposed
 
 ## 📌 Status
 
-Proposed (2026-11-17, spec-01-02). PR 병합 시 accepted. 첫 적용: spec-01-05 내 해석 쓰기 (원본), spec-01-06 배경과 작가의 의도 (파생물).
+Proposed (2026-11-17, spec-01-02). PR 병합 시 accepted. 첫 적용: spec-01-05 내 해석 쓰기 (원본), spec-01-07 배경과 작가의 의도 (파생물).
 
 ## 🔗 Related
 

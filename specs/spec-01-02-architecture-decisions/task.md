@@ -80,10 +80,10 @@
 ## Task 7: 계획 반영
 
 ### 7-1. 목록과 계획 갱신
-- [ ] `./.harness-kit/bin/sdd adr-index` 로 `docs/decisions/README.md` 생성
-- [ ] `backlog/phase-01.md`: 이후 spec 의 범위와 순서 재검토, 뼈대 처리, 결정 기록
-- [ ] `docs/goals.md`: 모바일 앱 열린 질문과 ADR 경로 갱신
-- [ ] Commit: `docs(spec-01-02): reflect adrs in phase plan and goals`
+- [x] `./.harness-kit/bin/sdd adr-index` 로 `docs/decisions/README.md` 생성
+- [x] `backlog/phase-01.md`: 이후 spec 의 범위와 순서 재검토, 뼈대 처리, 결정 기록
+- [x] `docs/goals.md`: 모바일 앱 열린 질문과 ADR 경로 갱신
+- [x] Commit: `docs(spec-01-02): reflect adrs in phase plan and goals`
 
 ---
 
