@@ -1,0 +1,89 @@
+# feat(spec-01-04): 프론트 구조(ADR-007)와 책 등록
+
+## 📋 Summary
+
+### 배경 및 목적
+
+제품 화면이 처음 생기는 spec 이다. 화면을 만들기 전에 프론트 구조를 ADR-007 로 정하고, 그 구조로 첫 기능인 책 등록을 서버부터 화면까지 만든다.
+
+### 주요 변경 사항
+- [x] **ADR-007 프론트 구조**: 틀만 그리는 페이지, 기능 단위 클라이언트 컴포넌트, TanStack Query·nuqs·React Hook Form, `typedRoutes`, React Compiler
+- [x] **HTTP**: oRPC 1.x 계약 하나(`src/http/contract/`)에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 `/api/openapi.json`. 서버 구현은 `src/server/rpc/`, 화면은 `src/http/client/`(오류 정규화, 시간 제한, 응답 모양 검사, TanStack Query 연동)만 거친다
+- [x] **UI**: Tailwind 4, shadcn/ui(Radix) 부품을 `src/ui/` 에, 테마 값은 `globals.css` 토큰에서만, `@shadcn/lint` 로 강제
+- [x] **테스트**: Vitest 프로젝트 둘(Node, 브라우저 모드 + MSW), Playwright E2E, 의존 규칙과 UI 규칙의 lint 테스트
+- [x] **책 등록**: 도메인 규칙(다듬기, 같은 책 키, 길이), 유스케이스, 저장소(메모리, Postgres, 계약 테스트), `0002_books.sql`, API(`GET/POST /api/books`, `GET /api/books/{bookId}`), 화면(목록, 등록, 책 정보)
+- [x] 상태 확인 API 를 계약으로 옮김 (`/api/health`, 동작 같음)
+
+### Phase 컨텍스트
+- **Phase**: `phase-01`
+- **본 SPEC 의 역할**: B 구간(첫 모임)의 첫 spec. 이후 화면이 따를 구조를 정한다.
+
+## 🎯 Key Review Points
+
+1. **Server Actions 를 쓰지 않는다.** 최근 흐름과 다르지만 ADR-001 의 "화면은 HTTP API 로만"을 유지했다 (모바일 가정, 성공 기준 5 의 API 검증).
+2. **oRPC 1.16.2.** 공식 문서가 2.0 베타 기준이라 1.x 사용법은 패키지 타입으로 확인했다. 2.0 정식판이 나오면 판 올림이 필요하다.
+3. **의존성이 크게 늘었다.** 목록은 `walkthrough.md` §발견 사항.
+4. **같은 책 판정**: 다듬은 제목과 작가를 NFC 정규화하고 대소문자를 무시한 키에 유일 인덱스. 번역본과 판본은 구분하지 않는다. 동시에 등록해도 하나만 생긴다.
+5. **E2E 는 개발 DB 에 시험용 책을 남긴다** (`E2E 시험용 책 …`).
+
+## 🧪 Verification
+
+### 자동 테스트
+```bash
+docker compose up -d --wait
+pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build
+```
+
+**결과 요약**:
+- ✅ lint, 타입 검사, 빌드
+- ✅ Vitest 140개 (18 파일, Node + 브라우저 Chromium)
+- ✅ Playwright 4개
+
+### 수동 검증 시나리오
+1. **등록 흐름**: E2E → 책 정보로 이동, 목록에 나타남
+2. **같은 책 재등록**: E2E → 안내와 기존 책 링크
+3. **규칙 위반**: `curl` → 400 `INVALID_BOOK` 과 이유
+4. **없는 책**: E2E → "책을 찾을 수 없어요"
+5. **재시작 뒤 유지**: `docker compose down` → `up` → 남아 있음
+6. **테마 한곳 변경**: `--primary` 하나만 바꿔 버튼 색이 바뀜, 되돌림
+
+## 📦 Files Changed
+
+### 🆕 New Files
+- `docs/decisions/ADR-007-frontend-structure.md`
+- `src/http/contract/` (health, books), `src/http/client/` (클라이언트, 오류, QueryClient)
+- `src/server/rpc/` (구현, 라우터, 처리기, OpenAPI 문서)와 테스트, 스냅샷
+- `src/app/api/[...rest]/route.ts`, `src/app/api/openapi.json/route.ts`, `src/app/providers.tsx`, `src/app/books/`, `src/app/not-found.tsx`
+- `src/features/books/`, `src/features/system/`, `src/ui/` (shadcn/ui 부품)
+- `src/domain/book.ts`, `src/application/books.ts`, `src/infrastructure/db/migrations/0002_books.sql`, `src/infrastructure/repositories/postgres-book-repository.ts`
+- `src/testing/` (책 저장소 메모리 구현과 계약, RPC 문맥, 브라우저 테스트 도우미, MSW 워커)
+- `e2e/`, `playwright.config.ts`, `components.json`
+
+### 🛠 Modified Files
+- `eslint.config.mjs`: 화면의 의존 규칙, `fetch` 금지, `@shadcn/lint`
+- `vitest.config.mts`: Node 와 브라우저 프로젝트
+- `next.config.ts`: `typedRoutes`, `reactCompiler`
+- `src/app/globals.css`, `layout.tsx`, `page.tsx`: 토큰, 제공자, 시스템 글꼴, 책 목록
+- `src/application/ports.ts`, `src/server/container.ts`: `BookRepository`
+- `README.md`, `docs/architecture.md`, `backlog/phase-01.md`
+
+### 🗑 Deleted Files
+- `src/app/api/health/route.ts` (계약으로 옮김), `src/app/health-status.tsx` (`src/features/system/` 로 옮김)
+
+## ✅ Definition of Done
+
+- [x] ADR-007 과 `docs/architecture.md` §6
+- [x] 모든 테스트 PASS, lint 와 타입 검사 통과, 빌드 성공
+- [x] 수동 검증 시나리오 6개 확인
+- [x] `walkthrough.md` ship commit 완료
+- [x] `pr_description.md` ship commit 완료
+- [x] 사용자 검토 요청 알림 완료
+
+## 🔗 관련 자료
+
+- Phase: `backlog/phase-01.md`
+- Walkthrough: `specs/spec-01-04-book-registration/walkthrough.md`
+- 아키텍처: `docs/architecture.md`
+- ADR: `docs/decisions/ADR-007-frontend-structure.md`
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
