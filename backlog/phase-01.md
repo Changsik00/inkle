@@ -62,6 +62,7 @@
 |---|---|:---:|---|---|
 | `spec-01-01` | manual-experiment | P? | Merged | `specs/spec-01-01-manual-experiment/` |
 | `spec-01-02` | architecture-decisions | P? | Merged | `specs/spec-01-02-architecture-decisions/` |
+| `spec-01-03` | project-skeleton | P? | Active | `specs/spec-01-03-project-skeleton/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
@@ -239,7 +240,7 @@
 ### 시나리오 2: 먼저 쓰고, 그다음 본다
 - **Given**: 책은 등록했지만 내 해석을 저장하지 않은 상태
 - **When**: 다른 시선과 비교를 화면과 API 로 요청한다
-- **Then**: 두 경로 모두 거부되고, 이를 위한 LLM 호출도 일어나지 않는다
+- **Then**: 두 경로 모두 거부된다. 독자 단위 작업(연결, 비교)은 만들어지지 않는다. 책 단위 자료 수집은 뒤에서 진행될 수 있지만 그 결과와 개수는 내주지 않는다 (ADR-004 §7)
 - **연관 SPEC**: spec-01-05, spec-01-08
 
 ### 시나리오 3: 출처 없는 사실과 시선은 표시하지 않는다

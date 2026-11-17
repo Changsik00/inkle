@@ -2,7 +2,7 @@
 id: ADR-001
 type: decision
 date: 2026-11-17
-status: proposed
+status: accepted
 ---
 
 # ADR-001: 단일 Next.js 앱과 별도 작업 프로세스로 만든다
@@ -47,7 +47,7 @@ ORM 사용 여부, 테스트 실행기, 마이그레이션 도구는 이 결정�
 
 ## 📌 Status
 
-Proposed (2026-11-17, spec-01-02). PR 병합 시 accepted. 첫 적용: spec-01-03 프로젝트 뼈대.
+Accepted (2026-11-17, spec-01-02, PR #2 병합). 첫 적용: spec-01-03 프로젝트 뼈대.
 
 ## 🔗 Related
 

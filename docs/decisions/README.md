@@ -5,9 +5,9 @@
 <!-- adr-index:start -->
 | # | title | type | status | date |
 |---|---|---|---|---|
-| ADR-001 | 단일 Next.js 앱과 별도 작업 프로세스로 만든다 | decision | proposed | 2026-11-17 |
-| ADR-002 | 자료를 책 단위와 독자 단위 두 층으로 나누고, 시선은 하나의 개념으로 둔다 | decision | proposed | 2026-11-17 |
-| ADR-003 | 독자 단위 자료에는 처음부터 사용자 식별자를 둔다 | decision | proposed | 2026-11-17 |
-| ADR-004 | LLM 은 Claude Code CLI 로 부르고, 출처는 앱이 직접 열어 문장을 대조한다 | decision | proposed | 2026-11-17 |
-| ADR-005 | 원본은 덧붙이기만 하고, 파생물은 무엇으로 만들었는지 남겨 다시 만들 수 있게 한다 | decision | proposed | 2026-11-17 |
+| ADR-001 | 단일 Next.js 앱과 별도 작업 프로세스로 만든다 | decision | accepted | 2026-11-17 |
+| ADR-002 | 자료를 책 단위와 독자 단위 두 층으로 나누고, 시선은 하나의 개념으로 둔다 | decision | accepted | 2026-11-17 |
+| ADR-003 | 독자 단위 자료에는 처음부터 사용자 식별자를 둔다 | decision | accepted | 2026-11-17 |
+| ADR-004 | LLM 은 Claude Code CLI 로 부르고, 출처는 앱이 직접 열어 문장을 대조한다 | decision | accepted | 2026-11-17 |
+| ADR-005 | 원본은 덧붙이기만 하고, 파생물은 무엇으로 만들었는지 남겨 다시 만들 수 있게 한다 | decision | accepted | 2026-11-17 |
 <!-- adr-index:end -->

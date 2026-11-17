@@ -2,7 +2,7 @@
 id: ADR-004
 type: decision
 date: 2026-11-17
-status: proposed
+status: accepted
 ---
 
 # ADR-004: LLM 은 Claude Code CLI 로 부르고, 출처는 앱이 직접 열어 문장을 대조한다
@@ -128,7 +128,7 @@ LLM 을 부르는 코드는 하나의 모듈 뒤에 둔다. 나머지 코드는 
 
 ## 📌 Status
 
-Proposed (2026-11-17, spec-01-02). PR 병합 시 accepted. 첫 적용: spec-01-03 (가정 확인), spec-01-06 자료 수집.
+Accepted (2026-11-17, spec-01-02, PR #2 병합). 첫 적용: spec-01-03 (가정 확인), spec-01-06 자료 수집.
 
 ## 🔗 Related
 
