@@ -31,26 +31,26 @@
 - [x] oRPC (계약 우선, OpenAPI 처리기, Next.js 연결, TanStack Query 연동, 서버에서 처리 함수 직접 부르기), nuqs (Next.js 16, Cache Components), Vitest 4 브라우저 모드와 MSW, Playwright, shadcn/ui 설치, `@shadcn/lint` 의 React 설정. 하나라도 spec 의 설명과 다르면 멈추고 보고 — oRPC 문서가 2.0 베타 기준이라 보고했고, 사용자가 1.x 안정판(1.16.2)을 선택. Vitest 는 5, MSW 는 3, React 테스트는 `vitest-browser-react` (ADR-007 §확인)
 
 ### 3-2. 테스트 작성 (TDD Red)
-- [ ] `src/architecture.test.ts`: 화면 코드가 조립·애플리케이션·인프라·도메인을 가져오면 막고, `src/app/api/**` 은 조립을 허용. 계약(`src/http/contract/`)은 React·Next.js 를 가져오지 못함
-- [ ] `src/architecture.test.ts`: `@shadcn/lint` 가 팔레트 색 직접 사용, 눈금 밖 값, `src/ui/` 부품의 겉모양 덮어쓰기를 막는다 (`src/ui/` 안에서는 허용)
-- [ ] `src/architecture.test.ts`: 화면 코드의 `fetch` 직접 사용을 막는다
-- [ ] `src/http/client/` 테스트: 성공 응답, 선언한 오류 코드, 네트워크 오류, 시간 초과, 응답 모양 불일치가 모두 `ApiError` 로 정규화된다
-- [ ] 브라우저 모드 컴포넌트 테스트 하나와 MSW 흉내가 동작하는지 (시험용 컴포넌트)
-- [ ] 테스트 실행 → Fail 확인
+- [x] `src/architecture.test.ts`: 화면 코드가 조립·애플리케이션·인프라·도메인을 가져오면 막고, `src/app/api/**` 은 조립을 허용. 계약(`src/http/contract/`)은 React·Next.js 를 가져오지 못함
+- [x] `src/architecture.test.ts`: `@shadcn/lint` 가 팔레트 색 직접 사용, 눈금 밖 값, `src/ui/` 부품의 겉모양 덮어쓰기를 막는다 (`src/ui/` 안에서는 허용)
+- [x] `src/architecture.test.ts`: 화면 코드의 `fetch` 직접 사용을 막는다
+- [x] `src/http/client/` 테스트: 성공 응답, 선언한 오류 코드, 네트워크 오류, 시간 초과, 응답 모양 불일치가 모두 `ApiError` 로 정규화된다
+- [x] 브라우저 모드 컴포넌트 테스트 하나와 MSW 흉내가 동작하는지 (시험용 컴포넌트)
+- [x] 테스트 실행 → Fail 확인
 
 ### 3-3. 구현 (TDD Green)
-- [ ] 의존성: TanStack Query, nuqs, React Hook Form, oRPC, Testing Library, MSW, Vitest 브라우저 제공자, Playwright, `babel-plugin-react-compiler`
-- [ ] `next.config.ts`: `typedRoutes`, `reactCompiler`
-- [ ] `vitest.config.mts`: 프로젝트 둘 (Node: `*.test.ts`, 브라우저: `*.test.tsx`). `test:unit` 은 DB 없는 것만
-- [ ] shadcn/ui 초기화 (`components.json`, 부품 위치 `src/ui/`, Radix UI)
-- [ ] `globals.css` 디자인 토큰: 색, 둥글기, 글꼴을 CSS 변수로 정의하고 Tailwind 테마에 연결. 뼈대의 `zinc` 직접 사용과 두 변수뿐인 설정을 교체
-- [ ] `@shadcn/lint` 와 화면의 의존 규칙 (`eslint.config.mjs`)
-- [ ] `src/app/providers.tsx` (TanStack Query, nuqs), `layout.tsx` (시스템 글꼴, `lang="ko"`)
-- [ ] `src/http/contract/index.ts` (계약 묶음), `src/server/rpc/` 기본 구성과 `src/app/api/[...rest]/route.ts`, `/api/openapi.json`
-- [ ] `src/http/client/` (클라이언트 인스턴스: 기본 주소, 헤더, 시간 제한, 오류 정규화, TanStack Query 연동)
-- [ ] `playwright.config.ts`, `pnpm test:e2e`
-- [ ] 테스트 실행 → Pass 확인. `pnpm build` 성공
-- [ ] Commit: `feat(spec-01-04): add frontend foundation`
+- [x] 의존성: TanStack Query, nuqs, React Hook Form, oRPC, Testing Library, MSW, Vitest 브라우저 제공자, Playwright, `babel-plugin-react-compiler`
+- [x] `next.config.ts`: `typedRoutes`, `reactCompiler`
+- [x] `vitest.config.mts`: 프로젝트 둘 (Node: `*.test.ts`, 브라우저: `*.test.tsx`). `test:unit` 은 DB 없는 것만
+- [x] shadcn/ui 초기화 (`components.json`, 부품 위치 `src/ui/`, Radix UI)
+- [x] `globals.css` 디자인 토큰: 색, 둥글기, 글꼴을 CSS 변수로 정의하고 Tailwind 테마에 연결. 뼈대의 `zinc` 직접 사용과 두 변수뿐인 설정을 교체
+- [x] `@shadcn/lint` 와 화면의 의존 규칙 (`eslint.config.mjs`)
+- [x] `src/app/providers.tsx` (TanStack Query, nuqs), `layout.tsx` (시스템 글꼴, `lang="ko"`)
+- [x] `src/http/contract/index.ts` (계약 묶음), `src/server/rpc/` 기본 구성과 `src/app/api/[...rest]/route.ts`, `/api/openapi.json`
+- [x] `src/http/client/` (클라이언트 인스턴스: 기본 주소, 헤더, 시간 제한, 오류 정규화, TanStack Query 연동)
+- [x] `playwright.config.ts`, `pnpm test:e2e`
+- [x] 테스트 실행 → Pass 확인. `pnpm build` 성공
+- [x] Commit: `feat(spec-01-04): add frontend foundation`
 
 ---
 
