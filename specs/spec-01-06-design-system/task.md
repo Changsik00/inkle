@@ -34,10 +34,10 @@
 
 ## Task 3: 글꼴 고르기 (사용자 결정)
 
-- [ ] 명조 후보 셋(Noto Serif KR, Gowun Batang, Hahmlet)과 고딕 후보 둘(시스템 고딕, Pretendard)로 견본 화면을 임시로 만든다. 글자 단계 전부를 실제 문장(책 제목, 인용, 긴 해석)으로 보여 주고, 스크린숏과 글꼴 파일 크기를 정리한다
-- [ ] **사용자에게 견본을 보여 주고 고를 때까지 멈춘다**
-- [ ] 고른 글꼴을 `layout.tsx` 에서 `next/font` 로 불러 `--font-serif`, `--font-sans` 에 연결, DESIGN.md 의 typography 갱신, 견본 화면 삭제
-- [ ] Commit: `feat(spec-01-06): load serif font for titles and quotes`
+- [x] 명조 후보 셋(Noto Serif KR, Gowun Batang, Hahmlet)과 고딕 후보 둘(시스템 고딕, Pretendard)로 견본 화면을 임시로 만든다. 글자 단계 전부를 실제 문장(책 제목, 인용, 긴 해석)으로 보여 주고, 스크린숏과 글꼴 파일 크기를 정리한다
+- [x] **사용자에게 견본을 보여 주고 고를 때까지 멈춘다** — 명조 고운바탕, 고딕 시스템 고딕 (사용자 선택, 2026-11-18). 견본에서 내려받은 글꼴: Noto Serif KR 199 KB, 고운바탕 96 KB, 함렛 245 KB, Pretendard 추가 시 약 +300 KB
+- [x] 고른 글꼴을 `layout.tsx` 에서 `next/font` 로 불러 `--font-serif`, `--font-sans` 에 연결, DESIGN.md 의 typography 갱신, 견본 화면 삭제
+- [x] Commit: `feat(spec-01-06): load serif font for titles and quotes`
 
 ---
 

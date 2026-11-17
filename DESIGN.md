@@ -27,61 +27,61 @@ colors:
   ink-quote: "#1D1F22"
 typography:
   display:
-    fontFamily: Serif
+    fontFamily: Gowun Batang
     fontSize: 2rem
-    fontWeight: 500
+    fontWeight: 400
     lineHeight: 1.25
     letterSpacing: -0.01em
   heading-1:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 1.5rem
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: 0em
   heading-2:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 1.125rem
     fontWeight: 600
     lineHeight: 1.4
     letterSpacing: 0em
   title-book:
-    fontFamily: Serif
+    fontFamily: Gowun Batang
     fontSize: 1.125rem
-    fontWeight: 500
+    fontWeight: 400
     lineHeight: 1.4
     letterSpacing: 0em
   body-reading:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 1.0625rem
     fontWeight: 400
     lineHeight: 1.8
     letterSpacing: 0em
   quote:
-    fontFamily: Serif
+    fontFamily: Gowun Batang
     fontSize: 1.0625rem
     fontWeight: 400
     lineHeight: 1.8
     letterSpacing: 0em
   body-md:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 1rem
     fontWeight: 400
     lineHeight: 1.75
     letterSpacing: 0em
   body-sm:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 0.875rem
     fontWeight: 400
     lineHeight: 1.6
     letterSpacing: 0em
   label:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 0.875rem
     fontWeight: 500
     lineHeight: 1.4
     letterSpacing: 0em
   caption:
-    fontFamily: Sans
+    fontFamily: system-ui
     fontSize: 0.8125rem
     fontWeight: 400
     lineHeight: 1.5
@@ -217,14 +217,14 @@ inkle 은 책을 읽은 뒤 내 해석을 먼저 쓰고, 그 해석을 작품의
 
 고딕은 화면의 글자, 명조는 책의 목소리다. 명조는 책 제목, 외부 인용, 책 정보의 큰 제목에만 쓴다.
 
-- **고딕 (`Sans`):** 화면 글자 전부. 글꼴은 `--font-sans` 토큰이 정한다.
-- **명조 (`Serif`):** 책 제목, 인용. 글꼴은 `--font-serif` 토큰이 정한다.
+- **고딕 (`system-ui`):** 화면 글자 전부. 운영체제의 한국어 고딕을 쓴다 (Mac: Apple SD Gothic Neo, Windows: 맑은 고딕). 내려받는 글꼴이 없다. 배포할 때 운영체제마다 모양을 맞출 필요가 생기면 Pretendard 를 다시 본다.
+- **명조 (`Gowun Batang`, 고운바탕):** 책 제목, 인용, 책 정보의 큰 제목. 가늘고 부드러운 획이 연필로 적는 느낌에 맞는다. 굵기는 400 하나만 쓴다 (700 은 쓰지 않는다). 견본에서 고른 글꼴이다 (spec-01-06, 후보: Noto Serif KR, 함렛).
 - **한국어 조판:**
   - 자간은 0 이 기본이다. 큰 명조 제목(`display`)에만 -0.01em.
   - 본문 행간은 1.75 (긴 글과 인용은 1.8). 제목은 1.25–1.4.
   - 줄바꿈은 어절 단위 (`word-break: keep-all`), 넘칠 때만 글자 단위 (`overflow-wrap: break-word`).
   - 제목은 `text-wrap: balance`, 본문은 `text-wrap: pretty`.
-- **굵기:** 400, 500, 600 만 쓴다. 700 이상은 쓰지 않는다.
+- **굵기:** 고딕은 400, 500, 600. 명조는 400. 700 이상은 쓰지 않는다.
 
 | 단계 | 쓰임 |
 |---|---|
@@ -313,5 +313,4 @@ AI 에이전트와 사람이 화면을 만들거나 고칠 때 따른다.
 
 - **다크 모드:** 아직 없다. 같은 토큰 이름에 다른 값을 주는 묶음(`.dark`)으로 더한다.
 - **움직임:** 정하지 않았다. 쓴다면 150–200ms, 화면 전환 없이 상태 변화에만.
-- **글꼴:** `Serif`, `Sans` 의 실제 글꼴은 견본을 보고 고른다 (spec-01-06 Task 3).
 - **글쓴이 표시 컴포넌트:** 토큰과 규칙만 있다. 컴포넌트는 spec-01-10.
