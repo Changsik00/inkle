@@ -49,14 +49,14 @@
 ## Task 4: API
 
 ### 4-1. 테스트 작성 (TDD Red)
-- [ ] `rpc/sessions.test.ts`: 네 엔드포인트, 오류 코드, 다른 사용자의 모임, 모임 조회가 내 해석 전에 다음 단계의 내용을 담지 않음
-- [ ] OpenAPI 스냅샷과 엔드포인트 목록 갱신
-- [ ] 테스트 실행 → Fail 확인
+- [x] `rpc/sessions.test.ts`: 네 엔드포인트, 오류 코드, 다른 사용자의 모임, 모임 조회가 내 해석 전에 다음 단계의 내용을 담지 않음
+- [x] OpenAPI 스냅샷과 엔드포인트 목록 갱신
+- [x] 테스트 실행 → Fail 확인
 
 ### 4-2. 구현 (TDD Green)
-- [ ] `packages/contract/src/sessions.ts`, `rpc/sessions.ts`, 라우터
-- [ ] 테스트 실행 → Pass 확인
-- [ ] Commit: `feat(spec-01-07): add session api`
+- [x] `packages/contract/src/sessions.ts`, `rpc/sessions.ts`, 라우터
+- [x] 테스트 실행 → Pass 확인
+- [x] Commit: `feat(spec-01-07): add session api`
 
 ---
 

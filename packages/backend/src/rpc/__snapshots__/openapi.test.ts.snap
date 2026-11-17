@@ -462,6 +462,199 @@ exports[`엔드포인트 문서 > 문서 스냅샷 1`] = `
         "tags": undefined,
       },
     },
+    "/books/{bookId}/sessions": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "sessions.listForBook",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "bookId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "sessions": {
+                      "items": {
+                        "properties": {
+                          "bookId": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "stage": {
+                            "enum": [
+                              "writing",
+                              "interpretation_saved",
+                            ],
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "bookId",
+                          "stage",
+                          "createdAt",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "sessions",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+        },
+        "summary": "이 책으로 연 내 모임 (최근 순)",
+        "tags": undefined,
+      },
+      "post": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "sessions.start",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "bookId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "bookId": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "stage": {
+                      "enum": [
+                        "writing",
+                        "interpretation_saved",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "bookId",
+                    "stage",
+                    "createdAt",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "책을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "이 책으로 모임을 연다",
+        "tags": undefined,
+      },
+    },
     "/health": {
       "get": {
         "deprecated": undefined,
@@ -548,6 +741,511 @@ exports[`엔드포인트 문서 > 문서 스냅샷 1`] = `
           },
         },
         "summary": "DB 에 닿는지 확인한다",
+        "tags": undefined,
+      },
+    },
+    "/sessions/{sessionId}": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "sessions.get",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "book": {
+                      "properties": {
+                        "author": {
+                          "type": "string",
+                        },
+                        "createdAt": {
+                          "format": "date-time",
+                          "type": "string",
+                        },
+                        "genre": {
+                          "enum": [
+                            "fiction",
+                          ],
+                          "type": "string",
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "type": "string",
+                        },
+                        "title": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "author",
+                        "genre",
+                        "createdAt",
+                      ],
+                      "type": "object",
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "interpretation": {
+                      "anyOf": [
+                        {
+                          "properties": {
+                            "answers": {
+                              "items": {
+                                "properties": {
+                                  "questionId": {
+                                    "type": "string",
+                                  },
+                                  "text": {
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "questionId",
+                                  "text",
+                                ],
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                            "author": {
+                              "const": "me",
+                            },
+                            "createdAt": {
+                              "format": "date-time",
+                              "type": "string",
+                            },
+                            "questionSetId": {
+                              "type": "string",
+                            },
+                            "version": {
+                              "maximum": 9007199254740991,
+                              "minimum": -9007199254740991,
+                              "type": "integer",
+                            },
+                          },
+                          "required": [
+                            "version",
+                            "questionSetId",
+                            "answers",
+                            "author",
+                            "createdAt",
+                          ],
+                          "type": "object",
+                        },
+                        {
+                          "type": "null",
+                        },
+                      ],
+                    },
+                    "questionSet": {
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                        },
+                        "questions": {
+                          "items": {
+                            "properties": {
+                              "hint": {
+                                "type": "string",
+                              },
+                              "id": {
+                                "type": "string",
+                              },
+                              "text": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "id",
+                              "text",
+                            ],
+                            "type": "object",
+                          },
+                          "type": "array",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "questions",
+                      ],
+                      "type": "object",
+                    },
+                    "stage": {
+                      "enum": [
+                        "writing",
+                        "interpretation_saved",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "stage",
+                    "createdAt",
+                    "book",
+                    "questionSet",
+                    "interpretation",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "모임을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "모임: 책, 질문 묶음, 최근 내 해석, 단계",
+        "tags": undefined,
+      },
+    },
+    "/sessions/{sessionId}/interpretation": {
+      "put": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "sessions.saveInterpretation",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "examples": undefined,
+                "properties": {
+                  "answers": {
+                    "items": {
+                      "properties": {
+                        "questionId": {
+                          "maxLength": 100,
+                          "type": "string",
+                        },
+                        "text": {
+                          "maxLength": 100000,
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "questionId",
+                        "text",
+                      ],
+                      "type": "object",
+                    },
+                    "maxItems": 50,
+                    "type": "array",
+                  },
+                },
+                "required": [
+                  "answers",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "answers": {
+                      "items": {
+                        "properties": {
+                          "questionId": {
+                            "type": "string",
+                          },
+                          "text": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "questionId",
+                          "text",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "author": {
+                      "const": "me",
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                    "questionSetId": {
+                      "type": "string",
+                    },
+                    "version": {
+                      "maximum": 9007199254740991,
+                      "minimum": -9007199254740991,
+                      "type": "integer",
+                    },
+                  },
+                  "required": [
+                    "version",
+                    "questionSetId",
+                    "answers",
+                    "author",
+                    "createdAt",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "INVALID_INTERPRETATION",
+                        },
+                        "data": {
+                          "properties": {
+                            "violations": {
+                              "items": {
+                                "properties": {
+                                  "max": {
+                                    "type": "number",
+                                  },
+                                  "questionId": {
+                                    "type": "string",
+                                  },
+                                  "reason": {
+                                    "enum": [
+                                      "no_answer",
+                                      "too_long",
+                                      "unknown_question",
+                                      "duplicate_question",
+                                    ],
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "reason",
+                                ],
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                          },
+                          "required": [
+                            "violations",
+                          ],
+                          "type": "object",
+                        },
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "내 해석이 규칙에 맞지 않는다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 400,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                        "data",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "400",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "모임을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "내 해석을 저장한다 (새 판을 덧붙인다)",
         "tags": undefined,
       },
     },

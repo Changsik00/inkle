@@ -7,7 +7,16 @@ describe("엔드포인트 문서", () => {
     const endpoints = Object.entries(doc.paths ?? {}).flatMap(([path, item]) =>
       Object.keys(item ?? {}).map((method) => `${method.toUpperCase()} ${path}`),
     );
-    expect(endpoints.sort()).toEqual(["GET /books", "GET /books/{bookId}", "GET /health", "POST /books"]);
+    expect(endpoints.sort()).toEqual([
+      "GET /books",
+      "GET /books/{bookId}",
+      "GET /books/{bookId}/sessions",
+      "GET /health",
+      "GET /sessions/{sessionId}",
+      "POST /books",
+      "POST /books/{bookId}/sessions",
+      "PUT /sessions/{sessionId}/interpretation",
+    ]);
   });
 
   // 계약이 바뀌면 이 스냅샷이 바뀌어 리뷰에 드러난다 (ADR-007 §3).

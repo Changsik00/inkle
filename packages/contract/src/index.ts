@@ -3,10 +3,12 @@
 // React 와 Next.js 를 가져오지 않는다.
 import { booksContract } from "./books";
 import { healthContract } from "./health";
+import { sessionsContract } from "./sessions";
 
 export const contract = {
   health: healthContract,
   books: booksContract,
+  sessions: sessionsContract,
 };
 
 export type Contract = typeof contract;
