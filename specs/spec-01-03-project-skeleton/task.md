@@ -105,10 +105,10 @@
 ## Task 7: 명령 등록과 README
 
 ### 7-1. 정리
-- [ ] `sdd config precheck add` 로 lint, 타입 검사, 테스트 등록
-- [ ] `README.md` 한국어로 교체 (소개, 준비물, 실행, 테스트, 토큰 설정)
-- [ ] `backlog/phase-01.md`: 통합 테스트 실행 명령, phase-FF README 항목 완료
-- [ ] Commit: `docs(spec-01-03): add readme and register precheck commands`
+- [x] `sdd config precheck add` 로 lint, 타입 검사, 테스트 등록
+- [x] `README.md` 한국어로 교체 (소개, 준비물, 실행, 테스트, 토큰 설정)
+- [x] `backlog/phase-01.md`: 통합 테스트 실행 명령, phase-FF README 항목 완료
+- [x] Commit: `docs(spec-01-03): add readme and register precheck commands`
 
 ---
 
