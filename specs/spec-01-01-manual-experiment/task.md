@@ -33,11 +33,11 @@
 ## Task 2: 책 1 수행과 기록
 
 ### 2-1. 사용자 수행 (에이전트 대기)
-- [ ] 사용자가 책 1 로 inkle 방식과 일반 채팅을 수행하고 대화 원문을 전달
+- [x] 사용자가 책 1 로 inkle 방식을 수행 (이 세션에서 진행). 일반 채팅 비교는 미수행 — Task 4 전에 수행 여부 결정
 
 ### 2-2. 기록 정리
-- [ ] `docs/experiments/01-manual-flow/book-1.md` — 양식에 맞춰 정리, 출처 점검 결과 포함
-- [ ] Commit: `docs(spec-01-01): record experiment for book 1`
+- [x] `docs/experiments/01-manual-flow/book-1.md` — 양식에 맞춰 정리, 출처 점검 결과 포함
+- [x] Commit: `docs(spec-01-01): record experiment for book 1`
 
 ---
 
