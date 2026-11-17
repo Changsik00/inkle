@@ -20,13 +20,13 @@
 ## Task 2: 경계 테스트와 워크스페이스 뼈대
 
 ### 2-1. 테스트 작성 (TDD Red)
-- [ ] `tests/workspace.test.ts`: 워크스페이스에 다섯 패키지가 있고, web 은 backend·postgres 를 의존하지 않고, contract 는 zod·@orpc/contract 만, backend 는 React·Next.js·apps 를 의존하지 않는다
-- [ ] 테스트 실행 → Fail 확인
+- [x] `tests/workspace.test.ts`: 워크스페이스에 다섯 패키지가 있고, web 은 backend·postgres 를 의존하지 않고, contract 는 zod·@orpc/contract 만, backend 는 React·Next.js·apps 를 의존하지 않는다
+- [x] 테스트 실행 → Fail 확인
 
 ### 2-2. 구현 (TDD Green)
-- [ ] `pnpm-workspace.yaml`, `tsconfig.base.json`, 다섯 패키지의 `package.json` 과 `tsconfig.json`
-- [ ] 테스트 실행 → Pass 확인 (아직 코드는 옮기지 않음)
-- [ ] Commit: `chore(spec-01-05): add workspace skeleton and dependency boundary test`
+- [x] `pnpm-workspace.yaml`, `tsconfig.base.json`, 다섯 패키지의 `package.json` 과 `tsconfig.json`
+- [x] 테스트 실행 → Pass 확인 (아직 코드는 옮기지 않음. 각 package.json 에 의존성만 먼저 적었다)
+- [x] Commit: `chore(spec-01-05): add workspace skeleton and dependency boundary test`
 
 ---
 
