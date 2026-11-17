@@ -10,10 +10,10 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "tsx --tsconfig tsconfig.json src/cli/migrate.ts",
-    "worker": "tsx --tsconfig tsconfig.json src/worker/main.ts",
-    "job:enqueue": "tsx --tsconfig tsconfig.json src/cli/enqueue-job.ts",
-    "test:unit": "vitest run --exclude \"src/infrastructure/**\"",
+    "db:migrate": "tsx --tsconfig tsconfig.json src/backend/cli/migrate.ts",
+    "worker": "tsx --tsconfig tsconfig.json src/backend/worker/main.ts",
+    "job:enqueue": "tsx --tsconfig tsconfig.json src/backend/cli/enqueue-job.ts",
+    "test:unit": "vitest run --exclude \"src/backend/infrastructure/**\"",
     "test:e2e": "playwright test"
   },
   "dependencies": {

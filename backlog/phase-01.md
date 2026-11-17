@@ -63,7 +63,7 @@
 | `spec-01-01` | manual-experiment | P? | Merged | `specs/spec-01-01-manual-experiment/` |
 | `spec-01-02` | architecture-decisions | P? | Merged | `specs/spec-01-02-architecture-decisions/` |
 | `spec-01-03` | project-skeleton | P? | Merged | `specs/spec-01-03-project-skeleton/` |
-| `spec-01-04` | book-registration | P? | Merged | `specs/spec-01-04-book-registration/` |
+| `spec-01-04` | book-registration | P? | In Progress | `specs/spec-01-04-book-registration/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`

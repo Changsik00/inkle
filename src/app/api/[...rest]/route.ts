@@ -1,6 +1,6 @@
 // HTTP API 의 입구. 계약(src/http/contract/)에 있는 주소만 처리한다 (ADR-007 §3).
-import { container } from "@/server/container";
-import { handleApiRequest } from "@/server/rpc/handler";
+import { container } from "@/backend/container";
+import { handleApiRequest } from "@/backend/rpc/handler";
 
 function handle(request: Request) {
   return handleApiRequest(request, container());

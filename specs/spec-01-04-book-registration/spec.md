@@ -47,6 +47,15 @@
 9. HTTP API: oRPC 계약으로 정의하고 REST 주소로 연다 (`GET /api/books`, `POST /api/books`, `GET /api/books/{bookId}`). 서버와 화면이 같은 계약을 쓴다. 오류는 타입 있는 코드로 돌려준다.
 10. 화면: 책 목록(`/`), 책 등록(`/books/new`), 책 정보(`/books/{bookId}`). 책 정보 화면의 "모임 시작"은 spec-01-05 전까지 눌리지 않는다.
 
+### 계획 변경 (2026-11-17, PR #4 리뷰)
+
+사용자 요청: `src` 아래에 백엔드와 프론트가 섞여 있으니 나눈다. 사용자가 "src 안에서 나누기"와 "PR #4 에 넣기"를 골랐다.
+
+- `src/backend/` (domain, application, infrastructure, rpc, container, worker, cli, testing), `src/frontend/` (features, ui, api-client, providers, testing), `src/shared/` (contract, product). `src/app/` 은 Next.js 라우트만 둔다 (페이지는 frontend 를, `api/` 의 route 파일은 backend 를 부르는 얕은 입구).
+- 의존 규칙: frontend 와 backend 는 서로 가져오지 않는다. 둘 다 shared 만 가져온다. shared 는 아무것도 가져오지 않는다 (React, Next.js, DB 포함). backend 안의 계층 규칙(ADR-006)은 그대로.
+- 동작은 바꾸지 않는다. 파일 이동, 가져오기 경로, lint 규칙, 설정의 경로, 문서만 고친다.
+- ADR-008 로 남기고 ADR-006, 007 과 문서의 경로를 고친다.
+
 ## Out of Scope
 
 - 모임, 내 해석 (spec-01-05). 임시 저장과 이탈 방지는 ADR-007 에서 규칙만 정하고 spec-01-05 에서 만든다

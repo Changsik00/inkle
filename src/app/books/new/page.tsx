@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RegisterBookScreen } from "@/features/books/register-book-screen";
+import { RegisterBookScreen } from "@/frontend/features/books/register-book-screen";
 
 export default function NewBookPage() {
   return (

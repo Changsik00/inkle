@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { BookDetailScreen } from "@/features/books/book-detail-screen";
+import { BookDetailScreen } from "@/frontend/features/books/book-detail-screen";
 
 // 주소의 값(bookId)을 읽는 부분은 Suspense 안에 둔다. 그래야 틀을 미리 그릴 수 있다 (Cache Components).
 export default function BookPage() {

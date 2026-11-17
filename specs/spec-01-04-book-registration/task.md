@@ -108,7 +108,7 @@
 
 ---
 
-## Task 8: Ship (필수)
+## Task 8: Ship (1차, 완료)
 
 ### 🚦 Pre-Push Quality Gate
 
@@ -126,3 +126,41 @@
 
 - [x] `git push -u origin spec-01-04-book-registration`
 - [x] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
+
+---
+
+> **계획 변경** (2026-11-17, PR #4 리뷰): `src` 를 backend / frontend / shared 로 나눈다.
+
+## Task 9: src 를 backend, frontend, shared 로 나누기
+
+### 9-1. 테스트 작성 (TDD Red)
+- [x] `src/architecture.test.ts` 를 새 경로로 고치고, frontend ↔ backend 상호 가져오기 금지, shared 의 가져오기 금지 사례 추가
+- [x] 테스트 실행 → Fail 확인
+
+### 9-2. 구현 (TDD Green)
+- [x] 파일 이동 (`git mv`)과 가져오기 경로 수정
+- [x] `eslint.config.mjs`, `vitest.config.mts`, `components.json`, `package.json` 스크립트, 마이그레이션 경로
+- [x] `docs/decisions/ADR-008-src-layout.md`, ADR-006·007 의 경로, `docs/architecture.md`, `README.md`
+- [x] lint, 타입 검사, 전체 테스트, E2E, 빌드, compose 확인
+- [x] Commit: `refactor(spec-01-04): split src into backend, frontend and shared`
+
+---
+
+## Task 10: Ship (필수, 다시)
+
+### 🚦 Pre-Push Quality Gate
+
+- [ ] **전체 테스트 실행** → 모두 PASS (`pnpm test`, `pnpm test:e2e`)
+- [ ] lint, 타입 검사, 빌드
+- [ ] spec.md 의 수동 검증 시나리오 6개 (토큰 하나를 바꿔 전체가 바뀌는지 포함)
+
+### 📝 산출물 작성
+
+- [ ] **walkthrough.md 갱신** (계획 변경)
+- [ ] **pr_description.md 갱신**
+- [ ] Commit: `docs(spec-01-04): ship walkthrough and pr description`
+
+### 🚀 Push & PR
+
+- [ ] `git push -u origin spec-01-04-book-registration`
+- [ ] PR #4 본문 갱신 (`gh pr edit`)

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { BookList } from "@/features/books/book-list";
-import { HealthStatus } from "@/features/system/health-status";
-import { PRODUCT_NAME, PRODUCT_TAGLINE } from "@/product";
-import { Button } from "@/ui/button";
+import { BookList } from "@/frontend/features/books/book-list";
+import { HealthStatus } from "@/frontend/features/system/health-status";
+import { PRODUCT_NAME, PRODUCT_TAGLINE } from "@/shared/product";
+import { Button } from "@/frontend/ui/button";
 
 export default function Home() {
   return (

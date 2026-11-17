@@ -24,7 +24,7 @@ export default defineConfig({
       {
         // 컴포넌트: 실제 Chromium 에서 돌리고 HTTP 는 MSW 로 흉내 낸다.
         extends: true,
-        publicDir: fileURLToPath(new URL("./src/testing/browser/public", import.meta.url)),
+        publicDir: fileURLToPath(new URL("./src/frontend/testing/public", import.meta.url)),
         // next/link 등 Next.js 의 브라우저 코드가 process.env 를 읽는다. 브라우저에는 없으므로 채워 준다.
         define: { "process.env": JSON.stringify({ NODE_ENV: "test" }) },
         test: {

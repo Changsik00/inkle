@@ -33,7 +33,18 @@ flowchart LR
 
 작업 프로세스가 호스트에서 뜨는 이유: CLI 를 이 기기의 로그인으로 쓰기 때문이다. 컨테이너 안의 토큰 로그인은 확인하지 않았다 (ADR-004 §가정의 확인 결과).
 
-## 2. 서버 계층
+## 2. src 의 배치
+
+ADR-008. backend 와 frontend 는 서로 가져오지 않고 shared 만 함께 쓴다.
+
+| 영역 | 내용 | 가져올 수 없는 것 |
+|---|---|---|
+| `src/app/` | Next.js 라우트 (얕은 입구). 페이지는 frontend, `api/` 는 backend | (api 제외) backend |
+| `src/frontend/` | features, ui, api-client, providers, testing | backend, DB |
+| `src/backend/` | domain, application, infrastructure, rpc, container, worker, cli, testing | frontend, React, Next.js |
+| `src/shared/` | contract (HTTP 계약), product | 모든 영역, React, Next.js, DB |
+
+## 2-1. 서버 계층
 
 ADR-006. 의존은 바깥에서 안쪽으로만 간다.
 
@@ -50,11 +61,11 @@ flowchart TB
 
 | 계층 | 폴더 | 담는 것 | 금지 |
 |---|---|---|---|
-| 도메인 | `src/domain/` | 타입, 상수, 순수한 규칙 | DB, 프레임워크, 다른 계층 |
-| 애플리케이션 | `src/application/` | 유스케이스 함수, 포트(`ports.ts`) | DB, 프레임워크, 인프라, 조립, 진입점 |
-| 인프라 | `src/infrastructure/` | 포트 구현, DB 연결과 마이그레이션 | 조립, 진입점 |
-| 조립 | `src/server/container.ts` | 실제 구현을 만들어 묶는다 | - |
-| 진입점 | `src/app/`, `src/worker/`, `src/cli/` | 입력을 받아 유스케이스를 부른다 | SQL 직접 실행 |
+| 도메인 | `src/backend/domain/` | 타입, 상수, 순수한 규칙 | DB, 프레임워크, 다른 계층 |
+| 애플리케이션 | `src/backend/application/` | 유스케이스 함수, 포트(`ports.ts`) | DB, 프레임워크, 인프라, 조립, 진입점 |
+| 인프라 | `src/backend/infrastructure/` | 포트 구현, DB 연결과 마이그레이션 | 조립, 진입점 |
+| 조립 | `src/backend/container.ts` | 실제 구현을 만들어 묶는다 | - |
+| 진입점 | `src/app/`, `src/backend/worker/`, `src/backend/cli/` | 입력을 받아 유스케이스를 부른다 | SQL 직접 실행 |
 
 금지 항목은 lint 가 막는다 (`eslint.config.mjs`).
 
@@ -133,7 +144,7 @@ ADR-002. 자료는 두 층이다.
 
 - 모든 글에 글쓴이(나 / AI / 외부 사람)를 따로 저장한다 (ADR-002 §3).
 - 원본은 덧붙이기만 하고, 파생물은 만든 재료와 지시문의 판을 남긴다 (ADR-005).
-- 스키마는 `src/infrastructure/db/migrations/` 의 번호 붙은 SQL 파일로 관리한다. ORM 은 쓰지 않는다.
+- 스키마는 `src/backend/infrastructure/db/migrations/` 의 번호 붙은 SQL 파일로 관리한다. ORM 은 쓰지 않는다.
 - 같은 책은 하나만 있다. 정규화한 제목과 작가(`books.key`)에 유일 인덱스를 둔다.
 
 ## 5. 테스트
@@ -142,12 +153,12 @@ ADR-006 §4, ADR-007 §8.
 
 | 종류 | 위치 | 도구 | 실제 DB |
 |---|---|---|:---:|
-| 유스케이스, 도메인 규칙 | `src/application/`, `src/domain/` (메모리 구현 사용) | Vitest (Node) | 불필요 |
-| 저장소 계약 | `src/testing/contracts/` 를 메모리와 Postgres 양쪽에 | Vitest (Node) | Postgres 쪽만 |
-| Postgres 고유 성질 (동시성, 마이그레이션) | `src/infrastructure/**/*.test.ts` | Vitest (Node) | 필요 |
-| API 처리, 엔드포인트 문서 | `src/server/rpc/*.test.ts` (메모리 문맥으로 직접 호출) | Vitest (Node) | 불필요 |
-| HTTP 클라이언트 | `src/http/client/*.test.ts` | Vitest (Node) | 불필요 |
-| 화면 컴포넌트 | `src/features/**/*.test.tsx` (HTTP 는 MSW) | Vitest 브라우저 모드 (Chromium) | 불필요 |
+| 유스케이스, 도메인 규칙 | `src/backend/application/`, `src/backend/domain/` (메모리 구현 사용) | Vitest (Node) | 불필요 |
+| 저장소 계약 | `src/backend/testing/contracts/` 를 메모리와 Postgres 양쪽에 | Vitest (Node) | Postgres 쪽만 |
+| Postgres 고유 성질 (동시성, 마이그레이션) | `src/backend/infrastructure/**/*.test.ts` | Vitest (Node) | 필요 |
+| API 처리, 엔드포인트 문서 | `src/backend/rpc/*.test.ts` (메모리 문맥으로 직접 호출) | Vitest (Node) | 불필요 |
+| HTTP 클라이언트 | `src/frontend/api-client/*.test.ts` | Vitest (Node) | 불필요 |
+| 화면 컴포넌트 | `src/frontend/features/**/*.test.tsx` (HTTP 는 MSW) | Vitest 브라우저 모드 (Chromium) | 불필요 |
 | 의존 규칙, UI 일관성 | `src/architecture.test.ts` | ESLint 를 코드로 실행 | 불필요 |
 | 흐름 (E2E) | `e2e/` | Playwright, compose 로 띄운 앱 | 필요 |
 
@@ -164,12 +175,12 @@ ADR-007.
 
 ```mermaid
 flowchart LR
-    P[src/app 페이지<br/>틀만, 서버 컴포넌트] --> F[src/features<br/>클라이언트 컴포넌트]
-    F --> K[src/http/client<br/>HTTP 클라이언트 + TanStack Query]
+    P[src/app 페이지<br/>틀만, 서버 컴포넌트] --> F[src/frontend/features<br/>클라이언트 컴포넌트]
+    F --> K[src/frontend/api-client<br/>HTTP 클라이언트 + TanStack Query]
     K -->|REST| R[src/app/api route.ts<br/>OpenAPIHandler]
-    R --> S[src/server/rpc<br/>계약 구현]
+    R --> S[src/backend/rpc<br/>계약 구현]
     S --> U[application 유스케이스]
-    C[src/http/contract<br/>엔드포인트 · 요청 · 응답 · 오류] -.-> K
+    C[src/shared/contract<br/>엔드포인트 · 요청 · 응답 · 오류] -.-> K
     C -.-> S
 ```
 
@@ -177,8 +188,8 @@ flowchart LR
 |---|---|
 | 라우터 | App Router. 페이지는 자료를 읽지 않는 틀. `typedRoutes`. 주소 상태는 nuqs |
 | 상태 | 서버 자료 TanStack Query, 주소 nuqs, 양식 React Hook Form + zod. 전역 저장소 없음 (Zustand 는 필요해질 때) |
-| HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 `/api/openapi.json`. 화면은 `src/http/client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
-| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `src/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
+| HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 `/api/openapi.json`. 화면은 `src/frontend/api-client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
+| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `src/frontend/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
