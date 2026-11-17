@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-18 (spec-01-05, 모노레포).
+> 마지막 갱신: 2026-11-18 (spec-01-06, 디자인 시스템).
 
 ## 1. 한눈에
 
@@ -259,7 +259,7 @@ flowchart LR
 | 라우터 | App Router. 페이지는 자료를 읽지 않는 틀. `typedRoutes`. 주소 상태는 nuqs |
 | 상태 | 서버 자료 TanStack Query, 주소 nuqs, 양식 React Hook Form + zod. 전역 저장소 없음 (Zustand 는 필요해질 때) |
 | HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 엔드포인트 문서. API 는 별도 서버(ADR-009). 화면은 `apps/web/src/api-client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
-| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `apps/web/src/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
+| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `apps/web/src/ui/` 에. 디자인 값의 원본은 저장소 루트의 `DESIGN.md` (여백의 노트, ADR-011), `globals.css` 는 같은 값을 따르고 테스트가 비교한다. `@shadcn/lint` 와 DESIGN.md 형식 검사로 강제 |
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
@@ -279,6 +279,7 @@ flowchart LR
 | 008 | `src` 를 backend · frontend · shared 로 (ADR-010 이 대체) |
 | 009 | API 는 Next.js 와 다른 서버로, Next.js 는 화면만 |
 | 010 | pnpm 워크스페이스 모노레포, 영역 경계는 패키지 의존성 |
+| 011 | 디자인 규칙은 DESIGN.md 가 원본 (여백의 노트), 토큰 동기화 테스트 |
 
 ## 8. 이 문서를 고칠 때
 

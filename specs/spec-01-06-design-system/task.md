@@ -57,9 +57,9 @@
 
 ## Task 5: 지침과 문서
 
-- [ ] `CLAUDE.md`: 화면 작업 시 DESIGN.md 를 따른다
-- [ ] `docs/decisions/ADR-011-design-system.md`, ADR-007 §4 고침, `docs/architecture.md` §6, `README.md` §테마
-- [ ] Commit: `docs(spec-01-06): document design system and agent rule`
+- [x] `CLAUDE.md`: 화면 작업 시 DESIGN.md 를 따른다
+- [x] `docs/decisions/ADR-011-design-system.md`, ADR-007 §4 고침, `docs/architecture.md` §6, `README.md` §테마
+- [x] Commit: `docs(spec-01-06): document design system and agent rule`
 
 ---
 
