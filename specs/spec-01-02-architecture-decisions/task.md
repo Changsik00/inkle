@@ -31,11 +31,11 @@
 ## Task 3: ADR-002 데이터 모델
 
 ### 3-1. 작성
-- [ ] 책 단위와 독자 단위 두 층의 개념과 관계 (다이어그램 포함)
-- [ ] 시선의 종류, "얼마나 흔한 읽기인가", 글쓴이 구분, 장르
-- [ ] 선택지 비교: 시선을 하나의 개념으로 / 종류별로 따로
-- [ ] `docs/decisions/ADR-002-data-model.md`
-- [ ] Commit: `docs(spec-01-02): add adr-002 data model`
+- [x] 책 단위와 독자 단위 두 층의 개념과 관계 (다이어그램 포함)
+- [x] 시선의 종류, "얼마나 흔한 읽기인가", 글쓴이 구분, 장르
+- [x] 선택지 비교: 시선을 하나의 개념으로 / 종류별로 따로
+- [x] `docs/decisions/ADR-002-data-model.md`
+- [x] Commit: `docs(spec-01-02): add adr-002 data model`
 
 ---
 
