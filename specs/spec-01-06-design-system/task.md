@@ -19,16 +19,16 @@
 ## Task 2: DESIGN.md 와 토큰 동기화
 
 ### 2-1. 테스트 작성 (TDD Red)
-- [ ] `apps/web/src/design-tokens.test.ts`: DESIGN.md 머리말의 colors·rounded 와 `globals.css` `:root` 가 같은 이름·같은 값
-- [ ] 테스트 실행 → Fail 확인 (DESIGN.md 없음)
+- [x] `apps/web/src/design-tokens.test.ts`: DESIGN.md 머리말의 colors·rounded 와 `globals.css` `:root` 가 같은 이름·같은 값
+- [x] 테스트 실행 → Fail 확인 (DESIGN.md 없음)
 
 ### 2-2. 구현 (TDD Green)
-- [ ] `DESIGN.md` (머리말 토큰: colors, typography 단계, rounded, spacing, components / 절: Google 형식 여덟 + Responsive Behavior, Iteration Guide, Known Gaps). 형식은 `design.md spec` 출력으로 다시 확인
-- [ ] `globals.css`: 글자 단계 토큰과 한국어 조판 규칙(`keep-all`, `text-wrap`)
-- [ ] `globals.css`: 16진수 토큰, 글쓴이 잉크, `.dark` 삭제, `@theme inline` 연결
-- [ ] 루트 `lint` 에 `design.md lint DESIGN.md`. 오류 없음, 대비 경고 없음
-- [ ] 테스트 실행 → Pass 확인
-- [ ] Commit: `feat(spec-01-06): add design.md and sync theme tokens`
+- [x] `DESIGN.md` (머리말 토큰: colors, typography 단계, rounded, spacing, components / 절: Google 형식 여덟 + Responsive Behavior, Iteration Guide, Known Gaps). 형식은 `design.md spec` 출력으로 다시 확인
+- [x] `globals.css`: 글자 단계 토큰과 한국어 조판 규칙(`keep-all`, `text-wrap`)
+- [x] `globals.css`: 16진수 토큰, 글쓴이 잉크, `.dark` 삭제, `@theme inline` 연결
+- [x] 루트 `lint` 에 `design.md lint DESIGN.md`. 오류 없음, 대비 경고 없음
+- [x] 테스트 실행 → Pass 확인
+- [x] Commit: `feat(spec-01-06): add design.md and sync theme tokens`
 
 ---
 
