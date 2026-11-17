@@ -70,7 +70,7 @@
 
 - [ ] **walkthrough.md 작성**
 - [ ] **pr_description.md 작성**
-- [ ] Commit: `docs(spec-01-01): ship walkthrough and pr description`
+- [x] Commit: `docs(spec-01-01): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
