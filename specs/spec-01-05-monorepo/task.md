@@ -47,9 +47,9 @@
 
 ## Task 4: compose 와 이미지
 
-- [ ] `Dockerfile` (워크스페이스 설치), `compose.yaml` (패키지별 `node_modules` 볼륨, `pnpm --filter` 시작 명령), `.dockerignore`
-- [ ] `docker compose up -d --wait --build -V`, `pnpm test`, `pnpm test:e2e`, `pnpm build`, 수동 검증 1~5
-- [ ] Commit: `chore(spec-01-05): run compose services from workspace apps`
+- [x] `Dockerfile` (워크스페이스 설치), `compose.yaml` (패키지별 `node_modules` 볼륨, `pnpm --filter` 시작 명령), `.dockerignore`
+- [x] `docker compose up -d --wait --build -V`, `pnpm test`, `pnpm test:e2e`, `pnpm build`, 수동 검증 1~5
+- [x] Commit: `chore(spec-01-05): run compose services from workspace apps`
 
 ---
 

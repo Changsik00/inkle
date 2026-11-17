@@ -1,6 +1,17 @@
-# 로컬 개발 환경 (ADR-001, ADR-009). `docker compose up -d --wait` 로 화면(web), API(api), DB 가 뜬다.
+# 로컬 개발 환경 (ADR-009, ADR-010). `docker compose up -d --wait` 로 화면(web), API(api), DB 가 뜬다.
 # 작업 프로세스는 호스트에서 `pnpm worker` 로 띄운다. 이 기기에 로그인된 Claude Code CLI 를 쓰기 때문이다 (ADR-004).
+# 처음 한 번, 또는 의존성이 바뀌면: docker compose up -d --wait --build -V
 name: inkle
+
+# 저장소를 통째로 마운트하고, 워크스페이스마다 node_modules 는 이미지의 것을 쓴다.
+x-workspace-volumes: &workspace-volumes
+  - .:/app
+  - /app/node_modules
+  - /app/apps/web/node_modules
+  - /app/apps/api/node_modules
+  - /app/apps/worker/node_modules
+  - /app/packages/contract/node_modules
+  - /app/packages/backend/node_modules
 
 services:
   db:
@@ -21,18 +32,16 @@ services:
       timeout: 3s
       retries: 30
 
-  # API 서버 (src/backend/server). 뜰 때 마이그레이션을 적용한다 (이미 적용한 것은 건너뛴다).
+  # API 서버 (apps/api). 뜰 때 마이그레이션을 적용한다 (이미 적용한 것은 건너뛴다).
   api:
     build: .
-    command: ["sh", "-c", "pnpm db:migrate && pnpm api"]
+    command: ["sh", "-c", "pnpm --filter @inkle/api db:migrate && pnpm --filter @inkle/api dev"]
     environment:
       DATABASE_URL: postgres://inkle@db:5432/inkle
       API_PORT: "4000"
     ports:
       - "127.0.0.1:4000:4000"
-    volumes:
-      - .:/app
-      - /app/node_modules
+    volumes: *workspace-volumes
     depends_on:
       db:
         condition: service_healthy
@@ -43,10 +52,10 @@ services:
       retries: 40
       start_period: 5s
 
-  # 화면 (Next.js). DB 에 직접 닿지 않는다. /api 는 api 서버로 넘긴다 (next.config.ts 의 rewrites).
+  # 화면 (apps/web). DB 에 직접 닿지 않는다. /api 는 api 서버로 넘긴다 (apps/web/next.config.ts 의 rewrites).
   web:
     build: .
-    command: ["pnpm", "dev", "--hostname", "0.0.0.0"]
+    command: ["pnpm", "--filter", "@inkle/web", "dev", "--hostname", "0.0.0.0"]
     environment:
       API_ORIGIN: http://api:4000
     ports:
@@ -54,7 +63,12 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/.next
+      - /app/apps/web/node_modules
+      - /app/apps/api/node_modules
+      - /app/apps/worker/node_modules
+      - /app/packages/contract/node_modules
+      - /app/packages/backend/node_modules
+      - /app/apps/web/.next
     depends_on:
       api:
         condition: service_healthy
@@ -70,16 +84,14 @@ services:
   worker:
     profiles: ["container-worker"]
     build: .
-    command: ["pnpm", "worker"]
+    command: ["pnpm", "--filter", "@inkle/worker", "start"]
     environment:
       DATABASE_URL: postgres://inkle@db:5432/inkle
       LLM_WORKDIR: /llm-workdir
     env_file:
       - path: .env
         required: false
-    volumes:
-      - .:/app
-      - /app/node_modules
+    volumes: *workspace-volumes
     depends_on:
       db:
         condition: service_healthy
