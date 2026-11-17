@@ -75,4 +75,4 @@
 ### 🚀 Push & PR
 
 - [x] `git push -u origin spec-01-01-manual-experiment`
-- [ ] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
+- [x] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
