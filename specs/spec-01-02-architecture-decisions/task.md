@@ -91,16 +91,16 @@
 
 ### 🚦 Pre-Push Quality Gate
 
-- [ ] `./.harness-kit/bin/sdd adr-index --check` 통과
-- [ ] spec.md 의 수동 검증 시나리오 4개 확인
+- [x] `./.harness-kit/bin/sdd adr-index --check` 통과
+- [x] spec.md 의 수동 검증 시나리오 4개 확인
 
 ### 📝 산출물 작성
 
-- [ ] **walkthrough.md 작성** (`findings.md` 입력 9개의 대응표 포함)
-- [ ] **pr_description.md 작성**
-- [ ] Commit: `docs(spec-01-02): ship walkthrough and pr description`
+- [x] **walkthrough.md 작성** (`findings.md` 입력 9개의 대응표 포함)
+- [x] **pr_description.md 작성**
+- [x] Commit: `docs(spec-01-02): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
-- [ ] `git push -u origin spec-01-02-architecture-decisions`
-- [ ] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
+- [x] `git push -u origin spec-01-02-architecture-decisions`
+- [x] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)

@@ -61,7 +61,7 @@
 | ID | 슬러그 | 우선순위 | 상태 | 디렉토리 |
 |---|---|:---:|---|---|
 | `spec-01-01` | manual-experiment | P? | Merged | `specs/spec-01-01-manual-experiment/` |
-| `spec-01-02` | architecture-decisions | P? | Active | `specs/spec-01-02-architecture-decisions/` |
+| `spec-01-02` | architecture-decisions | P? | Merged | `specs/spec-01-02-architecture-decisions/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
