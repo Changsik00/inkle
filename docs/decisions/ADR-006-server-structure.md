@@ -9,7 +9,7 @@ status: accepted
 
 ## 📚 Context
 
-- spec-01-03 의 첫 구현은 `src/domain/` 의 함수가 `postgres` 연결을 받아 SQL 을 직접 실행했다. 규칙과 DB 접근이 한 파일에 섞여 있어, 작업 처리 순서 같은 규칙 하나를 확인할 때도 실제 DB 가 필요했다.
+- spec-01-03 의 첫 구현은 `src/backend/domain/` 의 함수가 `postgres` 연결을 받아 SQL 을 직접 실행했다. 규칙과 DB 접근이 한 파일에 섞여 있어, 작업 처리 순서 같은 규칙 하나를 확인할 때도 실제 DB 가 필요했다.
 - 사용자 요청 (2026-11-17, PR #3 리뷰): 단순한 클린 아키텍처로 나누고, DB 접근은 저장소(repository) 패턴 뒤에 둔다. 테스트도 그 구조를 활용한다.
 - 이후 spec 은 DB 말고도 바깥 시스템을 부른다. Claude Code CLI(ADR-004 §1 의 LLM 호출 경계)와 출처 페이지 가져오기(ADR-004 §2)다. 이 둘도 같은 방식으로 감싸야 테스트에서 바꿔 끼울 수 있다.
 - phase-01 성공 기준 5("내 해석 저장 전에는 시선과 비교를 내주지 않는다")는 자동 테스트로 검증해야 한다. 이 규칙은 DB 없이 확인할 수 있어야 테스트가 빠르고 많아질 수 있다.
@@ -22,16 +22,16 @@ status: accepted
 ```mermaid
 flowchart TB
     subgraph entry[진입점]
-        A[src/app/api: HTTP]
-        W[src/worker: 작업 프로세스]
-        C[src/cli: 명령]
+        A[src/backend/server: HTTP]
+        W[src/backend/worker: 작업 프로세스]
+        C[src/backend/cli: 명령]
     end
-    S[src/server/container.ts: 조립]
+    S[src/backend/container.ts: 조립]
     subgraph core[안쪽]
-        AP[src/application: 유스케이스와 포트]
-        D[src/domain: 타입과 규칙]
+        AP[src/backend/application: 유스케이스와 포트]
+        D[src/backend/domain: 타입과 규칙]
     end
-    I[src/infrastructure: Postgres, CLI, HTTP 구현]
+    I[src/backend/infrastructure: Postgres, CLI, HTTP 구현]
 
     entry --> S
     entry --> AP
@@ -44,17 +44,17 @@ flowchart TB
 
 | 계층 | 폴더 | 담는 것 | 가져올 수 있는 것 |
 |---|---|---|---|
-| 도메인 | `src/domain/` | 타입, 상수, 순수한 규칙 (DB 도 입출력도 없음) | 다른 도메인 파일만 |
-| 애플리케이션 | `src/application/` | 유스케이스 함수, 포트(저장소와 외부 시스템의 인터페이스) | 도메인 |
-| 인프라 | `src/infrastructure/` | 포트의 구현 (Postgres 저장소, 이후 CLI 호출, 페이지 가져오기), DB 연결과 마이그레이션 | 애플리케이션의 포트, 도메인, 외부 라이브러리 |
-| 조립 | `src/server/container.ts` | 실제 구현을 만들어 묶는다. 앱 전체에서 한 곳 | 모두 |
-| 진입점 | `src/app/` (HTTP, 화면), `src/worker/`, `src/cli/` | 입력을 받아 유스케이스를 부르고 결과를 돌려준다 | 조립, 애플리케이션, 도메인 |
+| 도메인 | `src/backend/domain/` | 타입, 상수, 순수한 규칙 (DB 도 입출력도 없음) | 다른 도메인 파일만 |
+| 애플리케이션 | `src/backend/application/` | 유스케이스 함수, 포트(저장소와 외부 시스템의 인터페이스) | 도메인 |
+| 인프라 | `src/backend/infrastructure/` | 포트의 구현 (Postgres 저장소, 이후 CLI 호출, 페이지 가져오기), DB 연결과 마이그레이션 | 애플리케이션의 포트, 도메인, 외부 라이브러리 |
+| 조립 | `src/backend/container.ts` | 실제 구현을 만들어 묶는다. 앱 전체에서 한 곳 | 모두 |
+| 진입점 | `src/app/` (HTTP, 화면), `src/backend/worker/`, `src/backend/cli/` | 입력을 받아 유스케이스를 부르고 결과를 돌려준다 | 조립, 애플리케이션, 도메인 |
 
-**의존은 바깥에서 안쪽으로만 간다.** 도메인과 애플리케이션은 `postgres`, `next`, `react`, `src/infrastructure/`, `src/server/`, 진입점을 가져오지 않는다. lint(`no-restricted-imports`)로 강제하고, 그 lint 설정 자체를 테스트로 확인한다.
+**의존은 바깥에서 안쪽으로만 간다.** 도메인과 애플리케이션은 `postgres`, `next`, `react`, `src/backend/infrastructure/`, `src/backend/`, 진입점을 가져오지 않는다. lint(`no-restricted-imports`)로 강제하고, 그 lint 설정 자체를 테스트로 확인한다.
 
 ### 2. 포트와 유스케이스
 
-- **포트**는 `src/application/ports.ts` 에 인터페이스로 둔다. 이름은 하는 일로 짓는다 (`JobRepository`, `UserRepository`, `HealthProbe`, 이후 `LlmClient`, `PageFetcher`).
+- **포트**는 `src/backend/application/ports.ts` 에 인터페이스로 둔다. 이름은 하는 일로 짓는다 (`JobRepository`, `UserRepository`, `HealthProbe`, 이후 `LlmClient`, `PageFetcher`).
 - **저장소는 자료의 모양으로 말한다.** 인자와 결과는 도메인 타입이다. SQL, 행, 연결 객체는 저장소 밖으로 나가지 않는다.
 - **유스케이스는 함수다.** 필요한 포트를 첫 인자로 받는다. 클래스와 DI 프레임워크는 쓰지 않는다.
 
@@ -67,14 +67,14 @@ export async function runNextJob(jobs: JobRepository, handlers: JobHandlers): Pr
 
 ### 3. 조립
 
-`src/server/container.ts` 가 실제 구현을 만든다. 진입점은 container 에서 포트 구현을 받아 유스케이스에 넘긴다. 테스트는 container 를 쓰지 않고 메모리 구현이나 테스트 DB 의 구현을 직접 넘긴다.
+`src/backend/container.ts` 가 실제 구현을 만든다. 진입점은 container 에서 포트 구현을 받아 유스케이스에 넘긴다. 테스트는 container 를 쓰지 않고 메모리 구현이나 테스트 DB 의 구현을 직접 넘긴다.
 
 ### 4. 테스트
 
 | 대상 | 방식 | 실제 DB |
 |---|---|:---:|
-| 도메인 규칙, 유스케이스 | 메모리 구현(`src/testing/in-memory/`)을 넘겨 테스트 | 불필요 |
-| 저장소 계약 | 같은 테스트 묶음(`src/testing/contracts/`)을 메모리 구현과 Postgres 구현 **양쪽에** 돌린다 | Postgres 쪽만 |
+| 도메인 규칙, 유스케이스 | 메모리 구현(`src/backend/testing/in-memory/`)을 넘겨 테스트 | 불필요 |
+| 저장소 계약 | 같은 테스트 묶음(`src/backend/testing/contracts/`)을 메모리 구현과 Postgres 구현 **양쪽에** 돌린다 | Postgres 쪽만 |
 | Postgres 구현에만 있는 성질 | 동시에 가져가도 겹치지 않음, 마이그레이션 | 필요 |
 | 의존 규칙 | ESLint 를 코드로 실행해 금지된 가져오기가 실패하는지 확인 | 불필요 |
 
@@ -100,6 +100,9 @@ export async function runNextJob(jobs: JobRepository, handlers: JobHandlers): Pr
 - **메모리 구현 없이 모든 테스트를 실제 DB 로**: 구현이 하나라 어긋날 일이 없다 — 비채택 이유: 테스트가 느려지고 DB 를 띄워야만 돈다. 실제 DB 테스트는 저장소 계약과 DB 고유 성질에만 쓴다.
 
 ## 📌 Status
+
+경로 고침 (2026-11-17): 계층은 모두 `src/backend/` 아래로 옮겼다 (ADR-008). API 의 입구도 별도 서버 `src/backend/server/` 로 옮겼다 (ADR-009).
+
 
 Accepted (2026-11-17, spec-01-03 계획 변경 2, 사용자 요청). 첫 적용: 상태 확인, 사용자, 작업 대기열.
 

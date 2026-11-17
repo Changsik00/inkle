@@ -1,0 +1,561 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`엔드포인트 문서 > 문서 스냅샷 1`] = `
+{
+  "info": {
+    "title": "inkle API",
+    "version": "0.1.0",
+  },
+  "openapi": "3.1.1",
+  "paths": {
+    "/books": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "books.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "books": {
+                      "items": {
+                        "properties": {
+                          "author": {
+                            "type": "string",
+                          },
+                          "createdAt": {
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "genre": {
+                            "enum": [
+                              "fiction",
+                            ],
+                            "type": "string",
+                          },
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "title": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "author",
+                          "genre",
+                          "createdAt",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "books",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+        },
+        "summary": "등록한 책 목록 (최근 순)",
+        "tags": undefined,
+      },
+      "post": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "books.register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "author": {
+                    "maxLength": 10000,
+                    "type": "string",
+                  },
+                  "title": {
+                    "maxLength": 10000,
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "title",
+                  "author",
+                ],
+                "type": "object",
+              },
+            },
+          },
+          "required": true,
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "author": {
+                      "type": "string",
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                    "genre": {
+                      "enum": [
+                        "fiction",
+                      ],
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "author",
+                    "genre",
+                    "createdAt",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "INVALID_BOOK",
+                        },
+                        "data": {
+                          "properties": {
+                            "violations": {
+                              "items": {
+                                "properties": {
+                                  "field": {
+                                    "enum": [
+                                      "title",
+                                      "author",
+                                    ],
+                                    "type": "string",
+                                  },
+                                  "max": {
+                                    "type": "number",
+                                  },
+                                  "reason": {
+                                    "enum": [
+                                      "empty",
+                                      "too_long",
+                                    ],
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "field",
+                                  "reason",
+                                ],
+                                "type": "object",
+                              },
+                              "type": "array",
+                            },
+                          },
+                          "required": [
+                            "violations",
+                          ],
+                          "type": "object",
+                        },
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "제목이나 작가가 규칙에 맞지 않는다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 400,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                        "data",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "400",
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "CONFLICT",
+                        },
+                        "data": {
+                          "properties": {
+                            "book": {
+                              "properties": {
+                                "author": {
+                                  "type": "string",
+                                },
+                                "createdAt": {
+                                  "format": "date-time",
+                                  "type": "string",
+                                },
+                                "genre": {
+                                  "enum": [
+                                    "fiction",
+                                  ],
+                                  "type": "string",
+                                },
+                                "id": {
+                                  "format": "uuid",
+                                  "type": "string",
+                                },
+                                "title": {
+                                  "type": "string",
+                                },
+                              },
+                              "required": [
+                                "id",
+                                "title",
+                                "author",
+                                "genre",
+                                "createdAt",
+                              ],
+                              "type": "object",
+                            },
+                          },
+                          "required": [
+                            "book",
+                          ],
+                          "type": "object",
+                        },
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "이미 등록된 책이다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 409,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                        "data",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "409",
+          },
+        },
+        "summary": "책 등록 (제목과 작가를 직접 입력)",
+        "tags": undefined,
+      },
+    },
+    "/books/{bookId}": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "books.get",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "bookId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "author": {
+                      "type": "string",
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string",
+                    },
+                    "genre": {
+                      "enum": [
+                        "fiction",
+                      ],
+                      "type": "string",
+                    },
+                    "id": {
+                      "format": "uuid",
+                      "type": "string",
+                    },
+                    "title": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "author",
+                    "genre",
+                    "createdAt",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "책을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "책 한 권",
+        "tags": undefined,
+      },
+    },
+    "/health": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "health.check",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "db": {
+                      "const": "ok",
+                    },
+                  },
+                  "required": [
+                    "db",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "SERVICE_UNAVAILABLE",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "DB 에 닿지 못함",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 503,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "503",
+          },
+        },
+        "summary": "DB 에 닿는지 확인한다",
+        "tags": undefined,
+      },
+    },
+  },
+  "servers": [
+    {
+      "url": "/api",
+    },
+  ],
+}
+`;
