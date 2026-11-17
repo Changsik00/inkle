@@ -55,6 +55,7 @@ inkle 방식을 먼저 하고 일반 채팅을 나중에 한다. 순서를 바�
 | `prompts.md` | 내 해석 질문, inkle 방식 시작 프롬프트, 일반 채팅 프롬프트 | O |
 | `record-template.md` | 책별 기록 양식 | O |
 | `book-1.md`, `book-2.md` | 책별 기록 (수치와 요약) | O |
+| `rehearsal.md` | 가상의 해석으로 돌려 본 리허설 기록 | O |
 | `findings.md` | 두 권 비교, 판단, 열린 질문의 답 | O |
 | `raw/` | 내 해석 원문과 대화 원문 | X (gitignore) |
 

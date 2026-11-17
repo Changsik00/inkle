@@ -19,6 +19,17 @@
 
 ---
 
+## Task 1-R: 리허설 (추가)
+
+> 사용자 결정(2026-11-17)으로 추가. 본 실험 전에 가상의 해석으로 프롬프트와 검색·출처 확인을 점검한다.
+
+- [x] 『채식주의자』와 가상의 해석으로 배경 → 다른 시선 → 비교 수행, 출처 7개 직접 확인
+- [x] `docs/experiments/01-manual-flow/rehearsal.md` — 결과와 알게 된 것
+- [x] `prompts.md` 보완과 변경 이력 기록
+- [x] Commit: `docs(spec-01-01): add rehearsal record and refine prompts`
+
+---
+
 ## Task 2: 책 1 수행과 기록
 
 ### 2-1. 사용자 수행 (에이전트 대기)
