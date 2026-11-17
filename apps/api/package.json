@@ -1,0 +1,22 @@
+{
+  "name": "@inkle/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API 서버 진입점과 명령 (ADR-009)",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "db:migrate": "tsx src/cli/migrate.ts",
+    "job:enqueue": "tsx src/cli/enqueue-job.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inkle/backend": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

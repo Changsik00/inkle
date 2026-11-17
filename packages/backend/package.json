@@ -1,0 +1,35 @@
+{
+  "name": "@inkle/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "서버 코드: domain, application, infrastructure, rpc, 조립 (ADR-006)",
+  "exports": {
+    "./container": "./src/container.ts",
+    "./server": "./src/server/http-server.ts",
+    "./worker": "./src/worker/handlers.ts",
+    "./db": "./src/infrastructure/db/client.ts",
+    "./migrate": "./src/infrastructure/db/migrate.ts",
+    "./application/*": "./src/application/*.ts",
+    "./testing/*": "./src/testing/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inkle/contract": "workspace:*",
+    "@orpc/contract": "1.16.2",
+    "@orpc/server": "1.16.2",
+    "@orpc/openapi": "1.16.2",
+    "@orpc/zod": "1.16.2",
+    "postgres": "^4.1.1",
+    "zod": "^4.6.7",
+    "linkedom": "^0.18.15",
+    "@mozilla/readability": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  }
+}

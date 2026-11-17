@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-17 (spec-01-04, API 서버 분리).
+> 마지막 갱신: 2026-11-18 (spec-01-05, 모노레포).
 
 ## 1. 한눈에
 
@@ -10,12 +10,12 @@
 flowchart LR
     B[브라우저] -->|HTTP| WEB
     subgraph compose[docker compose]
-        WEB[web: Next.js<br/>화면만]
-        API[api: API 서버<br/>src/backend/server]
+        WEB[web: apps/web<br/>Next.js 화면]
+        API[api: apps/api<br/>API 서버]
         DB[(db: Postgres)]
     end
     subgraph host[호스트]
-        WK[작업 프로세스<br/>pnpm worker]
+        WK[작업 프로세스<br/>apps/worker]
         CLI[Claude Code CLI<br/>이 기기의 로그인]
     end
     WEB -->|/api/* rewrites| API
@@ -26,109 +26,88 @@ flowchart LR
     CLI -.->|웹 검색| NET[(웹)]
 ```
 
-| 실행 단위 | 어디서 | 시작 명령 | 하는 일 | 근거 |
-|---|---|---|---|---|
-| web | compose, `127.0.0.1:3000` | `pnpm dev` | 화면. `/api/*` 는 API 서버로 넘긴다 (`next.config.ts` 의 rewrites, `API_ORIGIN`) | ADR-007, ADR-009 |
-| api | compose, `127.0.0.1:4000` | `pnpm db:migrate && pnpm api` | HTTP API (계약의 주소, `/api/openapi.json`). 뜰 때 마이그레이션 적용 | ADR-009 |
-| db | compose, `127.0.0.1:54329` | - | 모든 자료와 작업 대기열 | ADR-001 |
-| 작업 프로세스 | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (지금은 시험용 작업만) | ADR-001, ADR-004 |
-| Claude Code CLI | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음 (예정, spec-01-08) | ADR-004 |
+| 실행 단위 | 앱 | 어디서 | 시작 명령 (루트) | 하는 일 | 근거 |
+|---|---|---|---|---|---|
+| web | `apps/web` | compose, `127.0.0.1:3000` | `pnpm dev` | 화면. `/api/*` 는 API 서버로 넘긴다 (`apps/web/next.config.ts` 의 rewrites, `API_ORIGIN`) | ADR-007, ADR-009 |
+| api | `apps/api` | compose, `127.0.0.1:4000` | `pnpm db:migrate && pnpm api` | HTTP API (계약의 주소, `/api/openapi.json`). 뜰 때 마이그레이션 적용 | ADR-009 |
+| db | - | compose, `127.0.0.1:54329` | - | 모든 자료와 작업 대기열 | ADR-001 |
+| 작업 프로세스 | `apps/worker` | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (지금은 시험용 작업만) | ADR-001, ADR-004 |
+| Claude Code CLI | - | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음 (예정, spec-01-08) | ADR-004 |
 
-- web, api, 작업 프로세스는 같은 저장소의 같은 코드이고, 컨테이너는 같은 이미지에서 시작 명령만 다르다.
+- 컨테이너는 개발용 이미지 하나(`Dockerfile`)에서 시작 명령만 다르다 (ADR-010).
 - 작업 프로세스가 호스트에서 뜨는 이유: CLI 를 이 기기의 로그인으로 쓰기 때문이다 (ADR-004 §가정의 확인 결과).
 - 브라우저는 같은 주소의 `/api` 만 안다. API 가 다른 서버라는 사실은 Next.js 의 rewrites 한 곳에만 있다.
 
-## 2. 현재 구조: 한 저장소, 세 영역
+## 2. 구조: pnpm 워크스페이스
 
-ADR-008, ADR-009. 저장소와 빌드는 하나이고, `src` 는 영역으로 나뉜다. backend 와 frontend 는 서로 가져오지 않고 shared 만 함께 쓴다. 규칙은 lint 가 막고 `src/architecture.test.ts` 가 확인한다.
+ADR-010. 앱 셋과 패키지 둘이다. 영역 경계는 패키지 의존성이 지킨다 (`package.json` 에 없는 것은 가져올 수 없다).
 
 ```
 inkle/
-├─ src/
-│  ├─ app/                Next.js 화면 라우트 (틀만). frontend 를 배치한다
-│  ├─ frontend/
-│  │  ├─ features/        기능별 화면 (books, system)
-│  │  ├─ ui/              shadcn/ui 공통 부품
-│  │  ├─ api-client/      HTTP 클라이언트 (화면이 서버를 부르는 유일한 통로)
-│  │  ├─ providers.tsx    TanStack Query, nuqs
-│  │  └─ testing/         MSW, 브라우저 렌더링 도우미
-│  ├─ backend/
-│  │  ├─ domain/          타입과 규칙
-│  │  ├─ application/     유스케이스, 포트
-│  │  ├─ infrastructure/  Postgres 저장소, 마이그레이션
-│  │  ├─ rpc/             계약 구현, OpenAPI 문서
-│  │  ├─ server/          API 서버 (진입점: main.ts)
-│  │  ├─ container.ts     조립
-│  │  ├─ worker/          작업 프로세스 (진입점: main.ts)
-│  │  ├─ cli/             db:migrate, job:enqueue
-│  │  └─ testing/         메모리 저장소, 저장소 계약, 테스트 DB
-│  ├─ shared/
-│  │  ├─ contract/        HTTP 계약 (엔드포인트 · 요청 · 응답 · 오류)
-│  │  └─ product.ts
-│  └─ architecture.test.ts
-├─ e2e/                   Playwright
+├─ apps/
+│  ├─ web/                @inkle/web — Next.js 화면
+│  │  ├─ src/app/         라우트 (자료를 읽지 않는 틀), globals.css (테마 토큰)
+│  │  ├─ src/features/    기능별 화면 (books, system)
+│  │  ├─ src/ui/          shadcn/ui 공통 부품
+│  │  ├─ src/api-client/  HTTP 클라이언트 (화면이 서버를 부르는 유일한 통로)
+│  │  ├─ src/providers.tsx, src/product.ts
+│  │  ├─ src/testing/     MSW, 브라우저 렌더링 도우미
+│  │  └─ next.config.ts, components.json
+│  ├─ api/                @inkle/api — API 서버 진입점 (src/main.ts), 명령 (src/cli/)
+│  └─ worker/             @inkle/worker — 작업 프로세스 진입점 (src/main.ts)
+├─ packages/
+│  ├─ contract/           @inkle/contract — HTTP 계약 (엔드포인트 · 요청 · 응답 · 오류)
+│  └─ backend/            @inkle/backend
+│     └─ src/domain/ application/ infrastructure/ rpc/ server/ worker/ testing/ container.ts
+├─ e2e/                   Playwright (web + api + db)
+├─ tests/                 저장소 수준 테스트 (패키지 의존성 규칙)
+├─ scripts/spike/         일회성 확인 스크립트
 ├─ docker/, Dockerfile, compose.yaml
-└─ package.json, next.config.ts, vitest.config.mts, eslint.config.mjs, tsconfig.json
+└─ package.json (루트, 공통 명령), pnpm-workspace.yaml, tsconfig.base.json,
+   vitest.config.mts, eslint.config.mjs, playwright.config.ts
 ```
 
-| 영역 | 가져올 수 있는 것 | 가져올 수 없는 것 |
+| 패키지 | 의존할 수 있는 것 | 의존할 수 없는 것 | 확인 |
+|---|---|---|---|
+| `@inkle/web` | `@inkle/contract`, React, Next.js, 화면 라이브러리 | `@inkle/backend`, `postgres` | `tests/workspace.test.ts`, 타입 검사, lint |
+| `@inkle/api`, `@inkle/worker` | `@inkle/backend` | `@inkle/web`, React, Next.js | `tests/workspace.test.ts` |
+| `@inkle/backend` | `@inkle/contract`, DB, oRPC 서버 | 앱, React, Next.js | `tests/workspace.test.ts` |
+| `@inkle/contract` | `zod`, `@orpc/contract` 만 | 그 밖의 모든 것 | `tests/workspace.test.ts`, lint |
+
+- 패키지는 빌드 없이 TypeScript 소스를 내보낸다. 패키지 안의 가져오기는 상대 경로이고, `@/` 별칭은 `apps/web` 안에서만 쓴다.
+- `@inkle/backend` 가 내보내는 것: `./container`, `./server`, `./worker`, `./db`, `./migrate`, `./application/*`, `./testing/*`.
+- 패키지 안쪽 규칙은 루트 `eslint.config.mjs` 가 지킨다: backend 의 계층(ADR-006), 화면의 HTTP 호출과 UI 일관성(ADR-007). 확인은 `packages/backend/src/architecture.test.ts`, `apps/web/src/architecture.test.ts`.
+
+### 워크스페이스에서 함께 쓰는 것
+
+| 무엇 | 어디 | 비고 |
 |---|---|---|
-| `src/app/` | frontend, shared | backend, DB |
-| `src/frontend/` | shared, React, Next.js | backend, DB |
-| `src/backend/` | shared, DB | frontend, React, Next.js |
-| `src/shared/` | `zod`, `@orpc/contract` | 모든 영역, React, Next.js, DB |
+| TypeScript 설정 | `tsconfig.base.json` 을 각 패키지가 확장 | `pnpm typecheck` 는 각 패키지와 루트 파일을 검사 |
+| 테스트 | 루트 `vitest.config.mts` 의 프로젝트 넷 (backend, web, web-browser, workspace) | `pnpm test` 한 번으로 전부 |
+| lint | 루트 `eslint.config.mjs` | `eslint-config-next` 때문에 루트에 `next` 를 개발 의존성으로 둔다 |
+| 이미지 | `Dockerfile` 하나 | 워크스페이스마다 `node_modules` 를 compose 의 이름 없는 볼륨으로 둔다 |
 
-### 지금 한 저장소에 묶여 있는 것
+## 2-0. 모노레포로 옮긴 기록
 
-모노레포로 나눌 때 풀어야 하는 것들이다.
+- **결정** (2026-11-17): 서버가 둘이면 앱이 둘이다. 코드가 적은 지금 옮긴다 (사용자 결정).
+- **완료** (2026-11-18, spec-01-05): 아래 대응표대로 옮겼다. 동작은 바뀌지 않았다. 이전 배치는 ADR-008 (대체됨).
 
-| 묶인 것 | 지금 | 
+| 이전 (`src/…`) | 지금 |
 |---|---|
-| 의존성 | `package.json` 하나에 화면(React, Next.js, shadcn/ui …)과 서버(postgres, oRPC 서버 …)의 의존성이 함께 있다 |
-| 경로 별칭 | `@/` 하나가 `src/` 전체를 가리킨다 (`tsconfig.json`, `vitest.config.mts`) |
-| 경계 강제 | 패키지가 아니라 lint 규칙(`eslint.config.mjs`)이 영역 경계를 지킨다 |
-| 테스트 | `vitest.config.mts` 하나에 Node 프로젝트(서버, 계약)와 브라우저 프로젝트(화면)가 있다 |
-| 이미지 | `Dockerfile` 하나를 web, api, worker 가 함께 쓴다 |
-| 계약 | `src/shared/contract/` 를 두 쪽이 소스로 직접 가져온다 (빌드된 패키지가 아님) |
-| API 주소 | 화면은 같은 주소의 `/api` 를 부르고, Next.js rewrites 가 API 서버로 넘긴다 |
+| app/, frontend/{features,ui,api-client,testing}, frontend/providers.tsx, shared/product.ts | `apps/web/src/` |
+| shared/contract/ | `packages/contract/src/` |
+| backend/{domain,application,infrastructure,rpc,testing}, backend/container.ts | `packages/backend/src/` |
+| backend/server/http-server.ts | `packages/backend/src/server/` |
+| backend/server/main.ts, backend/cli/ | `apps/api/src/` |
+| backend/worker/handlers.ts | `packages/backend/src/worker/` |
+| backend/worker/main.ts | `apps/worker/src/` |
+| architecture.test.ts | 계층 규칙은 `packages/backend`, 화면 규칙은 `apps/web`, 영역 경계는 `tests/workspace.test.ts` |
 
-## 2-0. 모노레포로 옮길 때
+### 앞으로 남은 것 (배포 방식을 정할 때)
 
-**결정 (2026-11-17)**: 지금 옮긴다. 서버가 둘(화면, API)과 작업 프로세스로 나뉘었으니 앱이 셋이고, 코드가 적은 지금이 가장 싸다. PR #4 다음 spec(spec-01-05 모노레포 전환)에서 이 절의 대응표와 순서대로 옮긴다. 화면을 정적으로 배포할지는 따로 열어 둔다 (`docs/goals.md` §열린 질문).
-
-### 대응표
-
-| 지금 | 모노레포 | 비고 |
-|---|---|---|
-| `src/app/`, `src/frontend/` | `apps/web/` | `src/frontend/*` 는 `apps/web/src/` 아래로. 정적 내보내기를 쓰면 Next.js `output: "export"` 또는 Vite SPA |
-| `src/backend/server/` | `apps/api/` (진입점) | `main.ts` 와 `http-server.ts` |
-| `src/backend/worker/` | `apps/worker/` (진입점) | |
-| `src/backend/cli/` | `apps/api/` 의 스크립트 또는 `packages/backend` 의 bin | |
-| `src/backend/domain/`, `application/`, `infrastructure/`, `rpc/`, `container.ts` | `packages/backend/` | 세 진입점(api, worker, cli)이 함께 쓴다. 계층 규칙(ADR-006)은 패키지 안에서 그대로 |
-| `src/backend/testing/` | `packages/backend/` 의 테스트 도우미 | |
-| `src/shared/contract/` | `packages/contract/` | 의존성은 `zod`, `@orpc/contract` 뿐이라 그대로 옮겨진다 |
-| `src/frontend/ui/` | `apps/web/` 안에 두거나 `packages/ui/` | 화면이 하나뿐이면 apps/web 안에 둔다 |
-| `src/architecture.test.ts` | 패키지 경계로 대부분 대체. 계층 규칙만 `packages/backend` 의 lint 로 남긴다 | |
-| `Dockerfile` 하나 | 앱마다 하나 (web 은 정적이면 이미지가 필요 없을 수 있다) | |
-| Next.js rewrites | 개발 중에는 그대로, 배포에서는 같은 도메인의 경로로 넘기거나 CORS 를 연다 | `src/frontend/api-client/` 의 `origin` 옵션을 쓴다 |
-
-### 옮기는 순서 (제안)
-
-1. `pnpm-workspace.yaml` 을 만들고 `packages/contract` 부터 옮긴다. 가져오기 경로를 `@/shared/contract` 에서 패키지 이름으로 바꾼다.
-2. `packages/backend` 를 옮긴다. `apps/api`, `apps/worker` 진입점을 만들고 compose 의 시작 명령을 바꾼다.
-3. `apps/web` 을 옮긴다. 의존성을 앱별 `package.json` 으로 나눈다.
-4. 정적 배포를 고르면: 동적 주소(`/books/{bookId}`)를 클라이언트 라우팅으로 바꾸고, Next.js rewrites 대신 배포 환경의 경로 전달이나 CORS 를 쓴다.
-5. lint 의 영역 규칙을 패키지 의존성(각 `package.json` 에 없는 패키지는 가져올 수 없음)으로 대체하고, `src/architecture.test.ts` 에서 남길 것만 남긴다.
-
-### 옮기기 쉽게 하려고 지금 지키는 것
-
-- frontend 와 backend 는 서로 가져오지 않는다 (lint).
-- 계약(`src/shared/contract/`)은 React, Next.js, DB 를 가져오지 않는다 (lint).
-- 페이지에서 서버 자료를 읽지 않는다. 요청 시점의 API(`headers()`, `cookies()`)를 쓰지 않는다 (ADR-007 §1).
-- Server Actions 를 쓰지 않는다 (ADR-007 §3).
-- API 주소는 HTTP 클라이언트 한 곳에서만 정하고, API 가 다른 서버라는 사실은 rewrites 한 곳에만 둔다.
-
-이 가운데 하나라도 깨야 하는 기능이 생기면, 그 spec 에서 이 절을 먼저 다시 본다.
+- 앱별 운영 이미지. 화면을 정적으로 내보낼지(`docs/goals.md` §열린 질문).
+- 정적 내보내기를 고르면: 동적 주소(`/books/{bookId}`)를 클라이언트 라우팅으로 바꾸고, Next.js rewrites 대신 배포 환경의 경로 전달이나 CORS 를 쓴다. HTTP 클라이언트의 기본 주소는 `apps/web/src/api-client/` 의 `origin` 옵션.
+- 이를 쉽게 하려고 지금 지키는 것: 페이지에서 서버 자료를 읽지 않는다(요청 시점의 API 금지), Server Actions 를 쓰지 않는다, API 주소는 HTTP 클라이언트 한 곳에서만 정하고 API 가 다른 서버라는 사실은 rewrites 한 곳에만 둔다.
 
 ## 2-1. 서버 계층
 
@@ -136,7 +115,7 @@ ADR-006. 의존은 바깥에서 안쪽으로만 간다.
 
 ```mermaid
 flowchart TB
-    E[진입점<br/>server · worker · cli] --> S[조립<br/>container.ts]
+    E[진입점<br/>apps/api · apps/worker] --> S[조립<br/>container.ts]
     E --> A[애플리케이션<br/>유스케이스 · 포트]
     S --> I[인프라<br/>Postgres 저장소 · 예정: CLI, 페이지 가져오기]
     S --> A
@@ -147,11 +126,11 @@ flowchart TB
 
 | 계층 | 폴더 | 담는 것 | 금지 |
 |---|---|---|---|
-| 도메인 | `src/backend/domain/` | 타입, 상수, 순수한 규칙 | DB, 프레임워크, 다른 계층 |
-| 애플리케이션 | `src/backend/application/` | 유스케이스 함수, 포트(`ports.ts`) | DB, 프레임워크, 인프라, 조립, 진입점 |
-| 인프라 | `src/backend/infrastructure/` | 포트 구현, DB 연결과 마이그레이션 | 조립, 진입점 |
-| 조립 | `src/backend/container.ts` | 실제 구현을 만들어 묶는다 | - |
-| 진입점 | `src/app/`, `src/backend/worker/`, `src/backend/cli/` | 입력을 받아 유스케이스를 부른다 | SQL 직접 실행 |
+| 도메인 | `packages/backend/src/domain/` | 타입, 상수, 순수한 규칙 | DB, 프레임워크, 다른 계층 |
+| 애플리케이션 | `packages/backend/src/application/` | 유스케이스 함수, 포트(`ports.ts`) | DB, 프레임워크, 인프라, 조립, 진입점 |
+| 인프라 | `packages/backend/src/infrastructure/` | 포트 구현, DB 연결과 마이그레이션 | 조립, 진입점 |
+| 조립 | `packages/backend/src/container.ts` | 실제 구현을 만들어 묶는다 | - |
+| 진입점 | `packages/backend/src/rpc/`·`server/` (API), `apps/api/src/`, `apps/worker/src/` | 입력을 받아 유스케이스를 부른다 | SQL 직접 실행 |
 
 금지 항목은 lint 가 막는다 (`eslint.config.mjs`).
 
@@ -174,10 +153,10 @@ flowchart TB
 ```mermaid
 sequenceDiagram
     participant B as 브라우저
-    participant K as frontend/api-client
+    participant K as web/src/api-client
     participant N as web (Next.js rewrites)
-    participant R as backend/server (OpenAPIHandler)
-    participant S as backend/rpc/books.ts
+    participant R as apps/api (OpenAPIHandler)
+    participant S as packages/backend/src/rpc/books.ts
     participant U as application/books.ts
     participant P as PostgresBookRepository
     B->>K: 등록 양식 제출
@@ -233,23 +212,24 @@ ADR-002. 자료는 두 층이다.
 
 - 모든 글에 글쓴이(나 / AI / 외부 사람)를 따로 저장한다 (ADR-002 §3).
 - 원본은 덧붙이기만 하고, 파생물은 만든 재료와 지시문의 판을 남긴다 (ADR-005).
-- 스키마는 `src/backend/infrastructure/db/migrations/` 의 번호 붙은 SQL 파일로 관리한다. ORM 은 쓰지 않는다.
+- 스키마는 `packages/backend/src/infrastructure/db/migrations/` 의 번호 붙은 SQL 파일로 관리한다. ORM 은 쓰지 않는다.
 - 같은 책은 하나만 있다. 정규화한 제목과 작가(`books.key`)에 유일 인덱스를 둔다.
 
 ## 5. 테스트
 
-ADR-006 §4, ADR-007 §8.
+ADR-006 §4, ADR-007 §8, ADR-010. 루트 `vitest.config.mts` 의 프로젝트 넷(backend, web, web-browser, workspace)을 한 번에 돈다.
 
 | 종류 | 위치 | 도구 | 실제 DB |
 |---|---|---|:---:|
-| 유스케이스, 도메인 규칙 | `src/backend/application/`, `src/backend/domain/` (메모리 구현 사용) | Vitest (Node) | 불필요 |
-| 저장소 계약 | `src/backend/testing/contracts/` 를 메모리와 Postgres 양쪽에 | Vitest (Node) | Postgres 쪽만 |
-| Postgres 고유 성질 (동시성, 마이그레이션) | `src/backend/infrastructure/**/*.test.ts` | Vitest (Node) | 필요 |
-| API 처리, 엔드포인트 문서 | `src/backend/rpc/*.test.ts` (메모리 문맥으로 직접 호출) | Vitest (Node) | 불필요 |
-| API 서버 (HTTP 상태, 문서, 없는 주소) | `src/backend/server/*.test.ts` (실제 HTTP 서버, 메모리 문맥) | Vitest (Node) | 불필요 |
-| HTTP 클라이언트 | `src/frontend/api-client/*.test.ts` | Vitest (Node) | 불필요 |
-| 화면 컴포넌트 | `src/frontend/features/**/*.test.tsx` (HTTP 는 MSW) | Vitest 브라우저 모드 (Chromium) | 불필요 |
-| 의존 규칙, UI 일관성 | `src/architecture.test.ts` | ESLint 를 코드로 실행 | 불필요 |
+| 유스케이스, 도메인 규칙 | `packages/backend/src/application/`, `packages/backend/src/domain/` (메모리 구현 사용) | Vitest (Node) | 불필요 |
+| 저장소 계약 | `packages/backend/src/testing/contracts/` 를 메모리와 Postgres 양쪽에 | Vitest (Node) | Postgres 쪽만 |
+| Postgres 고유 성질 (동시성, 마이그레이션) | `packages/backend/src/infrastructure/**/*.test.ts` | Vitest (Node) | 필요 |
+| API 처리, 엔드포인트 문서 | `packages/backend/src/rpc/*.test.ts` (메모리 문맥으로 직접 호출) | Vitest (Node) | 불필요 |
+| API 서버 (HTTP 상태, 문서, 없는 주소) | `packages/backend/src/server/*.test.ts` (실제 HTTP 서버, 메모리 문맥) | Vitest (Node) | 불필요 |
+| HTTP 클라이언트 | `apps/web/src/api-client/*.test.ts` | Vitest (Node) | 불필요 |
+| 화면 컴포넌트 | `apps/web/src/features/**/*.test.tsx` (HTTP 는 MSW) | Vitest 브라우저 모드 (Chromium) | 불필요 |
+| 패키지 의존성 (영역 경계) | `tests/workspace.test.ts` | 각 `package.json` 을 읽음 | 불필요 |
+| 계층 규칙, 화면 규칙, UI 일관성 | `packages/backend/src/architecture.test.ts`, `apps/web/src/architecture.test.ts` | ESLint 를 코드로 실행 | 불필요 |
 | 흐름 (E2E) | `e2e/` | Playwright, compose 로 띄운 앱 | 필요 |
 
 ```bash
@@ -265,12 +245,12 @@ ADR-007.
 
 ```mermaid
 flowchart LR
-    P[src/app 페이지<br/>틀만, 서버 컴포넌트] --> F[src/frontend/features<br/>클라이언트 컴포넌트]
-    F --> K[src/frontend/api-client<br/>HTTP 클라이언트 + TanStack Query]
-    K -->|REST /api, rewrites| R[src/backend/server<br/>OpenAPIHandler]
-    R --> S[src/backend/rpc<br/>계약 구현]
+    P[apps/web/src/app 페이지<br/>틀만, 서버 컴포넌트] --> F[apps/web/src/features<br/>클라이언트 컴포넌트]
+    F --> K[apps/web/src/api-client<br/>HTTP 클라이언트 + TanStack Query]
+    K -->|REST /api, rewrites| R[apps/api<br/>OpenAPIHandler]
+    R --> S[packages/backend/src/rpc<br/>계약 구현]
     S --> U[application 유스케이스]
-    C[src/shared/contract<br/>엔드포인트 · 요청 · 응답 · 오류] -.-> K
+    C[packages/contract/src<br/>엔드포인트 · 요청 · 응답 · 오류] -.-> K
     C -.-> S
 ```
 
@@ -278,8 +258,8 @@ flowchart LR
 |---|---|
 | 라우터 | App Router. 페이지는 자료를 읽지 않는 틀. `typedRoutes`. 주소 상태는 nuqs |
 | 상태 | 서버 자료 TanStack Query, 주소 nuqs, 양식 React Hook Form + zod. 전역 저장소 없음 (Zustand 는 필요해질 때) |
-| HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 엔드포인트 문서. API 는 별도 서버(ADR-009). 화면은 `src/frontend/api-client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
-| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `src/frontend/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
+| HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 엔드포인트 문서. API 는 별도 서버(ADR-009). 화면은 `apps/web/src/api-client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
+| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `apps/web/src/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
@@ -296,8 +276,9 @@ flowchart LR
 | 005 | 원본은 덧붙이기만, 파생물은 재료를 기록 |
 | 006 | 서버 세 계층, 저장소 인터페이스, 계약 테스트 |
 | 007 | 프론트: 틀만 그리는 페이지, 기능 단위 클라이언트 컴포넌트, oRPC 계약, shadcn/ui 와 토큰 |
-| 008 | `src` 를 backend · frontend · shared 로 |
+| 008 | `src` 를 backend · frontend · shared 로 (ADR-010 이 대체) |
 | 009 | API 는 Next.js 와 다른 서버로, Next.js 는 화면만 |
+| 010 | pnpm 워크스페이스 모노레포, 영역 경계는 패키지 의존성 |
 
 ## 8. 이 문서를 고칠 때
 

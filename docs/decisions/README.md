@@ -12,6 +12,7 @@
 | ADR-005 | 원본은 덧붙이기만 하고, 파생물은 무엇으로 만들었는지 남겨 다시 만들 수 있게 한다 | decision | accepted | 2026-11-17 |
 | ADR-006 | 서버 코드는 세 계층으로 나누고, DB 와 외부 시스템은 저장소 인터페이스 뒤에 둔다 | convention | accepted | 2026-11-17 |
 | ADR-007 | 프론트는 틀만 그리는 페이지와 기능 단위 클라이언트 컴포넌트로 만들고, API 는 oRPC 계약 하나에서 정한다 | convention | accepted | 2026-11-17 |
-| ADR-008 | src 를 backend · frontend · shared 로 나누고, backend 와 frontend 는 서로 가져오지 않는다 | convention | accepted | 2026-11-17 |
+| ADR-008 | src 를 backend · frontend · shared 로 나누고, backend 와 frontend 는 서로 가져오지 않는다 | convention | superseded | 2026-11-17 |
 | ADR-009 | API 는 Next.js 와 다른 서버로 띄우고, Next.js 는 화면만 낸다 | decision | accepted | 2026-11-17 |
+| ADR-010 | pnpm 워크스페이스 모노레포로 나누고, 영역 경계는 패키지 의존성이 지킨다 | decision | accepted | 2026-11-18 |
 <!-- adr-index:end -->

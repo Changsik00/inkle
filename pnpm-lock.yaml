@@ -7,34 +7,89 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      '@mozilla/readability':
+        specifier: ^0.6.0
+        version: 0.6.0
+      '@playwright/test':
+        specifier: ^1.65.1
+        version: 1.65.1
+      '@shadcn/lint':
+        specifier: ^0.2.5
+        version: 0.2.5(@typescript-eslint/parser@8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))
+      '@types/node':
+        specifier: ^22.20.5
+        version: 22.20.5
+      '@typescript-eslint/parser':
+        specifier: ^8.73.0
+        version: 8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+      '@vitest/browser-playwright':
+        specifier: 5.1.0
+        version: 5.1.0(msw@3.0.6(@types/node@22.20.5)(typescript@5.9.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)))(playwright@1.65.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))(vitest@5.1.0)
+      eslint:
+        specifier: ^9
+        version: 9.39.5(jiti@2.7.0)
+      eslint-config-next:
+        specifier: 16.4.6
+        version: 16.4.6(@typescript-eslint/parser@8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+      linkedom:
+        specifier: ^0.18.15
+        version: 0.18.15
+      next:
+        specifier: 16.4.6
+        version: 16.4.6(@babel/core@7.29.13)(@opentelemetry/api@1.10.0)(@playwright/test@1.65.1)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      playwright:
+        specifier: ^1.65.1
+        version: 1.65.1
+      tailwindcss:
+        specifier: 4.3.3
+        version: 4.3.3
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^5.1.0
+        version: 5.1.0(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(msw@3.0.6(@types/node@22.20.5)(typescript@5.9.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+
+  apps/api:
+    dependencies:
+      '@inkle/backend':
+        specifier: workspace:*
+        version: link:../../packages/backend
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.5
+        version: 22.20.5
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  apps/web:
     dependencies:
       '@hookform/resolvers':
         specifier: ^7.0.7
         version: 7.0.7(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(react-hook-form@7.92.0(@types/react@19.3.0)(react@19.3.0))(zod@4.6.7)
-      '@mozilla/readability':
-        specifier: ^0.6.0
-        version: 0.6.0
+      '@inkle/contract':
+        specifier: workspace:*
+        version: link:../../packages/contract
       '@orpc/client':
         specifier: 1.16.2
         version: 1.16.2(@opentelemetry/api@1.10.0)
       '@orpc/contract':
         specifier: 1.16.2
         version: 1.16.2(@opentelemetry/api@1.10.0)
-      '@orpc/openapi':
-        specifier: 1.16.2
-        version: 1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0)
       '@orpc/openapi-client':
         specifier: 1.16.2
         version: 1.16.2(@opentelemetry/api@1.10.0)
-      '@orpc/server':
-        specifier: 1.16.2
-        version: 1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0)
       '@orpc/tanstack-query':
         specifier: 1.16.2
         version: 1.16.2(@opentelemetry/api@1.10.0)(@orpc/client@1.16.2(@opentelemetry/api@1.10.0))(@tanstack/query-core@5.107.1)
-      '@orpc/zod':
-        specifier: 1.16.2
-        version: 1.16.2(@opentelemetry/api@1.10.0)(@orpc/contract@1.16.2(@opentelemetry/api@1.10.0))(@orpc/server@1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0))(ws@8.23.0)(zod@4.6.7)
       '@tanstack/react-query':
         specifier: ^5.107.1
         version: 5.107.1(@types/react@19.3.0)(react@19.3.0)
@@ -44,9 +99,6 @@ importers:
       cn:
         specifier: ^0.5.2
         version: 0.5.2
-      linkedom:
-        specifier: ^0.18.15
-        version: 0.18.15
       lucide-react:
         specifier: ^1.74.0
         version: 1.74.0(@types/react@19.3.0)(react@19.3.0)
@@ -56,9 +108,6 @@ importers:
       nuqs:
         specifier: ^2.10.3
         version: 2.10.3(next@16.4.6(@babel/core@7.29.13)(@opentelemetry/api@1.10.0)(@playwright/test@1.65.1)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
-      postgres:
-        specifier: ^4.1.1
-        version: 4.1.1
       radix-ui:
         specifier: ^1.8.1
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -81,12 +130,6 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
-      '@playwright/test':
-        specifier: ^1.65.1
-        version: 1.65.1
-      '@shadcn/lint':
-        specifier: ^0.2.5
-        version: 0.2.5(@typescript-eslint/parser@8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))
       '@tailwindcss/turbopack':
         specifier: 4.3.3
         version: 4.3.3
@@ -99,33 +142,15 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.3.0(@types/react@19.3.0)
-      '@typescript-eslint/parser':
-        specifier: ^8.73.0
-        version: 8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
-      '@vitest/browser-playwright':
-        specifier: 5.1.0
-        version: 5.1.0(msw@3.0.6(@types/node@22.20.5)(typescript@5.9.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)))(playwright@1.65.1)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))(vitest@5.1.0)
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
-      eslint:
-        specifier: ^9
-        version: 9.39.5(jiti@2.7.0)
-      eslint-config-next:
-        specifier: 16.4.6
-        version: 16.4.6(@typescript-eslint/parser@8.73.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
       msw:
         specifier: ^3.0.6
         version: 3.0.6(@types/node@22.20.5)(typescript@5.9.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
-      playwright:
-        specifier: ^1.65.1
-        version: 1.65.1
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -135,6 +160,71 @@ importers:
       vitest-browser-react:
         specifier: ^2.3.0
         version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.1.0)
+
+  apps/worker:
+    dependencies:
+      '@inkle/backend':
+        specifier: workspace:*
+        version: link:../../packages/backend
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.5
+        version: 22.20.5
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/backend:
+    dependencies:
+      '@inkle/contract':
+        specifier: workspace:*
+        version: link:../contract
+      '@mozilla/readability':
+        specifier: ^0.6.0
+        version: 0.6.0
+      '@orpc/contract':
+        specifier: 1.16.2
+        version: 1.16.2(@opentelemetry/api@1.10.0)
+      '@orpc/openapi':
+        specifier: 1.16.2
+        version: 1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0)
+      '@orpc/server':
+        specifier: 1.16.2
+        version: 1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0)
+      '@orpc/zod':
+        specifier: 1.16.2
+        version: 1.16.2(@opentelemetry/api@1.10.0)(@orpc/contract@1.16.2(@opentelemetry/api@1.10.0))(@orpc/server@1.16.2(@opentelemetry/api@1.10.0)(ws@8.23.0))(ws@8.23.0)(zod@4.6.7)
+      linkedom:
+        specifier: ^0.18.15
+        version: 0.18.15
+      postgres:
+        specifier: ^4.1.1
+        version: 4.1.1
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^5.1.0
+        version: 5.1.0(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(msw@3.0.6(@types/node@22.20.5)(typescript@5.9.3)(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)))(vite@8.3.8(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+
+  packages/contract:
+    dependencies:
+      '@orpc/contract':
+        specifier: 1.16.2
+        version: 1.16.2(@opentelemetry/api@1.10.0)
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
 
 packages:
 
