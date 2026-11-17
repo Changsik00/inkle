@@ -102,9 +102,9 @@
 
 ## Task 7: 문서
 
-- [ ] `README.md` (폴더 표, 화면 주소), `docs/architecture.md` (포트, 데이터, 흐름의 현재 상태)
-- [ ] `backlog/phase-01.md` 결정 기록
-- [ ] Commit: `docs(spec-01-04): update readme and architecture for books`
+- [x] `README.md` (폴더 표, 화면 주소), `docs/architecture.md` (포트, 데이터, 흐름의 현재 상태)
+- [x] `backlog/phase-01.md` 결정 기록
+- [x] Commit: `docs(spec-01-04): update readme and architecture for books`
 
 ---
 

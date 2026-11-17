@@ -65,28 +65,33 @@ flowchart TB
 | `HealthProbe` | DB 에 닿는지 | `PostgresHealthProbe` | 현재 |
 | `UserRepository` | 사용자 찾기 | `PostgresUserRepository` | 현재 |
 | `JobRepository` | 작업 넣기, 가져가기, 끝내기, 실패 기록 | `PostgresJobRepository` | 현재 |
-| 책, 모임, 내 해석, 출처, 시선 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-04 ~) |
+| `BookRepository` | 책 만들기, 찾기(번호, 정규화한 키), 목록 | `PostgresBookRepository` | 현재 |
+| 모임, 내 해석, 출처, 시선 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-05 ~) |
 | `LlmClient` | 지시문과 결과 형식을 주고 결과를 받는다 | Claude Code CLI (이후 Claude API) | 예정 (spec-01-06) |
 | `PageFetcher` | 주소를 열어 본문 글자를 받는다 | HTTP 요청 + 본문 추출 | 예정 (spec-01-06) |
 
 ## 3. 흐름
 
-### HTTP 요청 (현재: 상태 확인)
+### HTTP 요청 (현재: 상태 확인, 책)
 
 ```mermaid
 sequenceDiagram
     participant B as 브라우저
-    participant R as app/api/health/route.ts
-    participant C as server/container.ts
-    participant U as application/health.ts
-    participant P as PostgresHealthProbe
-    B->>R: GET /api/health
-    R->>C: container()
-    R->>U: checkHealth(container.healthProbe)
-    U->>P: isDatabaseReachable()
-    P-->>U: true / false
-    U-->>R: { db: "ok" | "down" }
-    R-->>B: 200 / 503
+    participant K as http/client (화면)
+    participant R as app/api/[...rest]/route.ts
+    participant S as server/rpc/books.ts
+    participant U as application/books.ts
+    participant P as PostgresBookRepository
+    B->>K: 등록 양식 제출
+    K->>R: POST /api/books (계약의 주소와 모양)
+    R->>S: OpenAPIHandler 가 계약으로 요청을 검사하고 넘긴다
+    S->>U: registerBook(container.books, 입력)
+    U->>P: findByKey / create
+    P-->>U: 책 또는 DuplicateBookError
+    U-->>S: created / exists / invalid
+    S-->>R: 201 책 / 409 CONFLICT / 400 INVALID_BOOK
+    R-->>K: JSON
+    K-->>B: 응답 모양 검사, 오류는 ApiError 로
 ```
 
 화면은 HTTP API 로만 자료를 읽고 쓴다 (ADR-001 §4).
@@ -121,29 +126,36 @@ ADR-002. 자료는 두 층이다.
 
 | 층 | 자료 | 사용자 식별자 | 상태 |
 |---|---|:---:|---|
-| 책 단위 | 책, 출처, 배경 항목, 시선 | 없음 | 예정 |
+| 책 단위 | 책 | 없음 | 현재 (spec-01-04) |
+| 책 단위 | 출처, 배경 항목, 시선 | 없음 | 예정 |
 | 독자 단위 | 모임, 내 해석, 연결, 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
 | 운영 | 사용자, 작업 대기열, 적용한 마이그레이션 | - | 현재 |
 
 - 모든 글에 글쓴이(나 / AI / 외부 사람)를 따로 저장한다 (ADR-002 §3).
 - 원본은 덧붙이기만 하고, 파생물은 만든 재료와 지시문의 판을 남긴다 (ADR-005).
 - 스키마는 `src/infrastructure/db/migrations/` 의 번호 붙은 SQL 파일로 관리한다. ORM 은 쓰지 않는다.
+- 같은 책은 하나만 있다. 정규화한 제목과 작가(`books.key`)에 유일 인덱스를 둔다.
 
 ## 5. 테스트
 
-ADR-006 §4.
+ADR-006 §4, ADR-007 §8.
 
-| 종류 | 위치 | 실제 DB |
-|---|---|:---:|
-| 유스케이스, 도메인 규칙 | `src/application/*.test.ts`, `src/domain/*.test.ts` (메모리 구현 사용) | 불필요 |
-| 저장소 계약 | `src/testing/contracts/` 를 메모리 구현(`src/testing/in-memory/`)과 Postgres 구현 양쪽에 실행 | Postgres 쪽만 |
-| Postgres 고유 성질 (동시성, 마이그레이션) | `src/infrastructure/**/*.test.ts` | 필요 |
-| 의존 규칙 | `src/architecture.test.ts` | 불필요 |
+| 종류 | 위치 | 도구 | 실제 DB |
+|---|---|---|:---:|
+| 유스케이스, 도메인 규칙 | `src/application/`, `src/domain/` (메모리 구현 사용) | Vitest (Node) | 불필요 |
+| 저장소 계약 | `src/testing/contracts/` 를 메모리와 Postgres 양쪽에 | Vitest (Node) | Postgres 쪽만 |
+| Postgres 고유 성질 (동시성, 마이그레이션) | `src/infrastructure/**/*.test.ts` | Vitest (Node) | 필요 |
+| API 처리, 엔드포인트 문서 | `src/server/rpc/*.test.ts` (메모리 문맥으로 직접 호출) | Vitest (Node) | 불필요 |
+| HTTP 클라이언트 | `src/http/client/*.test.ts` | Vitest (Node) | 불필요 |
+| 화면 컴포넌트 | `src/features/**/*.test.tsx` (HTTP 는 MSW) | Vitest 브라우저 모드 (Chromium) | 불필요 |
+| 의존 규칙, UI 일관성 | `src/architecture.test.ts` | ESLint 를 코드로 실행 | 불필요 |
+| 흐름 (E2E) | `e2e/` | Playwright, compose 로 띄운 앱 | 필요 |
 
 ```bash
 pnpm test:unit                    # 실제 DB 없이
-docker compose up -d --wait db
+docker compose up -d --wait
 pnpm test                         # 전부 (inkle_test 데이터베이스를 비우고 쓴다)
+pnpm test:e2e                     # 흐름
 ```
 
 ## 6. 프론트
