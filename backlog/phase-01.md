@@ -172,6 +172,7 @@
 - **참조**:
   - `docs/goals.md` §원칙 "먼저 쓰고, 그다음 본다"
 - **연관 모듈**: 읽기 기록 도메인
+- **결과** (2026-11-18): 모임(`sessions`)과 내 해석의 판(`interpretation_versions`). 질문 넷(`fiction-v1`), 하나 이상 답하면 저장. 문(門)은 `requireUnlocked`. 화면은 `/sessions/{id}/interpretation`, 임시 저장은 `use-draft`.
 
 ### spec-01-08 — 자료 수집
 

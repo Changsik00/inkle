@@ -79,8 +79,8 @@
 
 ## Task 6: 문서
 
-- [ ] `docs/architecture.md` (포트, 데이터, 흐름), `README.md` (화면 주소), `backlog/phase-01.md`
-- [ ] Commit: `docs(spec-01-07): document sessions and interpretation`
+- [x] `docs/architecture.md` (포트, 데이터, 흐름), `README.md` (화면 주소), `backlog/phase-01.md`
+- [x] Commit: `docs(spec-01-07): document sessions and interpretation`
 
 ---
 
