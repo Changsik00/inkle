@@ -21,17 +21,17 @@
 ## Task 2: 뼈대 정리
 
 ### 2-1. 준비
-- [ ] `node_modules/next/dist/docs/` 에서 이 판의 Next.js 문서 중 필요한 부분을 읽는다 (`AGENTS.md` 의 지시)
+- [x] `node_modules/next/dist/docs/` 에서 이 판의 Next.js 문서 중 필요한 부분을 읽는다 (`AGENTS.md` 의 지시)
 
 ### 2-2. 테스트 실행기 (TDD Red → Green)
-- [ ] Vitest, `tsx` 추가. `test`, `typecheck` 스크립트
-- [ ] 실행기가 도는지 확인하는 테스트 하나 → Pass 확인
+- [x] Vitest, `tsx` 추가. `test`, `typecheck` 스크립트
+- [x] 실행기가 도는지 확인하는 테스트 하나 → Pass 확인
 
 ### 2-3. 정리
-- [ ] `@anthropic-ai/sdk` 제거, 기본 화면과 `public/` 예시 그림 제거, 첫 화면 교체
-- [ ] `.gitignore` 에 `.env.example` 예외, `.env.example` 작성
-- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` 통과
-- [ ] Commit: `chore(spec-01-03): commit cleaned next.js skeleton with test runner`
+- [x] `@anthropic-ai/sdk` 제거, 기본 화면과 `public/` 예시 그림 제거, 첫 화면 교체
+- [x] `.gitignore` 에 `.env.example` 예외, `.env.example` 작성
+- [x] `pnpm lint`, `pnpm typecheck`, `pnpm test` 통과
+- [x] Commit: `chore(spec-01-03): commit cleaned next.js skeleton with test runner`
 
 ---
 
