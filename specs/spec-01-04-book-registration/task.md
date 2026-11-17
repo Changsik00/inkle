@@ -74,14 +74,14 @@
 ## Task 5: 책 API (oRPC)
 
 ### 5-1. 테스트 작성 (TDD Red)
-- [ ] OpenAPI 문서 스냅샷 테스트 (책 엔드포인트 셋이 문서에 있다)
-- [ ] `src/server/rpc/books.test.ts` (메모리 저장소로 처리 함수 직접 호출): 목록, 등록, 같은 책은 `CONFLICT` 와 기존 책, 잘못된 입력은 `BAD_REQUEST` 와 이유, 없는 책과 형식이 틀린 id 는 `NOT_FOUND`
-- [ ] 테스트 실행 → Fail 확인
+- [x] OpenAPI 문서 스냅샷 테스트 (책 엔드포인트 셋이 문서에 있다)
+- [x] `src/server/rpc/books.test.ts` (메모리 저장소로 처리 함수 직접 호출): 목록, 등록, 같은 책은 `CONFLICT` 와 기존 책, 잘못된 입력은 `BAD_REQUEST` 와 이유, 없는 책과 형식이 틀린 id 는 `NOT_FOUND`
+- [x] 테스트 실행 → Fail 확인
 
 ### 5-2. 구현 (TDD Green)
-- [ ] `src/http/contract/books.ts`, `src/server/rpc/books.ts`, 라우터에 등록
-- [ ] 테스트 실행 → Pass 확인. compose 에서 `curl` 로 REST 주소(`/api/books`) 확인
-- [ ] Commit: `feat(spec-01-04): add book api with orpc`
+- [x] `src/http/contract/books.ts`, `src/server/rpc/books.ts`, 라우터에 등록
+- [x] 테스트 실행 → Pass 확인. compose 에서 `curl` 로 REST 주소(`/api/books`) 확인
+- [x] Commit: `feat(spec-01-04): add book api with orpc`
 
 ---
 

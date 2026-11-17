@@ -1,5 +1,5 @@
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { onError } from "@orpc/server";
+import { ORPCError, onError } from "@orpc/server";
 import type { RpcContext } from "@/server/rpc/context";
 import { router } from "@/server/rpc/router";
 
@@ -8,6 +8,8 @@ export const API_PREFIX = "/api";
 const handler = new OpenAPIHandler(router, {
   interceptors: [
     onError((error) => {
+      // 계약에 선언한 오류(NOT_FOUND, CONFLICT …)는 정상 응답이라 남기지 않는다.
+      if (error instanceof ORPCError && error.defined) return;
       console.error("[api]", error);
     }),
   ],
