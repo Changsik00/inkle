@@ -10,14 +10,16 @@
     "worker": "pnpm --filter @inkle/worker start",
     "db:migrate": "pnpm --filter @inkle/api db:migrate",
     "job:enqueue": "pnpm --filter @inkle/api job:enqueue",
-    "lint": "eslint .",
+    "lint": "eslint . && pnpm design:lint",
     "typecheck": "pnpm -r typecheck && tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run --exclude \"**/infrastructure/**\"",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "design:lint": "design.md lint DESIGN.md"
   },
   "devDependencies": {
+    "@google/design.md": "0.4.0",
     "@mozilla/readability": "^0.6.0",
     "@playwright/test": "^1.65.1",
     "@shadcn/lint": "^0.2.5",
@@ -32,7 +34,8 @@
     "tailwindcss": "4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "yaml": "^2.9.1"
   },
   "packageManager": "pnpm@9.15.6"
 }

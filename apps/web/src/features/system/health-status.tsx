@@ -7,5 +7,5 @@ import { api } from "@/api-client";
 export function HealthStatus() {
   const { data, isPending } = useQuery({ ...api.health.check.queryOptions(), retry: false });
   const text = isPending ? "확인 중" : data?.db === "ok" ? "DB 연결됨" : "DB 에 닿지 못함";
-  return <p className="text-sm text-muted-foreground">{text}</p>;
+  return <p className="text-caption text-muted-foreground">{text}</p>;
 }

@@ -95,11 +95,11 @@ export function BookRegisterForm({ onRegistered }: { onRegistered: (book: BookDt
             </Field>
           )}
         />
-        <p className="text-sm text-muted-foreground">장르: {GENRE_LABEL.fiction}</p>
+        <p className="text-body-sm text-muted-foreground">장르: {GENRE_LABEL.fiction}</p>
       </FieldGroup>
 
       {existing && (
-        <div role="status" className="flex flex-col items-start gap-2 rounded-lg border p-4">
+        <div role="status" className="flex flex-col items-start gap-3 border-l-2 border-rule-strong pl-4">
           <p>이미 등록된 책이에요</p>
           <Button asChild variant="outline">
             <Link href={`/books/${existing.id}`}>등록된 책 보기</Link>
@@ -107,7 +107,7 @@ export function BookRegisterForm({ onRegistered }: { onRegistered: (book: BookDt
         </div>
       )}
       {failed && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-body-sm text-destructive">
           등록하지 못했어요. 잠시 뒤 다시 시도해 주세요.
         </p>
       )}

@@ -130,6 +130,9 @@ flowchart LR
 
 ## 📌 Status
 
+고침 (2026-11-18): 디자인 값의 원본은 저장소 루트의 `DESIGN.md` 이고, `globals.css` 는 그 값을 따른다 (ADR-011). §4 의 "테마는 한곳에서 바꾼다"는 DESIGN.md 를 고치고 같은 값을 옮기는 것으로 읽는다.
+
+
 고침 (2026-11-17): API 의 입구는 Next.js route 파일이 아니라 별도 API 서버(`apps/api/` (진입점)와 `packages/backend/src/server/` (서버 생성))다. 브라우저는 같은 주소의 `/api` 를 부르고 Next.js 가 rewrites 로 넘긴다 (ADR-009). 화면 쪽 규칙은 바뀌지 않는다.
 
 

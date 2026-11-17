@@ -15,4 +15,5 @@
 | ADR-008 | src 를 backend · frontend · shared 로 나누고, backend 와 frontend 는 서로 가져오지 않는다 | convention | superseded | 2026-11-17 |
 | ADR-009 | API 는 Next.js 와 다른 서버로 띄우고, Next.js 는 화면만 낸다 | decision | accepted | 2026-11-17 |
 | ADR-010 | pnpm 워크스페이스 모노레포로 나누고, 영역 경계는 패키지 의존성이 지킨다 | decision | accepted | 2026-11-18 |
+| ADR-011 | 디자인 규칙은 DESIGN.md 가 원본이고, 화면 토큰은 그 값을 그대로 따른다 (여백의 노트) | convention | accepted | 2026-11-18 |
 <!-- adr-index:end -->

@@ -85,6 +85,12 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 | `docs/` | 목표, 아키텍처, 결정, 실험 기록 |
 | `backlog/`, `specs/` | 작업 계획 (harness-kit) |
 
-## 테마
+## 디자인
 
-색, 둥글기, 글꼴은 `apps/web/src/app/globals.css` 의 토큰(CSS 변수)에서만 정한다. 값 하나를 바꾸면 모든 화면이 바뀐다. 화면 코드에서 `text-red-500` 같은 팔레트 색이나 `rounded-[13px]` 같은 눈금 밖 값을 쓰면 lint(`@shadcn/lint`)가 막는다. 공통 부품은 `apps/web` 에서 `pnpm dlx shadcn@latest add <부품>` 으로 `apps/web/src/ui/` 에 추가한다.
+디자인 규칙과 값의 원본은 저장소 루트의 `DESIGN.md` 다 (방향: 여백의 노트, ADR-011). 화면을 만들거나 고칠 때 먼저 읽는다.
+
+- 화면 토큰(`apps/web/src/app/globals.css`)은 DESIGN.md 의 값을 그대로 옮기고, 테스트가 두 파일을 비교한다. 값을 바꿀 때는 DESIGN.md 를 먼저 고친다.
+- 화면 코드는 토큰 이름(`bg-background`, `text-title-book` …)만 쓴다. 팔레트 색이나 눈금 밖 값은 lint(`@shadcn/lint`)가 막는다.
+- `pnpm lint` 는 DESIGN.md 의 형식과 대비도 검사한다 (`pnpm design:lint`).
+- 공통 부품은 `apps/web` 에서 `pnpm dlx shadcn@latest add <부품>` 으로 `apps/web/src/ui/` 에 추가한 뒤 DESIGN.md 에 맞게 다듬는다.
+- 화면 스크린숏: `docs/design/screens/`

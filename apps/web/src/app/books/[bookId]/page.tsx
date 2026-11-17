@@ -6,10 +6,10 @@ import { BookDetailScreen } from "@/features/books/book-detail-screen";
 export default function BookPage() {
   return (
     <div className="flex flex-col gap-6">
-      <Link href="/" className="text-sm text-muted-foreground hover:underline">
+      <Link href="/" className="text-caption text-muted-foreground hover:text-foreground">
         ← 책 목록
       </Link>
-      <Suspense fallback={<p className="text-sm text-muted-foreground">불러오는 중…</p>}>
+      <Suspense fallback={<p className="text-body-sm text-muted-foreground">불러오는 중…</p>}>
         <BookDetailScreen />
       </Suspense>
     </div>
