@@ -19,15 +19,15 @@
 ## Task 2: 도메인
 
 ### 2-1. 테스트 작성 (TDD Red)
-- [ ] `question-set.test.ts`: 소설 묶음 `fiction-v1` 의 질문 넷과 순서, 장르로 묶음 찾기
-- [ ] `interpretation.test.ts`: 다듬기(앞뒤 공백), 하나 이상 답, 4,000자, 묶음에 없는 질문 거부, 빈 답은 버림
-- [ ] `session.test.ts`: 단계(`writing` / `interpretation_saved`), 문 판단
-- [ ] 테스트 실행 → Fail 확인
+- [x] `question-set.test.ts`: 소설 묶음 `fiction-v1` 의 질문 넷과 순서, 장르로 묶음 찾기
+- [x] `interpretation.test.ts`: 다듬기(앞뒤 공백), 하나 이상 답, 4,000자, 묶음에 없는 질문 거부, 빈 답은 버림
+- [x] `session.test.ts`: 단계(`writing` / `interpretation_saved`), 문 판단
+- [x] 테스트 실행 → Fail 확인
 
 ### 2-2. 구현 (TDD Green)
-- [ ] `packages/backend/src/domain/{question-set,interpretation,session}.ts`
-- [ ] 테스트 실행 → Pass 확인
-- [ ] Commit: `feat(spec-01-07): add session, question set and interpretation rules`
+- [x] `packages/backend/src/domain/{question-set,interpretation,session}.ts`
+- [x] 테스트 실행 → Pass 확인
+- [x] Commit: `feat(spec-01-07): add session, question set and interpretation rules`
 
 ---
 
