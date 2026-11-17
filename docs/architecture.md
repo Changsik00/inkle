@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-17 (spec-01-03).
+> 마지막 갱신: 2026-11-17 (spec-01-04).
 
 ## 1. 한눈에
 
@@ -148,7 +148,29 @@ pnpm test                         # 전부 (inkle_test 데이터베이스를 비
 
 ## 6. 프론트
 
-**아직 정하지 않았다.** 지금은 제품 이름과 DB 상태를 보여주는 첫 화면뿐이다 (`src/app/page.tsx`). 정해진 것은 "화면은 HTTP API 로만 자료를 읽고 쓴다"(ADR-001 §4) 하나다. 서버·클라이언트 컴포넌트의 경계, 상태 관리, 화면 구조, 글쓰기와 글쓴이 표시의 공통 규칙은 ADR-007 로 spec-01-04 에서 정한다 (`backlog/phase-01.md`).
+ADR-007.
+
+```mermaid
+flowchart LR
+    P[src/app 페이지<br/>틀만, 서버 컴포넌트] --> F[src/features<br/>클라이언트 컴포넌트]
+    F --> K[src/http/client<br/>HTTP 클라이언트 + TanStack Query]
+    K -->|REST| R[src/app/api route.ts<br/>OpenAPIHandler]
+    R --> S[src/server/rpc<br/>계약 구현]
+    S --> U[application 유스케이스]
+    C[src/http/contract<br/>엔드포인트 · 요청 · 응답 · 오류] -.-> K
+    C -.-> S
+```
+
+| 주제 | 정한 것 |
+|---|---|
+| 라우터 | App Router. 페이지는 자료를 읽지 않는 틀. `typedRoutes`. 주소 상태는 nuqs |
+| 상태 | 서버 자료 TanStack Query, 주소 nuqs, 양식 React Hook Form + zod. 전역 저장소 없음 (Zustand 는 필요해질 때) |
+| HTTP | oRPC 1.x 계약 하나에서 엔드포인트·요청·응답·오류를 정한다. REST 주소와 `/api/openapi.json`. 화면은 `src/http/client/` 만 거친다 (`fetch` 직접 사용 금지). Server Actions 없음 |
+| UI | Tailwind 4 만. shadcn/ui(Radix) 부품을 `src/ui/` 에. 테마 값은 `globals.css` 토큰에서만. `@shadcn/lint` 로 강제 |
+| 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
+| 기타 | React Compiler |
+
+화면의 의존 규칙은 ADR-007 §7. 글쓰기와 글쓴이 표시의 공통 규칙은 ADR-007 §5 (spec-01-05, 07 에서 만든다).
 
 ## 7. 결정 목록
 
@@ -160,7 +182,7 @@ pnpm test                         # 전부 (inkle_test 데이터베이스를 비
 | 004 | Claude Code CLI, 앱이 출처를 직접 열어 문자열 대조 |
 | 005 | 원본은 덧붙이기만, 파생물은 재료를 기록 |
 | 006 | 서버 세 계층, 저장소 인터페이스, 계약 테스트 |
-| 007 | 프론트 구조 (예정, spec-01-04) |
+| 007 | 프론트: 틀만 그리는 페이지, 기능 단위 클라이언트 컴포넌트, oRPC 계약, shadcn/ui 와 토큰 |
 
 ## 8. 이 문서를 고칠 때
 

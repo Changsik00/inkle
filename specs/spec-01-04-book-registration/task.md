@@ -19,16 +19,16 @@
 ## Task 2: ADR-007 프론트 구조
 
 ### 2-1. 작성
-- [ ] `docs/decisions/ADR-007-frontend-structure.md` (일곱 항목, 의존 규칙, 선택지 비교). 이 판의 Next.js 문서와 TanStack Query 의 현재 사용법을 확인하고 쓴다
-- [ ] `docs/architecture.md` §6, `sdd adr-index`
-- [ ] Commit: `docs(spec-01-04): add adr-007 frontend structure`
+- [x] `docs/decisions/ADR-007-frontend-structure.md` (일곱 항목, 의존 규칙, 선택지 비교). 이 판의 Next.js 문서와 TanStack Query 의 현재 사용법을 확인하고 쓴다
+- [x] `docs/architecture.md` §6, `sdd adr-index`
+- [x] Commit: `docs(spec-01-04): add adr-007 frontend structure`
 
 ---
 
 ## Task 3: 프론트 기반
 
 ### 3-1. 공식 문서 확인
-- [ ] oRPC (계약 우선, OpenAPI 처리기, Next.js 연결, TanStack Query 연동, 서버에서 처리 함수 직접 부르기), nuqs (Next.js 16, Cache Components), Vitest 4 브라우저 모드와 MSW, Playwright, shadcn/ui 설치, `@shadcn/lint` 의 React 설정. 하나라도 spec 의 설명과 다르면 멈추고 보고
+- [x] oRPC (계약 우선, OpenAPI 처리기, Next.js 연결, TanStack Query 연동, 서버에서 처리 함수 직접 부르기), nuqs (Next.js 16, Cache Components), Vitest 4 브라우저 모드와 MSW, Playwright, shadcn/ui 설치, `@shadcn/lint` 의 React 설정. 하나라도 spec 의 설명과 다르면 멈추고 보고 — oRPC 문서가 2.0 베타 기준이라 보고했고, 사용자가 1.x 안정판(1.16.2)을 선택. Vitest 는 5, MSW 는 3, React 테스트는 `vitest-browser-react` (ADR-007 §확인)
 
 ### 3-2. 테스트 작성 (TDD Red)
 - [ ] `src/architecture.test.ts`: 화면 코드가 조립·애플리케이션·인프라·도메인을 가져오면 막고, `src/app/api/**` 은 조립을 허용. 계약(`src/http/contract/`)은 React·Next.js 를 가져오지 못함
