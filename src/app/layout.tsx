@@ -11,7 +11,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-10">{children}</main>
+        </Providers>
       </body>
     </html>
   );

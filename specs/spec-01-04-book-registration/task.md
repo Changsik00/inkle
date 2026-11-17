@@ -88,15 +88,15 @@
 ## Task 6: 책 화면과 E2E
 
 ### 6-1. 테스트 작성 (TDD Red)
-- [ ] `src/features/books/*.test.tsx` (브라우저 모드, MSW): 목록(비었을 때, 있을 때, 오류), 등록 양식(입력 검사, 등록 뒤 이동, 이미 있는 책 안내, 서버 오류), 책 정보(있음, 없음, "모임 시작"은 눌리지 않음)
-- [ ] `e2e/books.spec.ts` (Playwright): 등록 → 책 정보 → 목록에 나타남, 같은 책 다시 등록 시 안내
-- [ ] 테스트 실행 → Fail 확인
+- [x] `src/features/books/*.test.tsx` (브라우저 모드, MSW): 목록(비었을 때, 있을 때, 오류), 등록 양식(입력 검사, 등록 뒤 이동, 이미 있는 책 안내, 서버 오류), 책 정보(있음, 없음, "모임 시작"은 눌리지 않음)
+- [x] `e2e/books.spec.ts` (Playwright): 등록 → 책 정보 → 목록에 나타남, 같은 책 다시 등록 시 안내
+- [x] 테스트 실행 → Fail 확인
 
 ### 6-2. 구현 (TDD Green)
-- [ ] `src/features/books/` (목록, React Hook Form 양식, 책 정보), 필요한 shadcn/ui 부품만 `src/ui/` 에 추가
-- [ ] `src/app/page.tsx`, `src/app/books/new/page.tsx`, `src/app/books/[bookId]/page.tsx`, `loading.tsx`, `not-found.tsx`. `src/app/health-status.tsx` 삭제
-- [ ] 테스트 실행 → Pass 확인. `pnpm test:e2e`, `pnpm build` 성공
-- [ ] Commit: `feat(spec-01-04): add book list, registration and detail screens`
+- [x] `src/features/books/` (목록, React Hook Form 양식, 책 정보), 필요한 shadcn/ui 부품만 `src/ui/` 에 추가
+- [x] `src/app/page.tsx`, `src/app/books/new/page.tsx`, `src/app/books/[bookId]/page.tsx`, `loading.tsx`, `not-found.tsx`. `src/app/health-status.tsx` 는 `src/features/system/health-status.tsx` 로 옮겨 첫 화면 아래에 남김 (Task 3)
+- [x] 테스트 실행 → Pass 확인. `pnpm test:e2e`, `pnpm build` 성공
+- [x] Commit: `feat(spec-01-04): add book list, registration and detail screens`
 
 ---
 
