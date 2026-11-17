@@ -44,6 +44,8 @@ ADR-008. backend 와 frontend 는 서로 가져오지 않고 shared 만 함께 �
 | `src/backend/` | domain, application, infrastructure, rpc, container, worker, cli, testing | frontend, React, Next.js |
 | `src/shared/` | contract (HTTP 계약), product | 모든 영역, React, Next.js, DB |
 
+**배포에 대해 열어 둔 것**: 지금은 Next.js 서버 하나가 화면과 API 를 함께 낸다. 화면은 자료를 읽지 않는 틀이라 이미 정적에 가깝다. 배포 방식을 정할 때 화면을 정적(SSG)으로, API 를 따로 두는 모노레포로 나눌지 다시 본다. 나눌 때 할 일과 지금 지키는 것은 ADR-008 §다시 볼 때.
+
 ## 2-1. 서버 계층
 
 ADR-006. 의존은 바깥에서 안쪽으로만 간다.
