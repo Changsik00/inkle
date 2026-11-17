@@ -66,7 +66,7 @@
 | `spec-01-04` | book-registration | P? | Merged | `specs/spec-01-04-book-registration/` |
 | `spec-01-05` | monorepo | P? | Merged | `specs/spec-01-05-monorepo/` |
 | `spec-01-06` | design-system | P? | Merged | `specs/spec-01-06-design-system/` |
-| `spec-01-07` | interpretation | P? | Active | `specs/spec-01-07-interpretation/` |
+| `spec-01-07` | interpretation | P? | Merged | `specs/spec-01-07-interpretation/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
