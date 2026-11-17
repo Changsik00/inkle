@@ -44,14 +44,14 @@
 ## Task 4: 화면 적용
 
 ### 4-1. 테스트
-- [ ] 기존 화면 테스트와 E2E 가 그대로 통과하는지 (기능은 바꾸지 않는다). 역할과 이름으로 찾으므로 바뀌지 않아야 한다
+- [x] 기존 화면 테스트와 E2E 가 그대로 통과하는지 (기능은 바꾸지 않는다). 역할과 이름으로 찾으므로 바뀌지 않아야 한다 — 첫 화면의 제목이 "inkle" 에서 "모임을 열 책"으로 바뀌어 E2E 의 확인 문장 하나를 고쳤다
 
 ### 4-2. 구현
-- [ ] 첫 화면 머리, 책 목록(가는 선의 목록), 책 등록, 책 정보
-- [ ] 부품(`card`, `button`, `input`)의 그림자와 둥글기
-- [ ] 스크린숏 (`docs/design/screens/`)
-- [ ] lint(`@shadcn/lint` 포함), 테스트, E2E 통과
-- [ ] Commit: `feat(spec-01-06): apply margin-note design to book screens`
+- [x] 첫 화면 머리, 책 목록(가는 선의 목록), 책 등록, 책 정보
+- [x] 부품(`card`, `button`, `input`)의 그림자와 둥글기
+- [x] 스크린숏 (`docs/design/screens/`)
+- [x] lint(`@shadcn/lint` 포함), 테스트, E2E 통과
+- [x] Commit: `feat(spec-01-06): apply margin-note design to book screens`
 
 ---
 
