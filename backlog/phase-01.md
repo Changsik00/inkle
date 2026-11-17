@@ -62,7 +62,7 @@
 |---|---|:---:|---|---|
 | `spec-01-01` | manual-experiment | P? | Merged | `specs/spec-01-01-manual-experiment/` |
 | `spec-01-02` | architecture-decisions | P? | Merged | `specs/spec-01-02-architecture-decisions/` |
-| `spec-01-03` | project-skeleton | P? | Merged | `specs/spec-01-03-project-skeleton/` |
+| `spec-01-03` | project-skeleton | P? | In Progress | `specs/spec-01-03-project-skeleton/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
@@ -130,7 +130,7 @@
 
 - **요점**: 프론트 구조를 ADR 로 정한 뒤, 제목과 작가를 직접 입력해 책을 등록한다.
 - **방향성**:
-  - **첫 작업은 ADR-006 프론트 구조다** (사용자 요청, 2026-11-17). 제품 화면이 처음 생기는 spec 이므로 화면을 만들기 전에 아래를 선택지 비교와 함께 정한다. 이 판의 Next.js 문서(`node_modules` 안)를 확인하고 쓴다.
+  - **첫 작업은 ADR-007 프론트 구조다** (사용자 요청, 2026-11-17). 제품 화면이 처음 생기는 spec 이므로 화면을 만들기 전에 아래를 선택지 비교와 함께 정한다. 이 판의 Next.js 문서(`node_modules` 안)를 확인하고 쓴다.
     1. 서버 컴포넌트와 클라이언트 컴포넌트의 경계 ("화면은 HTTP API 로만 자료를 읽고 쓴다"는 ADR-001 §4 를 지키는 방식)
     2. 자료 가져오기와 상태 관리 (수집 진행 상황의 주기적 조회, 모임 단계의 상태. 라이브러리를 쓸지 여부)
     3. HTTP API 응답의 타입을 서버와 화면이 공유하는 방식
@@ -236,7 +236,8 @@
 | 자료 수집의 위치 | 배경 spec 안에서 / 별도 spec | 별도 spec (spec-01-06) | 배경과 시선이 같은 수집 결과를 쓰고, 화면 없이 통과율을 먼저 재야 함 |
 | 미커밋 Next.js 뼈대 | 살림 / 버림 | 살림 | ADR-001. spec-01-03 에서 정리해 커밋 |
 | CLI 로그인 방식 | 구독 토큰을 컨테이너에 전달 / 이 기기의 로그인을 그대로 사용 | 이 기기의 로그인 사용, 작업 프로세스는 호스트에서 실행 | 사용자 결정 (2026-11-17). 토큰은 비워 둔다. 성공 기준 6 은 "`docker compose up` 과 `pnpm worker`"로 읽는다 |
-| 프론트 구조를 정하는 시점 | 지금 별도 문서로 / 첫 화면 spec 의 첫 작업으로 | spec-01-04 의 첫 작업 (ADR-006) | 사용자 요청 (2026-11-17). ADR-001 은 "화면은 HTTP API 만 쓴다"만 정했다. 화면을 실제로 설계하는 시점에 정한다 |
+| 서버 구조 | 도메인 함수가 SQL 직접 실행 / 세 계층과 저장소 | 세 계층과 저장소, 계약 테스트 | 사용자 요청 (2026-11-17, PR #3 리뷰). ADR-006, `docs/architecture.md` |
+| 프론트 구조를 정하는 시점 | 지금 별도 문서로 / 첫 화면 spec 의 첫 작업으로 | spec-01-04 의 첫 작업 (ADR-007) | 사용자 요청 (2026-11-17). ADR-001 은 "화면은 HTTP API 만 쓴다"만 정했다. 화면을 실제로 설계하는 시점에 정한다 |
 | Base Branch | 사용 / 미사용 | 미사용 (잠정) | 1인 개발이라 각 spec 을 main 에 바로 병합하는 편이 단순함. 사용자 확인 필요 |
 
 ## 🧪 통합 테스트 시나리오 (간결)
@@ -279,7 +280,7 @@ pnpm test                         # 단위·통합 테스트 (inkle_test 데이�
 
 - **선행 phase**: 없음
 - **외부 시스템**: Claude Code CLI (구독 로그인, 웹 검색 포함), 출처가 되는 외부 웹 페이지
-- **연관 ADR**: ADR-001 ~ ADR-005 (`docs/decisions/README.md`)
+- **연관 ADR**: ADR-001 ~ ADR-006 (`docs/decisions/README.md`). 전체 구조는 `docs/architecture.md`
 
 ## 📝 위험 요소 및 완화
 

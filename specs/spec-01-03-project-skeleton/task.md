@@ -112,7 +112,7 @@
 
 ---
 
-## Task 8: Ship (필수)
+## Task 8: Ship (1차, 완료)
 
 ### 🚦 Pre-Push Quality Gate
 
@@ -130,3 +130,54 @@
 
 - [x] `git push -u origin spec-01-03-project-skeleton`
 - [x] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
+
+---
+
+> **계획 변경 2** (2026-11-17, PR #3 리뷰): 서버 구조를 계층과 저장소 패턴으로 바꾼다. 아래 Task 9 ~ 11 을 추가했다.
+
+## Task 9: ADR-006 서버 구조와 아키텍처 문서
+
+### 9-1. 작성
+- [x] `docs/decisions/ADR-006-server-structure.md` (계층, 저장소 인터페이스, 조립, 의존 규칙, 테스트 방식, 선택지 비교)
+- [x] `docs/architecture.md` (시스템 구성, 계층, 흐름, 테스트 전략, ADR 목록)
+- [x] `sdd adr-index`, `backlog/phase-01.md` 의 프론트 구조를 ADR-007 로
+- [x] Commit: `docs(spec-01-03): add adr-006 server structure and architecture doc`
+
+---
+
+## Task 10: 계층과 저장소로 옮기기
+
+### 10-1. 테스트 작성 (TDD Red)
+- [ ] 저장소 계약 테스트 (`src/testing/contracts/`): 메모리와 Postgres 양쪽에 돌린다
+- [ ] 유스케이스 테스트를 메모리 저장소로 다시 쓴다 (DB 없음)
+- [ ] 의존 규칙 lint: `domain`, `application` 에서 `postgres`, `infrastructure` 를 가져오면 실패
+- [ ] 테스트 실행 → Fail 확인
+
+### 10-2. 구현 (TDD Green)
+- [ ] `src/domain/`, `src/application/` (ports, 유스케이스), `src/infrastructure/` (db, repositories), `src/server/container.ts`
+- [ ] 진입점(`src/app/api/health`, `src/worker/`, `db:migrate`, `job:enqueue`)이 container 를 거치도록
+- [ ] 메모리 저장소 (`src/testing/in-memory/`)
+- [ ] 테스트, lint, 타입 검사 통과. compose 와 `pnpm worker` 로 동작이 같은지 확인
+- [ ] README 의 폴더 표 갱신
+- [ ] Commit: `refactor(spec-01-03): split server into layers with repositories`
+
+---
+
+## Task 11: Ship (필수, 다시)
+
+### 🚦 Pre-Push Quality Gate
+
+- [ ] **전체 테스트 실행** → 모두 PASS
+- [ ] lint, 타입 검사 통과
+- [ ] spec.md 의 수동 검증 시나리오 4개 확인
+
+### 📝 산출물 작성
+
+- [ ] **walkthrough.md 갱신** (계획 변경 2)
+- [ ] **pr_description.md 갱신**
+- [ ] Commit: `docs(spec-01-03): ship walkthrough and pr description`
+
+### 🚀 Push & PR
+
+- [ ] `git push -u origin spec-01-03-project-skeleton`
+- [ ] PR #3 본문 갱신 (`gh pr edit`)
