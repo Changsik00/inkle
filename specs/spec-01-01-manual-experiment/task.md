@@ -64,15 +64,15 @@
 
 ### 🚦 Pre-Push Quality Gate
 
-- [ ] 자동 테스트 없음 (문서 전용). spec.md 의 수동 검증 시나리오 4개 확인
+- [x] 자동 테스트 없음 (문서 전용). spec.md 의 수동 검증 시나리오 4개 확인
 
 ### 📝 산출물 작성
 
-- [ ] **walkthrough.md 작성**
-- [ ] **pr_description.md 작성**
+- [x] **walkthrough.md 작성**
+- [x] **pr_description.md 작성**
 - [x] Commit: `docs(spec-01-01): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
-- [ ] `git push -u origin spec-01-01-manual-experiment`
+- [x] `git push -u origin spec-01-01-manual-experiment`
 - [ ] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)
