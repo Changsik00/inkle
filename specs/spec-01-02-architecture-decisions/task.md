@@ -69,11 +69,11 @@
 ## Task 6: ADR-005 원본과 파생물
 
 ### 6-1. 작성
-- [ ] 원본과 파생물의 목록, 파생물에 남기는 출처 기록
-- [ ] 선택지 비교: 덧붙이기만 하는 원본 / 고쳐 쓰는 저장
-- [ ] 2단계 위키가 이 원본으로 만들어질 수 있는지 확인
-- [ ] `docs/decisions/ADR-005-source-and-derived.md`
-- [ ] Commit: `docs(spec-01-02): add adr-005 source and derived`
+- [x] 원본과 파생물의 목록, 파생물에 남기는 출처 기록
+- [x] 선택지 비교: 덧붙이기만 하는 원본 / 고쳐 쓰는 저장
+- [x] 2단계 위키가 이 원본으로 만들어질 수 있는지 확인
+- [x] `docs/decisions/ADR-005-source-and-derived.md`
+- [x] Commit: `docs(spec-01-02): add adr-005 source and derived`
 
 ---
 
