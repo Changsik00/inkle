@@ -32,7 +32,7 @@ flowchart LR
 | api | compose, `127.0.0.1:4000` | `pnpm db:migrate && pnpm api` | HTTP API (계약의 주소, `/api/openapi.json`). 뜰 때 마이그레이션 적용 | ADR-009 |
 | db | compose, `127.0.0.1:54329` | - | 모든 자료와 작업 대기열 | ADR-001 |
 | 작업 프로세스 | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (지금은 시험용 작업만) | ADR-001, ADR-004 |
-| Claude Code CLI | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음 (예정, spec-01-06) | ADR-004 |
+| Claude Code CLI | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음 (예정, spec-01-08) | ADR-004 |
 
 - web, api, 작업 프로세스는 같은 저장소의 같은 코드이고, 컨테이너는 같은 이미지에서 시작 명령만 다르다.
 - 작업 프로세스가 호스트에서 뜨는 이유: CLI 를 이 기기의 로그인으로 쓰기 때문이다 (ADR-004 §가정의 확인 결과).
@@ -94,7 +94,7 @@ inkle/
 
 ## 2-0. 모노레포로 옮길 때
 
-사용자 의견 (2026-11-17): 배포할 때 화면을 정적(SSG)으로 내고 API 를 따로 두는 모노레포가 나을 수 있다. 그때 이 절을 참고한다. 언제 옮길지는 `docs/goals.md` §열린 질문 (배포 방식을 정할 때).
+**결정 (2026-11-17)**: 지금 옮긴다. 서버가 둘(화면, API)과 작업 프로세스로 나뉘었으니 앱이 셋이고, 코드가 적은 지금이 가장 싸다. PR #4 다음 spec(spec-01-05 모노레포 전환)에서 이 절의 대응표와 순서대로 옮긴다. 화면을 정적으로 배포할지는 따로 열어 둔다 (`docs/goals.md` §열린 질문).
 
 ### 대응표
 
@@ -163,9 +163,9 @@ flowchart TB
 | `UserRepository` | 사용자 찾기 | `PostgresUserRepository` | 현재 |
 | `JobRepository` | 작업 넣기, 가져가기, 끝내기, 실패 기록 | `PostgresJobRepository` | 현재 |
 | `BookRepository` | 책 만들기, 찾기(번호, 정규화한 키), 목록 | `PostgresBookRepository` | 현재 |
-| 모임, 내 해석, 출처, 시선 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-05 ~) |
-| `LlmClient` | 지시문과 결과 형식을 주고 결과를 받는다 | Claude Code CLI (이후 Claude API) | 예정 (spec-01-06) |
-| `PageFetcher` | 주소를 열어 본문 글자를 받는다 | HTTP 요청 + 본문 추출 | 예정 (spec-01-06) |
+| 모임, 내 해석, 출처, 시선 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-07 ~) |
+| `LlmClient` | 지시문과 결과 형식을 주고 결과를 받는다 | Claude Code CLI (이후 Claude API) | 예정 (spec-01-08) |
+| `PageFetcher` | 주소를 열어 본문 글자를 받는다 | HTTP 요청 + 본문 추출 | 예정 (spec-01-08) |
 
 ## 3. 흐름
 
@@ -216,7 +216,7 @@ sequenceDiagram
 
 등록되지 않은 종류의 작업과 처리기의 예외는 `failed` 와 이유로 남는다.
 
-### 자료 수집 (예정: spec-01-06)
+### 자료 수집 (예정: spec-01-08)
 
 ADR-004 §2. 찾기(LLM, 웹 검색만) → 가져오기(코드) → 읽기(LLM, 도구 없음) → 대조(코드, 문자열). 대조를 통과한 인용이 없는 항목은 내주지 않는다. 책 단위로 저장해 재사용한다 (ADR-002). 결과는 내 해석이 저장된 모임에만 내준다 (ADR-004 §7).
 
@@ -283,7 +283,7 @@ flowchart LR
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
-화면의 의존 규칙은 ADR-007 §7. 글쓰기와 글쓴이 표시의 공통 규칙은 ADR-007 §5 (spec-01-05, 07 에서 만든다).
+화면의 의존 규칙은 ADR-007 §7. 글쓰기와 글쓴이 표시의 공통 규칙은 ADR-007 §5 (spec-01-07, 07 에서 만든다).
 
 ## 7. 결정 목록
 
