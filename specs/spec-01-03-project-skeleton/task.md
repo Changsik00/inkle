@@ -167,17 +167,17 @@
 
 ### 🚦 Pre-Push Quality Gate
 
-- [ ] **전체 테스트 실행** → 모두 PASS
-- [ ] lint, 타입 검사 통과
-- [ ] spec.md 의 수동 검증 시나리오 4개 확인
+- [x] **전체 테스트 실행** → 모두 PASS
+- [x] lint, 타입 검사 통과
+- [x] spec.md 의 수동 검증 시나리오 4개 확인
 
 ### 📝 산출물 작성
 
-- [ ] **walkthrough.md 갱신** (계획 변경 2)
-- [ ] **pr_description.md 갱신**
-- [ ] Commit: `docs(spec-01-03): ship walkthrough and pr description`
+- [x] **walkthrough.md 갱신** (계획 변경 2)
+- [x] **pr_description.md 갱신**
+- [x] Commit: `docs(spec-01-03): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
-- [ ] `git push -u origin spec-01-03-project-skeleton`
-- [ ] PR #3 본문 갱신 (`gh pr edit`)
+- [x] `git push -u origin spec-01-03-project-skeleton`
+- [x] PR #3 본문 갱신 (`gh pr edit`)
