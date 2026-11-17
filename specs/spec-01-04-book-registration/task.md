@@ -57,17 +57,17 @@
 ## Task 4: 책 도메인과 저장소
 
 ### 4-1. 테스트 작성 (TDD Red)
-- [ ] `src/domain/book.test.ts`: 정규화(공백, 대소문자), 길이 규칙
-- [ ] `src/testing/contracts/book-repository.contract.ts`: 만들기, 찾기, 정규화 키로 찾기, 목록(최근 순), 같은 키 두 번 만들기 거부
-- [ ] `src/application/books.test.ts` (메모리): 등록, 같은 책이면 `exists`, 규칙 위반은 이유와 함께 거부, 목록, 없는 책
-- [ ] Postgres 계약 실행, 동시에 같은 책 등록 시 하나만 생김
-- [ ] 테스트 실행 → Fail 확인
+- [x] `src/domain/book.test.ts`: 정규화(공백, 대소문자), 길이 규칙
+- [x] `src/testing/contracts/book-repository.contract.ts`: 만들기, 찾기, 정규화 키로 찾기, 목록(최근 순), 같은 키 두 번 만들기 거부
+- [x] `src/application/books.test.ts` (메모리): 등록, 같은 책이면 `exists`, 규칙 위반은 이유와 함께 거부, 목록, 없는 책
+- [x] Postgres 계약 실행, 동시에 같은 책 등록 시 하나만 생김
+- [x] 테스트 실행 → Fail 확인
 
 ### 4-2. 구현 (TDD Green)
-- [ ] `src/domain/book.ts`, `src/application/ports.ts` (`BookRepository`), `src/application/books.ts`
-- [ ] `0002_books.sql`, `PostgresBookRepository`, `InMemoryBookRepository`, `container`
-- [ ] 테스트 실행 → Pass 확인
-- [ ] Commit: `feat(spec-01-04): add book domain, use cases and repositories`
+- [x] `src/domain/book.ts`, `src/application/ports.ts` (`BookRepository`), `src/application/books.ts`
+- [x] `0002_books.sql`, `PostgresBookRepository`, `InMemoryBookRepository`, `container`
+- [x] 테스트 실행 → Pass 확인
+- [x] Commit: `feat(spec-01-04): add book domain, use cases and repositories`
 
 ---
 

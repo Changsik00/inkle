@@ -1,5 +1,6 @@
 // 애플리케이션이 바깥 세계에 기대하는 것 (ADR-006 §2). 구현은 src/infrastructure/ 에 있다.
 // 인자와 결과는 도메인 타입이다. SQL, 행, 연결 객체는 여기에 나타나지 않는다.
+import type { Book, Genre } from "@/domain/book";
 import type { Job } from "@/domain/job";
 import type { User } from "@/domain/user";
 
@@ -19,4 +20,23 @@ export interface JobRepository {
   claimNext(): Promise<Job | null>;
   markDone(id: number): Promise<void>;
   markFailed(id: number, error: string): Promise<void>;
+}
+
+export type NewBook = { title: string; author: string; genre: Genre; key: string };
+
+/** 같은 키(같은 책)가 이미 있을 때 BookRepository.create 가 던진다. */
+export class DuplicateBookError extends Error {
+  constructor(readonly key: string) {
+    super("같은 책이 이미 있다");
+    this.name = "DuplicateBookError";
+  }
+}
+
+export interface BookRepository {
+  /** 같은 키가 있으면 DuplicateBookError 를 던진다. */
+  create(book: NewBook): Promise<Book>;
+  findById(id: string): Promise<Book | null>;
+  findByKey(key: string): Promise<Book | null>;
+  /** 최근에 등록한 책부터 */
+  list(): Promise<Book[]>;
 }
