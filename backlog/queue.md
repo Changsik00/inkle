@@ -8,7 +8,7 @@
 ## 📦 진행 중 Phase
 
 <!-- sdd:active:start -->
-- **phase-01** — 혼자 읽는 모임 — 1 spec — 다음: spec-01-01-manual-experiment
+- **phase-01** — 혼자 읽는 모임 — 2 spec — 다음: (spec 없음)
 <!-- sdd:active:end -->
 
 ## 📥 spec-x 대기
