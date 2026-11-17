@@ -23,7 +23,8 @@ services:
 
   web:
     build: .
-    command: ["pnpm", "dev", "--hostname", "0.0.0.0"]
+    # 뜰 때 마이그레이션을 적용한다 (이미 적용한 것은 건너뛴다).
+    command: ["sh", "-c", "pnpm db:migrate && pnpm dev --hostname 0.0.0.0"]
     environment:
       DATABASE_URL: postgres://inkle@db:5432/inkle
     ports:

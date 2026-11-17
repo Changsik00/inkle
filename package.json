@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:migrate": "tsx --tsconfig tsconfig.json src/db/migrate-cli.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
