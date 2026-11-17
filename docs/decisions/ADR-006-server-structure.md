@@ -22,7 +22,7 @@ status: accepted
 ```mermaid
 flowchart TB
     subgraph entry[진입점]
-        A[src/app/api: HTTP]
+        A[src/backend/server: HTTP]
         W[src/backend/worker: 작업 프로세스]
         C[src/backend/cli: 명령]
     end
@@ -101,7 +101,7 @@ export async function runNextJob(jobs: JobRepository, handlers: JobHandlers): Pr
 
 ## 📌 Status
 
-경로 고침 (2026-11-17): 계층은 모두 `src/backend/` 아래로 옮겼다 (ADR-008). 진입점 가운데 `src/app/api/` 만 `src/app/` 에 남는다.
+경로 고침 (2026-11-17): 계층은 모두 `src/backend/` 아래로 옮겼다 (ADR-008). API 의 입구도 별도 서버 `src/backend/server/` 로 옮겼다 (ADR-009).
 
 
 Accepted (2026-11-17, spec-01-03 계획 변경 2, 사용자 요청). 첫 적용: 상태 확인, 사용자, 작업 대기열.

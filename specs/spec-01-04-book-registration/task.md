@@ -187,10 +187,10 @@
 
 ## Task 12: 아키텍처 문서
 
-- [ ] `docs/decisions/ADR-009-separate-api-server.md`, ADR-001·007·008 고침
-- [ ] `docs/architecture.md`: 현재 구조(실행 단위, 폴더, 요청 흐름)와 모노레포로 옮길 때의 대응표
-- [ ] `README.md`
-- [ ] Commit: `docs(spec-01-04): document current structure and monorepo migration path`
+- [x] `docs/decisions/ADR-009-separate-api-server.md`, ADR-001·007·008 고침
+- [x] `docs/architecture.md`: 현재 구조(실행 단위, 폴더, 요청 흐름)와 모노레포로 옮길 때의 대응표
+- [x] `README.md`
+- [x] Commit: `docs(spec-01-04): document current structure and monorepo migration path`
 
 ---
 

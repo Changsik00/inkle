@@ -18,11 +18,10 @@ status: accepted
 
 ```
 src/
-  app/        Next.js 라우트. 얕은 입구만 둔다
-              - 페이지·레이아웃 → frontend 를 배치
-              - api/ 의 route 파일 → backend 를 부름
+  app/        Next.js 화면 라우트. 페이지·레이아웃은 frontend 를 배치하는 틀
+              (API 는 별도 서버 — 처음에는 api/ route 파일이 있었다. ADR-009)
   backend/    domain, application, infrastructure (ADR-006)
-              rpc (계약 구현), container.ts (조립), worker, cli, testing
+              rpc (계약 구현), server (API 서버), container.ts (조립), worker, cli, testing
   frontend/   features, ui (shadcn/ui), api-client (HTTP 클라이언트), providers.tsx, testing
   shared/     contract (HTTP 계약), product.ts
 ```
@@ -32,8 +31,7 @@ src/
 | `src/shared/` | 외부 라이브러리 (`zod`, `@orpc/contract`) | backend, frontend, app, React, Next.js, DB |
 | `src/frontend/` | shared, React, Next.js | backend, DB |
 | `src/backend/` | shared, DB | frontend, React, Next.js |
-| `src/app/` (api 제외) | frontend, shared | backend, DB |
-| `src/app/api/` | backend (조립과 rpc), shared | - |
+| `src/app/` | frontend, shared | backend, DB |
 
 - backend 안의 계층 규칙(ADR-006 §1)은 그대로다.
 - 테스트 도우미도 영역을 따른다: 메모리 저장소와 저장소 계약은 `src/backend/testing/`, MSW 와 브라우저 렌더링 도우미는 `src/frontend/testing/`.
@@ -54,7 +52,7 @@ src/
 
 **지금의 상태**
 
-- 배포 단위는 Next.js 서버 하나다. 화면도 이 서버가 낸다.
+- 배포 단위는 화면(Next.js)과 API 서버 둘이다 (ADR-009 이후). 화면은 Next.js 서버가 낸다.
 - 다만 화면은 이미 정적에 가깝다. 페이지는 자료를 읽지 않는 틀이라 빌드 때 미리 그려지고(빌드 결과의 `○`), 자료는 브라우저가 HTTP API 로 가져온다 (ADR-001 §4, ADR-007 §1). 서버에서 자료를 넣어 그리는(SSR) 화면은 없다.
 - 그래서 화면과 서버가 묶여 있는 곳은 렌더링이 아니라 배포다: 같은 서버, 같은 주소의 `/api`, 서버가 처리하는 동적 주소(`/books/{bookId}`).
 
@@ -63,11 +61,11 @@ src/
 - 화면을 CDN 에 정적 파일로 두고, 서버는 API 만 운영한다. 비용, 확장, 배포를 따로 다룬다.
 - 모바일 클라이언트가 같은 API 를 쓴다 (ADR-001 의 모바일 가정).
 
-**나눌 때 할 일**
+**나눌 때 할 일** (자세한 대응표와 순서는 `docs/architecture.md` §모노레포로 옮길 때)
 
 | 할 일 | 내용 |
 |---|---|
-| 패키지 | `apps/web` (화면), `apps/api` (oRPC 의 `OpenAPIHandler` 를 Node 서버에), `packages/contract` (지금의 shared), `packages/backend` |
+| 패키지 | apps/web (화면), apps/api (지금의 `src/backend/server/`, ADR-009 로 이미 따로 뜬다), packages/contract (지금의 shared), packages/backend |
 | 동적 주소 | 정적 내보내기에서는 주소마다 미리 그릴 값이 필요하다. 책 정보처럼 값이 정해지지 않은 주소는 클라이언트 라우팅이나 SPA 폴백으로 바꾼다 |
 | API 주소 | 화면과 API 의 주소가 달라지면 CORS 를 열고, HTTP 클라이언트의 기본 주소(`origin` 옵션, 이미 있음)를 설정한다 |
 | 인증 | 쿠키를 쓴다면 도메인과 SameSite 설정을 정한다 (인증은 아직 없다) |
@@ -88,6 +86,9 @@ src/
 - **`src/server`, `src/client` 이름**: 짧다 — 비채택 이유: Next.js 의 "서버 컴포넌트"와 이름이 겹친다. 페이지(서버 컴포넌트)는 frontend 에 속한다.
 
 ## 📌 Status
+
+고침 (2026-11-17): src/app/api 는 없어졌다. API 는 `src/backend/server/` 의 별도 서버다 (ADR-009).
+
 
 Accepted (2026-11-17, spec-01-04 계획 변경, 사용자 요청). ADR-006, ADR-007 의 경로는 이 배치로 고쳤다.
 

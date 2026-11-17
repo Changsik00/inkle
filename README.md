@@ -12,11 +12,12 @@
 
 | 구성 요소 | 어디서 뜨나 | 하는 일 |
 |---|---|---|
-| 웹 앱 (Next.js) | docker compose | 화면과 HTTP API (`/api/…`, 엔드포인트 문서는 `/api/openapi.json`) |
+| 화면 (Next.js) | docker compose (`web`) | 화면. `/api/…` 요청은 API 서버로 넘긴다 |
+| API 서버 | docker compose (`api`) | HTTP API (엔드포인트 문서는 `/api/openapi.json`). 뜰 때 마이그레이션 적용 |
 | DB (Postgres) | docker compose | 모든 자료와 작업 대기열 |
 | 작업 프로세스 | 호스트 | 대기열의 작업을 처리한다. LLM 은 이 기기에 로그인된 Claude Code CLI 로 부른다 |
 
-작업 프로세스를 호스트에서 띄우는 이유는 `docs/decisions/ADR-004-llm-grounding.md` §가정의 확인 결과에 있다.
+실행 단위와 폴더 구조, 나중에 모노레포로 옮길 때의 대응표는 `docs/architecture.md` §1, §2 에 있다. 작업 프로세스를 호스트에서 띄우는 이유는 `docs/decisions/ADR-004-llm-grounding.md` §가정의 확인 결과에 있다.
 
 ## 준비물
 
@@ -31,12 +32,12 @@ API 키는 쓰지 않는다.
 
 ```bash
 pnpm install
-docker compose up -d --wait     # 웹 앱과 DB. 웹 앱이 뜰 때 마이그레이션을 적용한다
+docker compose up -d --wait     # 화면(web), API 서버(api), DB. API 서버가 뜰 때 마이그레이션을 적용한다
 pnpm worker                     # 작업 프로세스 (호스트, 다른 터미널에서)
 ```
 
 - 화면: http://localhost:3000 (책 목록), `/books/new` (책 등록), `/books/{bookId}` (책 정보)
-- 상태 확인: http://localhost:3000/api/health
+- 상태 확인: http://localhost:3000/api/health (API 서버 직접: http://localhost:4000/api/health)
 - 엔드포인트 문서 (OpenAPI): http://localhost:3000/api/openapi.json
 - DB: `127.0.0.1:54329` (이 기기 안쪽에만 열린다. 사용자 `inkle`, 비밀번호 없음)
 
@@ -66,7 +67,7 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 
 | 폴더 | 내용 |
 |---|---|
-| `src/app/` | Next.js 라우트. 페이지는 frontend 를 배치하는 틀, `api/` 의 route 파일은 backend 를 부르는 입구. `globals.css`(테마 토큰) |
+| `src/app/` | Next.js 화면 라우트. 페이지는 frontend 를 배치하는 틀. `globals.css`(테마 토큰) |
 | `src/frontend/features/` | 기능별 화면 컴포넌트와 양식 (`books/`, `system/`) |
 | `src/frontend/ui/` | shadcn/ui 공통 부품 (Radix UI) |
 | `src/frontend/api-client/` | HTTP 클라이언트 (오류 정규화, 시간 제한, TanStack Query 연동) |
@@ -76,6 +77,7 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 | `src/backend/application/` | 유스케이스 함수와 포트(`ports.ts`) |
 | `src/backend/infrastructure/` | Postgres 저장소, DB 연결과 마이그레이션 |
 | `src/backend/rpc/` | 계약 구현. 유스케이스를 부른다 |
+| `src/backend/server/` | API 서버 (`pnpm api`) |
 | `src/backend/container.ts` | 조립: 실제 구현을 만들어 묶는 유일한 곳 |
 | `src/backend/worker/`, `src/backend/cli/` | 작업 프로세스, `db:migrate`, `job:enqueue` |
 | `src/backend/testing/` | 메모리 저장소, 저장소 계약 테스트, 테스트 DB 도우미 |
