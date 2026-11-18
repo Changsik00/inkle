@@ -183,7 +183,7 @@
   - ADR-002, ADR-004, ADR-005
   - `docs/experiments/01-manual-flow/rehearsal.md`, `book-1.md`
 - **연관 모듈**: LLM 연동, 작업 프로세스, 책 도메인
-- **결과** (2026-11-18): 수집(`collections`)과 출처·배경 항목·시선·인용 (마이그레이션 0004). 포트 `LlmClient`(`ClaudeCodeCli`), `PageFetcher`(`HttpPageFetcher`), `CollectionRepository`. 지시문 `find.v1`·`read.v1`·`prevalence.v1`. 모임을 시작하면 수집을 대기열에 넣고(`collect-book`), 확인은 `pnpm collect`, `pnpm collect:report`. 실제 실행 결과는 `docs/experiments/03-collection/README.md`.
+- **결과** (2026-11-18): 수집(`collections`)과 출처·배경 항목·시선·인용 (마이그레이션 0004). 포트 `LlmClient`(`ClaudeCodeCli`), `PageFetcher`(`HttpPageFetcher`), `CollectionRepository`. 지시문 `find.v2`(v1 은 시선이 작가 쪽으로 쏠려 고침)·`read.v1`·`prevalence.v1`. 모임을 시작하면 수집을 대기열에 넣고(`collect-book`), 확인은 `pnpm collect`, `pnpm collect:report`. 실제 실행 결과는 `docs/experiments/03-collection/README.md`.
 
 ### spec-01-09 — 배경과 작가의 의도
 

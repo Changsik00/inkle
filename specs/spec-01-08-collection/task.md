@@ -70,11 +70,12 @@
 
 ## Task 6: 실제 수집과 기록 (구독 사용량 사용)
 
-- [ ] 『채식주의자』, 『노인과 바다』 를 등록하고 실제로 수집
-- [ ] 보고서로 통과율·시간·비용 확인, 보여 줄 수 있는 항목의 출처 다섯 개 이상 직접 열어 확인
-- [ ] 문제가 있으면 지시문을 고쳐 판을 올리고 다시 돌린다 (판 기록)
-- [ ] `docs/experiments/03-collection/README.md`, ADR-004 에 측정 결과
-- [ ] Commit: `docs(spec-01-08): record real collection runs for two books`
+- [x] 『채식주의자』, 『노인과 바다』 를 등록하고 실제로 수집
+- [x] 보고서로 통과율·시간·비용 확인, 보여 줄 수 있는 항목의 출처 다섯 개 이상 직접 열어 확인
+- [x] 문제가 있으면 지시문을 고쳐 판을 올리고 다시 돌린다 (판 기록)
+  - 메모: 시선이 작가 본인 쪽으로 쏠려 `find.v2` 로 올렸다. 기본 모델은 구독 사용량이 바닥나 `claude-sonnet-5-5` 로 돌렸다. CLI 격리와 `$schema` 수정은 따로 `fix` 커밋 (b879f32)
+- [x] `docs/experiments/03-collection/README.md`, ADR-004 에 측정 결과
+- [x] Commit: `docs(spec-01-08): record real collection runs for two books`
 
 ---
 

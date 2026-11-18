@@ -218,7 +218,7 @@ sequenceDiagram
     participant F as PageFetcher
     participant R as CollectionRepository
     W->>U: collectBook(deps, collectionId)
-    U->>L: 찾기 (find.v1, 웹 검색만) — 후보 주소 최대 10
+    U->>L: 찾기 (find.v2, 웹 검색만) — 후보 주소 최대 10
     loop 출처마다 (정규화한 주소, 중복 제거, 최대 8)
         U->>F: fetch(url)
         F-->>U: 페이지 전체 글자, 본문 글자 (또는 열지 못함)
