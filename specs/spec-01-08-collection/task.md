@@ -80,8 +80,8 @@
 
 ## Task 7: 문서
 
-- [ ] `docs/architecture.md` (포트, 데이터, 흐름), `README.md` (명령), `backlog/phase-01.md`
-- [ ] Commit: `docs(spec-01-08): document collection`
+- [x] `docs/architecture.md` (포트, 데이터, 흐름), `README.md` (명령), `backlog/phase-01.md`
+- [x] Commit: `docs(spec-01-08): document collection`
 
 ---
 

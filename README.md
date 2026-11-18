@@ -28,7 +28,7 @@ pnpm 워크스페이스 모노레포다 (ADR-010). 실행 단위, 폴더 구조,
 - Docker (Compose 포함)
 - Node.js 22, pnpm 9
 - Chromium (화면 테스트용): `pnpm exec playwright install chromium`
-- Claude Code CLI, 로그인된 상태 (`claude` 를 한 번 실행해 로그인한다). LLM 을 쓰는 작업이 생기면 필요하다
+- Claude Code CLI, 로그인된 상태 (`claude` 를 한 번 실행해 로그인한다). 자료 수집에 쓴다. 호출은 구독 사용량을 쓴다
 
 API 키는 쓰지 않는다.
 
@@ -54,6 +54,8 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 |---|---|
 | `pnpm db:migrate` | 아직 적용하지 않은 마이그레이션을 적용한다 (`packages/backend/src/infrastructure/db/migrations/`) |
 | `pnpm job:enqueue noop` | 시험용 작업을 하나 넣는다. 작업 프로세스가 처리하면 상태가 `done` 이 된다 |
+| `pnpm collect <bookId> [--force]` | 책의 자료 수집을 대기열에 넣는다. 모임을 시작해도 자동으로 들어간다. 끝났거나 진행 중인 수집이 있으면 `--force` 로만 다시 넣는다. 처리는 `pnpm worker` 가 한다 (구독 사용량 사용) |
+| `pnpm collect:report <bookId> [--quotes]` | 책의 최근 수집 결과: 열린 출처, 인용 대조 통과율, 보여 줄 수 있는 항목 수, 비용 추정치. `--quotes` 는 인용 원문까지 |
 | `pnpm lint` | lint |
 | `pnpm typecheck` | 타입 검사 |
 | `pnpm test:unit` | DB 없이 도는 테스트만 (유스케이스, 메모리 저장소, API 처리, 의존 규칙, 화면 컴포넌트) |
@@ -75,10 +77,10 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 | `apps/web/src/ui/` | shadcn/ui 공통 부품 (Radix UI) |
 | `apps/web/src/api-client/` | HTTP 클라이언트 (오류 정규화, 시간 제한, TanStack Query 연동) |
 | `apps/web/src/testing/` | 브라우저 테스트 도우미 (MSW, 렌더링) |
-| `apps/api/src/` | API 서버 진입점, `db:migrate`, `job:enqueue` |
+| `apps/api/src/` | API 서버 진입점, `db:migrate`, `job:enqueue`, `collect`, `collect:report` |
 | `apps/worker/src/` | 작업 프로세스 진입점 |
 | `packages/contract/src/` | HTTP 계약: 엔드포인트, 요청·응답, 오류의 유일한 원본 (oRPC) |
-| `packages/backend/src/` | `domain/`, `application/`(유스케이스, 포트), `infrastructure/`(Postgres, 마이그레이션), `rpc/`(계약 구현), `server/`(API 서버 생성), `worker/`(작업 처리기), `container.ts`(조립), `testing/` |
+| `packages/backend/src/` | `domain/`, `application/`(유스케이스, 포트), `infrastructure/`(Postgres, 마이그레이션, Claude Code CLI, 페이지 가져오기), `rpc/`(계약 구현), `server/`(API 서버 생성), `worker/`(작업 처리기), `container.ts`(조립), `testing/` |
 | `e2e/` | Playwright 흐름 테스트 |
 | `tests/` | 저장소 수준 테스트 (패키지 의존성 규칙) |
 | `scripts/spike/` | 일회성 확인 스크립트 |
