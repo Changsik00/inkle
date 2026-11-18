@@ -10,7 +10,7 @@ import {
 } from "./collection";
 import type { LlmCall } from "./ports";
 import { STALE_AFTER_MS } from "../domain/collection";
-import * as find from "./prompts/find.v1";
+import * as find from "./prompts/find.v2";
 import * as read from "./prompts/read.v1";
 import { FakeLlm, type FakeResponder } from "../testing/fakes/llm";
 import { FakePageFetcher } from "../testing/fakes/page-fetcher";
@@ -181,7 +181,7 @@ describe("collectBook", () => {
       costUsd: 0.75,
       candidateCount: 3,
       models: ["model-x"],
-      promptVersions: { find: "find.v1", read: "read.v1" },
+      promptVersions: { find: find.version, read: read.version },
     });
   });
 

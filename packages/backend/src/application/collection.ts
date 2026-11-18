@@ -12,7 +12,7 @@ import type {
   NewQuote,
   PageFetcher,
 } from "./ports";
-import * as find from "./prompts/find.v1";
+import * as find from "./prompts/find.v2";
 import * as prevalence from "./prompts/prevalence.v1";
 import * as read from "./prompts/read.v1";
 import { isBookId, type Book } from "../domain/book";
