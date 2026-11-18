@@ -32,14 +32,14 @@
 ## Task 3: 수집 절차 (포트, 유스케이스, 지시문)
 
 ### 3-1. 테스트 작성 (TDD Red)
-- [ ] 저장소 계약: 수집 기록, 출처, 항목과 인용, 최근 수집, 보여 줄 수 있는 항목만 고르기
-- [ ] `application/collection.test.ts` (메모리 저장소, 대역 LLM·PageFetcher): 절차 전체, 열지 못한 출처, 대조 실패, 형식 오류 다시 시도, 한 출처의 실패, 비용 합계, 모델·지시문 판 기록, 흔한 읽기
-- [ ] `application/sessions.test.ts`: 모임 시작 시 수집이 한 번만 대기열에
-- [ ] 테스트 실행 → Fail 확인
+- [x] 저장소 계약: 수집 기록, 출처, 항목과 인용, 최근 수집 (보여 줄 수 있는지는 도메인 `isShowable` 로 고른다)
+- [x] `application/collection.test.ts` (메모리 저장소, 대역 LLM·PageFetcher): 절차 전체, 열지 못한 출처, 대조 실패, 형식 오류 다시 시도, 한 출처의 실패, 비용 합계, 모델·지시문 판 기록, 흔한 읽기, 대기열 넣기
+- [-] `application/sessions.test.ts`: 모임 시작 시 수집 → Task 5 로 옮김 (조립에 Postgres 저장소가 있어야 해서)
+- [x] 테스트 실행 → Fail 확인
 
 ### 3-2. 구현 (TDD Green)
-- [ ] 포트, `application/collection.ts`, 지시문 파일과 결과 스키마, 메모리 저장소, 대역
-- [ ] Commit: `feat(spec-01-08): add collection pipeline with llm and page fetcher ports`
+- [x] 포트, `application/collection.ts`, 지시문과 결과 스키마(`application/prompts/*.v1.ts`, 도메인 밖 파일 읽기를 피하려고 `.md` 대신 TS), 메모리 저장소, 대역
+- [x] Commit: `feat(spec-01-08): add collection pipeline with llm and page fetcher ports`
 
 ---
 
@@ -59,7 +59,7 @@
 
 ## Task 5: 연결 (작업 처리기, 명령)
 
-- [ ] 작업 처리기 `collect-book`, `startSession` 의 대기열 넣기 연결
+- [ ] 작업 처리기 `collect-book`, `startSession` 의 대기열 넣기 연결 (`sessions.test.ts`: 수집이 한 번만 대기열에)
 - [ ] `pnpm collect`, `pnpm collect:report`
 - [ ] 처리기 테스트 (메모리, 대역)
 - [ ] lint, 타입 검사, 전체 테스트, E2E

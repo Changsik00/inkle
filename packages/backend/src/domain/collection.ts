@@ -16,6 +16,8 @@ export type Collection = {
   promptVersions: Record<string, string>;
   /** CLI 가 보고한 비용 추정치의 합 (달러) */
   costUsd: number;
+  /** 찾기 단계가 낸 후보 수 */
+  candidateCount: number;
   createdAt: Date;
   startedAt: Date | null;
   finishedAt: Date | null;
@@ -55,6 +57,8 @@ export type Source = {
   pageText: string | null;
   /** 본문만 뽑은 글자. 읽기 단계에 넘긴다 */
   articleText: string | null;
+  /** 읽기 단계가 실패했으면 그 이유. 이 출처에서는 항목이 없다 */
+  readError: string | null;
   fetchedAt: Date;
 };
 
