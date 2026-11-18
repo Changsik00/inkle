@@ -19,13 +19,13 @@
 ## Task 2: 도메인 (대조 규칙, 수집 규칙)
 
 ### 2-1. 테스트 작성 (TDD Red)
-- [ ] `quote-match.test.ts`: 공백·줄바꿈, 따옴표 모양, 줄임표 차이는 통과 / 맞춤법을 고친 문장·줄인 문장·다른 글의 문장은 실패 / 너무 짧은 인용(10자 미만)은 실패
-- [ ] `collection.test.ts`: 보여 줄 수 있음(통과 인용 ≥1), 흔한 읽기(통과 시선 <3 이면 모두 알 수 없음), 상태 전이
-- [ ] 테스트 실행 → Fail 확인
+- [x] `quote-match.test.ts`: 공백·줄바꿈, 따옴표 모양, 줄임표 차이는 통과 / 맞춤법을 고친 문장·줄인 문장·다른 글의 문장은 실패 / 너무 짧은 인용(10자 미만)은 실패
+- [x] `collection.test.ts`: 보여 줄 수 있음(통과 인용 ≥1), 흔한 읽기(통과 시선 <3 이면 모두 알 수 없음), 상태 전이
+- [x] 테스트 실행 → Fail 확인
 
 ### 2-2. 구현 (TDD Green)
-- [ ] `domain/quote-match.ts`, `domain/collection.ts`
-- [ ] Commit: `feat(spec-01-08): add quote matching and collection rules`
+- [x] `domain/quote-match.ts`, `domain/collection.ts`
+- [x] Commit: `feat(spec-01-08): add quote matching and collection rules`
 
 ---
 
