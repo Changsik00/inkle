@@ -65,7 +65,9 @@ type Ledger = { costUsd: number; models: Set<string> };
 type Asked<T> = { ok: true; value: T; model: string } | { ok: false; error: string };
 
 async function ask<T>(llm: LlmClient, ledger: Ledger, prompt: string, schema: z.ZodType<T>, tools: LlmTools): Promise<Asked<T>> {
-  const jsonSchema = z.toJSONSchema(schema) as Record<string, unknown>;
+  // CLI 의 검사기는 zod 가 붙이는 $schema(2020-12) 를 알지 못해 거부한다. 형식 자체만 넘긴다.
+  const { $schema: _dialect, ...jsonSchema } = z.toJSONSchema(schema) as Record<string, unknown>;
+  void _dialect;
   let error = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     try {

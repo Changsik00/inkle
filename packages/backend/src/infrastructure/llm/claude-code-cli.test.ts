@@ -60,6 +60,15 @@ describe("ClaudeCodeCli", () => {
     expect(r.argv).not.toContain("--allowedTools");
   });
 
+  it("기기의 MCP 서버와 사용자 설정을 싣지 않는다 (호출마다 Serena 가 뜨던 문제)", async () => {
+    const cli = new ClaudeCodeCli({ command: await fakeClaude(ok()) });
+    await cli.run({ ...call, tools: "none" });
+    const { argv } = await recorded();
+    expect(argv).toContain("--strict-mcp-config");
+    expect(argv).not.toContain("--mcp-config");
+    expect(argv[argv.indexOf("--setting-sources") + 1]).toBe("");
+  });
+
   it("웹 검색은 WebSearch 도구 하나만 켠다", async () => {
     const cli = new ClaudeCodeCli({ command: await fakeClaude(ok()) });
     await cli.run({ ...call, tools: "web-search" });

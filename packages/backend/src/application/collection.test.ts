@@ -192,6 +192,8 @@ describe("collectBook", () => {
     expect(findCall.tools).toBe("web-search");
     expect(findCall.prompt).toContain("『채식주의자』, 한강");
     expect(findCall.jsonSchema).toMatchObject({ type: "object" });
+    // CLI 가 2020-12 의 $schema 를 거부한다 (실제 실행에서 발견)
+    expect(findCall.jsonSchema).not.toHaveProperty("$schema");
     expect(readCall.tools).toBe("none");
     expect(readCall.prompt).toContain(ARTICLE_A);
   });

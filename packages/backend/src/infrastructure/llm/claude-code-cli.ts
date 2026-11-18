@@ -1,5 +1,7 @@
 // LlmClient 를 Claude Code CLI 로 구현한다 (ADR-004 §1). 기기에 로그인된 CLI 를 비대화로 실행한다.
 // - 프로젝트 설정(CLAUDE.md, 훅)을 읽지 않도록 빈 임시 디렉토리에서 실행한다.
+// - 기기의 MCP 서버(예: Serena)와 사용자 설정을 싣지 않는다. 실으면 호출마다 MCP 서버가 뜨고
+//   대시보드 창을 연다 (spec-01-08 실제 실행에서 발견). 수집에는 웹 검색 말고 다른 도구가 필요 없다.
 // - 표준 입력을 닫는다. 주지 않으면 CLI 가 3초를 기다린다 (spec-01-03 가정 1).
 // - ANTHROPIC_API_KEY 는 넘기지 않는다. 있으면 구독 대신 API 로 청구된다.
 import { spawn } from "node:child_process";
@@ -53,6 +55,9 @@ export class ClaudeCodeCli implements LlmClient {
       "--tools",
       call.tools === "web-search" ? "WebSearch" : "",
       ...(call.tools === "web-search" ? ["--allowedTools", "WebSearch"] : []),
+      "--strict-mcp-config",
+      "--setting-sources",
+      "",
       "--max-turns",
       String(MAX_TURNS[call.tools]),
       ...(this.options.model ? ["--model", this.options.model] : []),
