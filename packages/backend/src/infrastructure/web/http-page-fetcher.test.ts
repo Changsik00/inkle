@@ -26,6 +26,12 @@ beforeAll(async () => {
       case "/redirect":
         res.writeHead(302, { location: "/article" }).end();
         return;
+      case "/redirect-file":
+        res.writeHead(302, { location: "file:///etc/passwd" }).end();
+        return;
+      case "/loop":
+        res.writeHead(302, { location: "/loop" }).end();
+        return;
       case "/missing":
         res.writeHead(404, { "content-type": "text/html" }).end("<p>없음</p>");
         return;
@@ -112,6 +118,11 @@ describe("HttpPageFetcher", () => {
     expect((await fetcher.fetch("file:///etc/passwd")).status).toBe("unreachable");
     expect((await fetcher.fetch("아무 말")).status).toBe("unreachable");
     expect((await fetcher.fetch("http://127.0.0.1:1/")).status).toBe("unreachable");
+  });
+
+  it("넘겨주기도 한 번씩 다시 검사한다: http(s) 가 아닌 곳으로 넘기면 열지 못함, 반복은 끊는다", async () => {
+    expect(await fetcher.fetch(`${base}/redirect-file`)).toMatchObject({ status: "unreachable", reason: expect.stringMatching(/http\(s\) 가 아님/) });
+    expect(await fetcher.fetch(`${base}/loop`)).toMatchObject({ status: "unreachable", reason: expect.stringMatching(/너무 많음/) });
   });
 
   it("기본값은 내부 주소(localhost, 사설 IP)를 열지 않는다", async () => {
