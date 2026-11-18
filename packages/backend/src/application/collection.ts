@@ -42,15 +42,15 @@ export type CollectDeps = {
   pages: PageFetcher;
 };
 
-// ── 대기열에 넣기 (ADR-004 §7)
+// ── 대기열에 넣기 (ADR-004 §7). 오래 멈춘 대기·진행 중 수집은 막지 않는다 (작업이 버려진 경우)
 
 export async function enqueueCollection(
   deps: { collections: CollectionRepository; jobs: JobRepository },
   bookId: string,
-  options: { force?: boolean } = {},
+  options: { force?: boolean; now?: Date } = {},
 ): Promise<{ status: "queued"; collectionId: string; jobId: number } | { status: "exists"; collection: Collection }> {
   const latest = await deps.collections.latestForBook(bookId);
-  if (latest && blocksNewCollection(latest.status) && !options.force) return { status: "exists", collection: latest };
+  if (latest && blocksNewCollection(latest, options.now ?? new Date()) && !options.force) return { status: "exists", collection: latest };
   const collection = await deps.collections.create(bookId);
   const jobId = await deps.jobs.enqueue(COLLECT_BOOK_JOB, { collectionId: collection.id });
   return { status: "queued", collectionId: collection.id, jobId };

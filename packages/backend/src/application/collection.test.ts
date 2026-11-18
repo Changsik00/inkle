@@ -9,6 +9,7 @@ import {
   type CollectDeps,
 } from "./collection";
 import type { LlmCall } from "./ports";
+import { STALE_AFTER_MS } from "../domain/collection";
 import * as find from "./prompts/find.v1";
 import * as read from "./prompts/read.v1";
 import { FakeLlm, type FakeResponder } from "../testing/fakes/llm";
@@ -122,6 +123,12 @@ describe("enqueueCollection", () => {
     expect((await enqueueCollection({ collections, jobs }, bookId)).status).toBe("exists");
     expect(await jobs.claimNext()).not.toBeNull();
     expect(await jobs.claimNext()).toBeNull();
+  });
+
+  it("오래 멈춘 대기 수집은 막지 않는다 (작업 프로세스가 버린 경우)", async () => {
+    await enqueueCollection({ collections, jobs }, bookId);
+    const later = new Date(Date.now() + STALE_AFTER_MS + 1000);
+    expect((await enqueueCollection({ collections, jobs }, bookId, { now: later })).status).toBe("queued");
   });
 
   it("실패한 수집만 있으면 다시 넣는다. force 면 끝난 수집이 있어도 넣는다", async () => {

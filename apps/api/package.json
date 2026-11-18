@@ -9,7 +9,9 @@
     "start": "tsx src/main.ts",
     "db:migrate": "tsx src/cli/migrate.ts",
     "job:enqueue": "tsx src/cli/enqueue-job.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "collect": "tsx src/cli/collect.ts",
+    "collect:report": "tsx src/cli/collect-report.ts"
   },
   "dependencies": {
     "@inkle/backend": "workspace:*"

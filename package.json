@@ -10,6 +10,8 @@
     "worker": "pnpm --filter @inkle/worker start",
     "db:migrate": "pnpm --filter @inkle/api db:migrate",
     "job:enqueue": "pnpm --filter @inkle/api job:enqueue",
+    "collect": "pnpm --filter @inkle/api collect",
+    "collect:report": "pnpm --filter @inkle/api collect:report",
     "lint": "eslint . && pnpm design:lint",
     "typecheck": "pnpm -r typecheck && tsc --noEmit -p tsconfig.json",
     "test": "vitest run",

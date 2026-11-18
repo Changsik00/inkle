@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   MIN_PERSPECTIVES_FOR_PREVALENCE,
+  STALE_AFTER_MS,
   applyPrevalence,
+  blocksNewCollection,
   canTransition,
   isShowable,
 } from "./collection";
@@ -49,5 +51,22 @@ describe("canTransition", () => {
     expect(canTransition("queued", "done")).toBe(false);
     expect(canTransition("done", "running")).toBe(false);
     expect(canTransition("failed", "running")).toBe(false);
+  });
+});
+
+describe("blocksNewCollection", () => {
+  const now = new Date("2026-11-18T10:00:00Z");
+  const ago = (ms: number) => new Date(now.getTime() - ms);
+
+  it("끝난 수집은 막고 실패한 수집은 막지 않는다", () => {
+    expect(blocksNewCollection({ status: "done", createdAt: ago(STALE_AFTER_MS * 10), startedAt: null }, now)).toBe(true);
+    expect(blocksNewCollection({ status: "failed", createdAt: ago(1000), startedAt: null }, now)).toBe(false);
+  });
+
+  it("대기·진행 중은 멈춘 지 오래되지 않았을 때만 막는다", () => {
+    expect(blocksNewCollection({ status: "queued", createdAt: ago(1000), startedAt: null }, now)).toBe(true);
+    expect(blocksNewCollection({ status: "queued", createdAt: ago(STALE_AFTER_MS + 1), startedAt: null }, now)).toBe(false);
+    expect(blocksNewCollection({ status: "running", createdAt: ago(STALE_AFTER_MS * 2), startedAt: ago(1000) }, now)).toBe(true);
+    expect(blocksNewCollection({ status: "running", createdAt: ago(STALE_AFTER_MS * 2), startedAt: ago(STALE_AFTER_MS + 1) }, now)).toBe(false);
   });
 });

@@ -59,11 +59,12 @@
 
 ## Task 5: 연결 (작업 처리기, 명령)
 
-- [ ] 작업 처리기 `collect-book`, `startSession` 의 대기열 넣기 연결 (`sessions.test.ts`: 수집이 한 번만 대기열에)
-- [ ] `pnpm collect`, `pnpm collect:report`
-- [ ] 처리기 테스트 (메모리, 대역)
-- [ ] lint, 타입 검사, 전체 테스트, E2E
-- [ ] Commit: `feat(spec-01-08): wire collection worker handler and commands`
+- [x] 작업 처리기 `collect-book`, `startSession` 의 대기열 넣기 연결 (`sessions.test.ts`: 수집이 한 번만 대기열에)
+- [x] 오래 멈춘 대기·진행 중 수집(2시간)은 다시 넣기를 막지 않는다 (작업이 버려진 경우를 E2E 중에 발견)
+- [x] `pnpm collect`, `pnpm collect:report`
+- [x] 처리기 테스트 (메모리, 대역)
+- [x] lint, 타입 검사, 전체 테스트, E2E
+- [x] Commit: `feat(spec-01-08): wire collection worker handler and commands`
 
 ---
 

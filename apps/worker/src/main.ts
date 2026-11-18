@@ -1,13 +1,14 @@
 // 작업 프로세스의 진입점 (`pnpm worker`). 호스트에서 실행한다 (ADR-004 §가정의 확인 결과).
 import { setTimeout as sleep } from "node:timers/promises";
 import { runNextJob } from "@inkle/backend/application/jobs";
-import { container } from "@inkle/backend/container";
-import { handlers } from "@inkle/backend/worker";
+import { collector, container } from "@inkle/backend/container";
+import { createHandlers } from "@inkle/backend/worker";
 
 const IDLE_WAIT_MS = 1000;
 
 async function main() {
   const c = container();
+  const handlers = createHandlers(collector(c));
   let stopping = false;
   const stop = () => {
     stopping = true;

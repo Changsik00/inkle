@@ -9,6 +9,8 @@ import {
   type SessionDeps,
 } from "./sessions";
 import { InMemoryBookRepository } from "../testing/in-memory/in-memory-book-repository";
+import { InMemoryCollectionRepository } from "../testing/in-memory/in-memory-collection-repository";
+import { InMemoryJobRepository } from "../testing/in-memory/in-memory-job-repository";
 import { InMemoryInterpretationRepository, InMemorySessionRepository } from "../testing/in-memory/in-memory-session-repository";
 
 const ME = "00000000-0000-4000-8000-000000000001";
@@ -22,6 +24,8 @@ beforeEach(async () => {
     books: new InMemoryBookRepository(),
     sessions: new InMemorySessionRepository(),
     interpretations: new InMemoryInterpretationRepository(),
+    collections: new InMemoryCollectionRepository(),
+    jobs: new InMemoryJobRepository(),
   };
   const r = await registerBook(deps.books, { title: "노인과 바다", author: "헤밍웨이" });
   if (r.status !== "created") throw new Error("책 준비 실패");
@@ -38,6 +42,15 @@ describe("startSession", () => {
   it("책으로 모임을 연다", async () => {
     const r = await startSession(deps, ME, bookId);
     expect(r).toMatchObject({ status: "created", session: { userId: ME, bookId } });
+  });
+
+  it("그 책의 자료 수집을 대기열에 넣는다. 같은 책으로 다시 열어도 한 번만 (ADR-004 §7)", async () => {
+    await startSession(deps, ME, bookId);
+    await startSession(deps, ME, bookId);
+    await startSession(deps, OTHER, bookId);
+    expect(await deps.collections.latestForBook(bookId)).toMatchObject({ status: "queued" });
+    expect(await deps.jobs.claimNext()).toMatchObject({ kind: "collect-book" });
+    expect(await deps.jobs.claimNext()).toBeNull();
   });
 
   it("없는 책이나 모양이 틀린 번호는 book_not_found", async () => {

@@ -34,9 +34,18 @@ export function canTransition(from: CollectionStatus, to: CollectionStatus): boo
   return TRANSITIONS[from].includes(to);
 }
 
-/** 대기·진행 중·끝남이 있으면 같은 책을 또 모으지 않는다. 실패만 있으면 다시 모은다. */
-export function blocksNewCollection(status: CollectionStatus): boolean {
-  return status !== "failed";
+/**
+ * 대기·진행 중이 이만큼 지나도 끝나지 않으면 멈춘 것으로 본다 (작업 프로세스가 죽었거나 작업이 버려졌다).
+ * 한 수집은 CLI 호출 열 번 남짓이고 호출마다 5분 제한이라 이보다 길지 않다.
+ */
+export const STALE_AFTER_MS = 2 * 60 * 60 * 1000;
+
+/** 끝난 수집, 멈추지 않은 대기·진행 중 수집이 있으면 같은 책을 또 모으지 않는다. 실패만 있으면 다시 모은다. */
+export function blocksNewCollection(c: Pick<Collection, "status" | "createdAt" | "startedAt">, now: Date): boolean {
+  if (c.status === "done") return true;
+  if (c.status === "failed") return false;
+  const since = (c.startedAt ?? c.createdAt).getTime();
+  return now.getTime() - since < STALE_AFTER_MS;
 }
 
 export const SOURCE_ROLES = ["background", "perspective", "both"] as const;
