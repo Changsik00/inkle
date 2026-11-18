@@ -46,14 +46,14 @@
 ## Task 4: 인프라 (CLI, 페이지 가져오기, Postgres)
 
 ### 4-1. 테스트 작성 (TDD Red)
-- [ ] `claude-code-cli.test.ts`: 가짜 `claude` 실행 파일로 인자·빈 디렉토리·표준 입력·결과 읽기·다시 시도·시간 제한
-- [ ] `http-page-fetcher.test.ts`: 로컬 HTTP 서버로 본문 추출과 열지 못함의 경우들
-- [ ] Postgres 계약 실행
-- [ ] 테스트 실행 → Fail 확인
+- [x] `claude-code-cli.test.ts`: 가짜 `claude` 실행 파일로 인자·빈 디렉토리·표준 입력·API 키 빼기·결과 읽기·오류·시간 제한 (다시 묻기는 유스케이스가 한다)
+- [x] `http-page-fetcher.test.ts`: 로컬 HTTP 서버로 본문 추출, 넘겨주기, EUC-KR, 열지 못함의 경우들, 내부 주소 막기
+- [x] Postgres 계약 실행
+- [x] 테스트 실행 → Fail 확인
 
 ### 4-2. 구현 (TDD Green)
-- [ ] `ClaudeCodeCli`, `HttpPageFetcher`, `0004_collections.sql`, Postgres 저장소, `container`
-- [ ] Commit: `feat(spec-01-08): add claude code cli client, page fetcher and collection storage`
+- [x] `ClaudeCodeCli`, `HttpPageFetcher`, `0004_collections.sql`, Postgres 저장소, `container`
+- [x] Commit: `feat(spec-01-08): add claude code cli client, page fetcher and collection storage`
 
 ---
 
