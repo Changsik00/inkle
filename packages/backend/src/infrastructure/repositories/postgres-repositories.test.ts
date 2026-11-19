@@ -141,6 +141,24 @@ describe("PostgresJobRepository 의 동시성", () => {
   });
 });
 
+describe("시선의 종류 제약 (0006)", () => {
+  it("출처 없는 시선은 AI 가 만든 해석일 때만, 그때 흔함 정도는 알 수 없음만", async () => {
+    const f = await sessionFixture();
+    const collections = new PostgresCollectionRepository(sql);
+    const c = await collections.create(f.bookId);
+    const s = await collections.addSource(sourceInput(c.id, f.bookId));
+    const insert = (kind: string, sourceId: string | null, who: string | null, role: string | null, prevalence = "unknown") =>
+      sql`insert into perspectives (collection_id, book_id, source_id, kind, who, role, reading_ko, prevalence, model, prompt_version)
+          values (${c.id}, ${f.bookId}, ${sourceId}, ${kind}, ${who}, ${role}, '읽기', ${prevalence}, 'm', 'v')`;
+
+    await expect(insert("external", null, null, null)).rejects.toThrow(/perspectives_kind_shape/);
+    await expect(insert("imagined", s.id, "누구", "critic")).rejects.toThrow(/perspectives_kind_shape/);
+    await expect(insert("imagined", null, null, null, "majority")).rejects.toThrow(/perspectives_kind_shape/);
+    await insert("imagined", null, null, null);
+    await insert("external", s.id, "평론가", "critic", "rare");
+  });
+});
+
 describe("PostgresHealthProbe", () => {
   it("DB 에 닿으면 true", async () => {
     expect(await new PostgresHealthProbe(sql).isDatabaseReachable()).toBe(true);

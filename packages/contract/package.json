@@ -9,6 +9,7 @@
     "./background": "./src/background.ts",
     "./books": "./src/books.ts",
     "./health": "./src/health.ts",
+    "./perspectives": "./src/perspectives.ts",
     "./sessions": "./src/sessions.ts"
   },
   "scripts": {

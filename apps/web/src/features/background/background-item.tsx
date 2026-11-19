@@ -1,6 +1,7 @@
 import type { BackgroundItemDto, ConnectionDto } from "@inkle/contract/background";
-import { SOURCE_KIND_LABEL, siteOf, TOPIC_LABEL } from "@/features/background/labels";
-import { AiText, ExternalQuote, MyText } from "@/ui/authored";
+import { TOPIC_LABEL } from "@/features/background/labels";
+import { SourcedQuotes } from "@/features/collection/sourced-quotes";
+import { AiText, MyText } from "@/ui/authored";
 
 /** 배경 항목 하나: 주제, 설명(AI), 대조를 통과한 인용(바깥 사람)과 출처 */
 export function BackgroundItem({ item, showTopic = true }: { item: BackgroundItemDto; showTopic?: boolean }) {
@@ -8,22 +9,7 @@ export function BackgroundItem({ item, showTopic = true }: { item: BackgroundIte
     <div className="flex flex-col gap-4">
       {showTopic && <p className="text-label">{TOPIC_LABEL[item.topic]}</p>}
       <AiText>{item.claim}</AiText>
-      {item.quotes.map((q, i) => (
-        <ExternalQuote
-          key={i}
-          text={q.text}
-          lang={q.lang}
-          translation={q.translationKo}
-          cite={
-            <>
-              {item.source.who} · {SOURCE_KIND_LABEL[q.sourceKind]} ·{" "}
-              <a href={item.source.url} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">
-                {siteOf(item.source.url)}
-              </a>
-            </>
-          }
-        />
-      ))}
+      <SourcedQuotes quotes={item.quotes} source={item.source} />
     </div>
   );
 }

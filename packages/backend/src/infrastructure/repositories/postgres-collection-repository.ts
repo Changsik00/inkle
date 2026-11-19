@@ -4,6 +4,7 @@ import type {
   CollectionOutcome,
   CollectionRepository,
   NewBackgroundItem,
+  NewImaginedPerspective,
   NewPerspective,
   NewQuote,
   NewSource,
@@ -17,6 +18,7 @@ import {
   SOURCE_ROLES,
   type BackgroundItem,
   type Collection,
+  type ImaginedPerspective,
   type Perspective,
   type Prevalence,
   type Quote,
@@ -138,6 +140,20 @@ const perspectiveRow = z.object({
   prompt_version: z.string(),
 });
 
+const imaginedRow = z.object({
+  id: z.uuid(),
+  collection_id: z.uuid(),
+  book_id: z.uuid(),
+  reading_ko: z.string(),
+  model: z.string(),
+  prompt_version: z.string(),
+});
+
+const toImagined = (raw: unknown): ImaginedPerspective => {
+  const r = imaginedRow.parse(raw);
+  return { id: r.id, collectionId: r.collection_id, bookId: r.book_id, readingKo: r.reading_ko, model: r.model, promptVersion: r.prompt_version };
+};
+
 const COLLECTION_COLUMNS = "id, book_id, status, error, models, prompt_versions, cost_usd, candidate_count, created_at, started_at, finished_at";
 const SOURCE_COLUMNS =
   "id, collection_id, book_id, url, final_url, who, role, fetch_status, fetch_error, page_text, article_text, read_error, fetched_at";
@@ -242,12 +258,27 @@ export class PostgresCollectionRepository implements CollectionRepository {
   async listPerspectives(collectionId: string): Promise<Perspective[]> {
     const rows = await this.sql`
       select id, collection_id, book_id, source_id, who, role, reading_ko, prevalence, model, prompt_version
-      from perspectives where collection_id = ${collectionId} order by seq`;
+      from perspectives where collection_id = ${collectionId} and kind = 'external' order by seq`;
     const quotes = await this.quotesFor("perspective_id", rows.map((r) => r.id as string));
     return rows.map((raw) => {
       const r = perspectiveRow.parse(raw);
       return toPerspective(r, quotes.get(r.id) ?? []);
     });
+  }
+
+  async addImaginedPerspective(item: NewImaginedPerspective): Promise<ImaginedPerspective> {
+    const [raw] = await this.sql`
+      insert into perspectives (collection_id, book_id, kind, reading_ko, model, prompt_version)
+      values (${item.collectionId}, ${item.bookId}, 'imagined', ${item.readingKo}, ${item.model}, ${item.promptVersion})
+      returning id, collection_id, book_id, reading_ko, model, prompt_version`;
+    return toImagined(raw);
+  }
+
+  async listImaginedPerspectives(collectionId: string): Promise<ImaginedPerspective[]> {
+    const rows = await this.sql`
+      select id, collection_id, book_id, reading_ko, model, prompt_version
+      from perspectives where collection_id = ${collectionId} and kind = 'imagined' order by seq`;
+    return rows.map(toImagined);
   }
 
   private async quotesFor(column: "background_item_id" | "perspective_id", ids: string[]): Promise<Map<string, Quote[]>> {

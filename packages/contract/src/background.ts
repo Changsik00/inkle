@@ -63,7 +63,8 @@ export const backgroundViewSchema = z.object({
 });
 export type BackgroundViewDto = z.infer<typeof backgroundViewSchema>;
 
-const gateErrors = {
+/** 문(門)을 거치는 모든 엔드포인트의 오류. 시선(perspectives.ts)도 쓴다 */
+export const gateErrors = {
   NOT_FOUND: { status: 404, message: "모임을 찾을 수 없다" },
   LOCKED: { status: 403, message: "내 해석을 먼저 써야 볼 수 있다" },
 } as const;

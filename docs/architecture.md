@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-20 (spec-01-09, 배경과 연결).
+> 마지막 갱신: 2026-11-20 (spec-01-10, 다른 시선).
 
 ## 1. 한눈에
 
@@ -47,7 +47,7 @@ inkle/
 ├─ apps/
 │  ├─ web/                @inkle/web — Next.js 화면
 │  │  ├─ src/app/         라우트 (자료를 읽지 않는 틀), globals.css (테마 토큰)
-│  │  ├─ src/features/    기능별 화면 (books, sessions, background, writing, system)
+│  │  ├─ src/features/    기능별 화면 (books, sessions, background, perspectives, collection(배경·시선이 함께 쓰는 부분), writing, system)
 │  │  ├─ src/ui/          shadcn/ui 공통 부품
 │  │  ├─ src/api-client/  HTTP 클라이언트 (화면이 서버를 부르는 유일한 통로)
 │  │  ├─ src/providers.tsx, src/product.ts
@@ -144,11 +144,11 @@ flowchart TB
 | `BookRepository` | 책 만들기, 찾기(번호, 정규화한 키), 목록 | `PostgresBookRepository` | 현재 |
 | `SessionRepository` | 모임 만들기, 사용자 것만 찾기, 책별 목록 | `PostgresSessionRepository` | 현재 |
 | `InterpretationRepository` | 내 해석의 판 덧붙이기, 최근 판, 모든 판 | `PostgresInterpretationRepository` | 현재 |
-| `CollectionRepository` | 수집과 출처·배경 항목·시선·인용 저장, 책의 최근 수집 | `PostgresCollectionRepository` | 현재 (spec-01-08) |
+| `CollectionRepository` | 수집과 출처·배경 항목·시선·인용 저장, 책의 최근 수집, AI 가 만든 해석 (spec-01-10) | `PostgresCollectionRepository` | 현재 (spec-01-08) |
 | `LlmClient` | 지시문과 결과 형식(JSON Schema), 쓸 도구를 주고 결과·비용·모델을 받는다 | `ClaudeCodeCli` (이후 Claude API) | 현재 (spec-01-08) |
 | `PageFetcher` | 주소를 열어 페이지 전체 글자와 본문 글자를 받는다 | `HttpPageFetcher` (내부 주소 차단, 리디렉션 매번 검사, 문자 인코딩 감지, Readability) | 현재 (spec-01-08) |
 | `ConnectionRepository` | 연결 만들기(모임·판·수집)와 연결 저장, 판의 최근 연결 만들기 | `PostgresConnectionRepository` | 현재 (spec-01-09) |
-| 비교 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-10 ~) |
+| 비교 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-11 ~) |
 
 ## 3. 흐름
 
@@ -184,7 +184,7 @@ sequenceDiagram
 phase-01 성공 기준 5. 모임의 단계는 저장된 내 해석이 있는지로 정해진다 (`writing` → `interpretation_saved`).
 
 - 문(門)은 애플리케이션 층의 `requireUnlocked` 하나다 (`packages/backend/src/application/sessions.ts`). 내 해석 전이면 `locked`, 다른 사용자의 모임이면 `not_found`.
-- 배경·다른 시선·비교를 읽는 API 는 모두 이 함수를 거친다. 지금은 배경(`GET /api/sessions/{id}/background`, `POST …/background/recollect`, spec-01-09). 잠긴 모임에는 수집 상태도 내주지 않는다 (`403 LOCKED`).
+- 배경·다른 시선·비교를 읽는 API 는 모두 이 함수를 거친다. 지금은 배경(`GET /api/sessions/{id}/background`, `POST …/background/recollect`, spec-01-09)과 다른 시선(`GET /api/sessions/{id}/perspectives`, spec-01-10). 잠긴 모임에는 수집 상태도 내주지 않는다 (`403 LOCKED`).
 - 모임 조회(`GET /api/sessions/{id}`)는 단계와 무관하게 책, 질문 묶음, 최근 내 해석만 담는다. 다음 단계의 자료는 담지 않는다.
 
 ### 작업 (현재: 자료 수집, 시험용 작업)
@@ -227,7 +227,8 @@ sequenceDiagram
         U->>U: 대조 (matchQuote: 페이지 전체 또는 본문에 그대로 있는가)
         U->>R: addSource, addBackgroundItem, addPerspective
     end
-    U->>L: 흔함 정도 (prevalence.v1, 보여 줄 시선이 셋 이상일 때만)
+    U->>L: 흔함 정도 (prevalence.v1, 작가 본인이 아닌 보여 줄 시선이 셋 이상일 때만)
+    U->>L: AI 가 만든 해석 (imagine.v1, 작가 본인이 아닌 보여 줄 시선이 셋 미만일 때 모자란 만큼)
     U->>R: markDone (모델, 지시문 판, 비용 추정치, 후보 수)
 ```
 
@@ -262,6 +263,15 @@ sequenceDiagram
 - 오래 멈춘 수집·연결 만들기는 `failed` 로 내준다. 수집이 실패했거나 없으면 화면의 "다시 모으기"가 `recollect` 를 부른다.
 - 화면은 `/sessions/{id}/background` (`apps/web/src/features/background/`). 글쓴이 표시는 `apps/web/src/ui/authored.tsx`.
 
+### 다른 시선 (현재: spec-01-10)
+
+책 단위 수집이 모은 시선을 문(門)을 거쳐 내준다 (`application/perspectives.ts`, `GET /sessions/{id}/perspectives`).
+
+- **다른 사람의 시선**(평론가·기자, 독자, 그 밖): 흔한 정도(많이 / 일부 / 드문 / 알 수 없음)를 붙이고 흔한 것부터 내준다 (`domain/collection.ts` 의 `arrangePerspectives`).
+- **작가 본인의 시선**: 따로 묶고 흔한 정도가 없다 (`prevalenceOf`). 흔함을 매길 때도 넘기지 않고 개수에도 세지 않는다 (`prevalenceTargets`).
+- **AI 가 만든 해석**: 다른 사람의 시선이 3개 미만이면 수집 끝에 모자란 만큼 만든다 (`needsImagined`, ADR-004 §6). 출처·인용 없이 `perspectives.kind = 'imagined'` 로 저장하고, DB 제약이 출처 없는 시선을 이것만 허용한다 (0006). 실패해도 수집은 끝난다.
+- 화면은 `/sessions/{id}/perspectives` (`apps/web/src/features/perspectives/`), 배경 화면 끝의 "다른 시선 보기"로 들어간다. 배경과 함께 쓰는 틀·진행 상황·다시 모으기·인용은 `features/collection/`.
+
 ## 4. 데이터
 
 ADR-002. 자료는 두 층이다.
@@ -270,6 +280,7 @@ ADR-002. 자료는 두 층이다.
 |---|---|:---:|---|
 | 책 단위 | 책 | 없음 | 현재 (spec-01-04) |
 | 책 단위 | 수집, 출처(페이지 전체 글자 보관), 배경 항목, 시선, 인용 | 없음 | 현재 (spec-01-08) |
+| 책 단위 | AI 가 만든 해석 (시선의 한 종류, 출처 없음) | 없음 | 현재 (spec-01-10) |
 | 독자 단위 | 모임, 내 해석(판) | 있음 (ADR-003) | 현재 (spec-01-07) |
 | 독자 단위 | 연결 만들기, 연결 (모임을 거쳐 사용자) | 있음 (ADR-003) | 현재 (spec-01-09) |
 | 독자 단위 | 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |

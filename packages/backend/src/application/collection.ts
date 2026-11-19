@@ -1,4 +1,4 @@
-// 자료 수집의 유스케이스 (ADR-004 §2). 찾기 → 가져오기 → 읽기 → 대조 → 흔한 읽기.
+// 자료 수집의 유스케이스 (ADR-004 §2). 찾기 → 가져오기 → 읽기 → 대조 → 흔한 읽기 → (모자라면) AI 가 만든 해석.
 // LLM 과 페이지 가져오기는 포트 뒤에 있다. 이 파일은 순서와 규칙만 갖는다.
 import { z } from "zod";
 import type {
@@ -13,6 +13,7 @@ import type {
 } from "./ports";
 import { ask, newLedger, roundedCost, type Ledger } from "./llm-ask";
 import * as find from "./prompts/find.v2";
+import * as imagine from "./prompts/imagine.v1";
 import * as prevalence from "./prompts/prevalence.v1";
 import * as read from "./prompts/read.v1";
 import { isBookId, type Book } from "../domain/book";
@@ -21,8 +22,11 @@ import {
   blocksNewCollection,
   isShowable,
   MIN_PERSPECTIVES_FOR_PREVALENCE,
+  needsImagined,
+  prevalenceTargets,
   type BackgroundItem,
   type Collection,
+  type ImaginedPerspective,
   type Perspective,
   type Source,
   type SourceRole,
@@ -54,6 +58,17 @@ export async function enqueueCollection(
   const collection = await deps.collections.create(bookId);
   const jobId = await deps.jobs.enqueue(COLLECT_BOOK_JOB, { collectionId: collection.id });
   return { status: "queued", collectionId: collection.id, jobId };
+}
+
+// ── 화면에 내주는 수집 상태 (ADR-004 §7: 내용이나 개수 없이 상태만)
+
+export type CollectionState = "collecting" | "done" | "failed" | "none";
+
+/** 멈춘 대기·진행 중은 실패로 본다. 다시 모으기를 누를 수 있게 (blocksNewCollection 과 같은 기준) */
+export function collectionState(c: Collection | null, now: Date): CollectionState {
+  if (!c) return "none";
+  if (c.status === "done" || c.status === "failed") return c.status;
+  return blocksNewCollection(c, now) ? "collecting" : "failed";
 }
 
 export const collectBookPayload = z.object({ collectionId: z.string() });
@@ -149,8 +164,12 @@ export async function collectBook(deps: CollectDeps, collectionId: string): Prom
       perspectives.push(...(await collectSource(deps, ledger, promptVersions, book, collection.id, candidate)));
     }
 
-    // 5. 흔한 읽기
-    await labelPrevalence(deps, ledger, promptVersions, book, perspectives.filter(isShowable));
+    // 5. 흔한 읽기: 작가 본인이 아닌 사람의 읽기에만 (spec-01-10)
+    const others = prevalenceTargets(perspectives);
+    await labelPrevalence(deps, ledger, promptVersions, book, others);
+
+    // 6. 다른 사람의 시선이 모자라면 AI 가 만든 해석을 덧붙인다 (ADR-004 §6). 실패해도 수집은 끝난다.
+    await addImagined(deps, ledger, promptVersions, book, collection.id, perspectives.filter(isShowable), needsImagined(others.length));
 
     await deps.collections.markDone(collection.id, outcome());
     return { status: "done" };
@@ -239,6 +258,25 @@ async function labelPrevalence(
   }
 }
 
+async function addImagined(
+  deps: CollectDeps,
+  ledger: Ledger,
+  promptVersions: Record<string, string>,
+  book: Book,
+  collectionId: string,
+  found: Perspective[],
+  count: number,
+): Promise<void> {
+  if (count <= 0) return;
+  promptVersions.imagine = imagine.version;
+  const answer = await ask(deps.llm, ledger, imagine.render({ book, count, found }), imagine.schema, "none");
+  if (!answer.ok) return;
+  const readings = answer.value.readings.map((r) => r.reading_ko.trim()).filter(Boolean);
+  for (const readingKo of readings.slice(0, Math.min(count, imagine.MAX_READINGS))) {
+    await deps.collections.addImaginedPerspective({ collectionId, bookId: book.id, readingKo, model: answer.model, promptVersion: imagine.version });
+  }
+}
+
 // ── 보고서 (손으로 확인하는 명령이 쓴다)
 
 export type CollectionReport = {
@@ -247,6 +285,7 @@ export type CollectionReport = {
   sources: Source[];
   background: BackgroundItem[];
   perspectives: Perspective[];
+  imagined: ImaginedPerspective[];
   counts: {
     candidates: number;
     sourcesOk: number;
@@ -258,6 +297,7 @@ export type CollectionReport = {
     showableBackground: number;
     perspectives: number;
     showablePerspectives: number;
+    imagined: number;
   };
 };
 
@@ -269,10 +309,11 @@ export async function collectionReport(
   if (!book) return null;
   const collection = await deps.collections.latestForBook(book.id);
   if (!collection) return null;
-  const [sources, background, perspectives] = await Promise.all([
+  const [sources, background, perspectives, imagined] = await Promise.all([
     deps.collections.listSources(collection.id),
     deps.collections.listBackgroundItems(collection.id),
     deps.collections.listPerspectives(collection.id),
+    deps.collections.listImaginedPerspectives(collection.id),
   ]);
   const quotes = [...background, ...perspectives].flatMap((i) => i.quotes);
   return {
@@ -281,6 +322,7 @@ export async function collectionReport(
     sources,
     background,
     perspectives,
+    imagined,
     counts: {
       candidates: collection.candidateCount,
       sourcesOk: sources.filter((s) => s.fetchStatus === "ok").length,
@@ -292,6 +334,7 @@ export async function collectionReport(
       showableBackground: background.filter(isShowable).length,
       perspectives: perspectives.length,
       showablePerspectives: perspectives.filter(isShowable).length,
+      imagined: imagined.length,
     },
   };
 }

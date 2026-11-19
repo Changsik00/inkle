@@ -26,7 +26,7 @@ async function main() {
     console.log("");
     console.log(`후보 ${n.candidates}  열린 출처 ${n.sourcesOk}  열지 못함 ${n.sourcesUnreachable}  읽기 실패 ${n.readFailures}`);
     console.log(`인용 대조 ${n.verifiedQuotes}/${n.quotes}${n.quotes ? ` (${Math.round((n.verifiedQuotes / n.quotes) * 100)}%)` : ""}`);
-    console.log(`보여 줄 수 있는 배경 ${n.showableBackground}/${n.background}  시선 ${n.showablePerspectives}/${n.perspectives}`);
+    console.log(`보여 줄 수 있는 배경 ${n.showableBackground}/${n.background}  시선 ${n.showablePerspectives}/${n.perspectives}  AI 가 만든 해석 ${n.imagined}`);
 
     for (const s of r.sources) {
       console.log("");
@@ -41,6 +41,11 @@ async function main() {
         console.log(`  [시선 ${p.role} · ${p.prevalence}] ${p.who}: ${short(p.readingKo)}  인용 ${p.quotes.map((q) => mark(q.verified)).join("")}`);
         if (showQuotes) for (const q of p.quotes) console.log(`    ${mark(q.verified)} (${q.lang}, ${q.sourceKind}) ${short(q.text, 200)}`);
       }
+    }
+    if (r.imagined.length) {
+      console.log("");
+      console.log(`■ AI 가 만든 해석 ${r.imagined.length}개 (출처 없음)`);
+      for (const p of r.imagined) console.log(`  ${short(p.readingKo)}`);
     }
   } finally {
     await c.close();

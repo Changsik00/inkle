@@ -4,17 +4,19 @@ import type {
   CollectionOutcome,
   CollectionRepository,
   NewBackgroundItem,
+  NewImaginedPerspective,
   NewPerspective,
   NewQuote,
   NewSource,
 } from "../../application/ports";
-import type { BackgroundItem, Collection, Perspective, Prevalence, Quote, Source } from "../../domain/collection";
+import type { BackgroundItem, Collection, ImaginedPerspective, Perspective, Prevalence, Quote, Source } from "../../domain/collection";
 
 export class InMemoryCollectionRepository implements CollectionRepository {
   private readonly collections: Collection[] = [];
   private readonly sources: Source[] = [];
   private readonly background: BackgroundItem[] = [];
   private readonly perspectives: Perspective[] = [];
+  private readonly imagined: ImaginedPerspective[] = [];
 
   async create(bookId: string): Promise<Collection> {
     const c: Collection = {
@@ -94,6 +96,16 @@ export class InMemoryCollectionRepository implements CollectionRepository {
 
   async listPerspectives(collectionId: string): Promise<Perspective[]> {
     return this.perspectives.filter((x) => x.collectionId === collectionId).map((x) => structuredClone(x));
+  }
+
+  async addImaginedPerspective(input: NewImaginedPerspective): Promise<ImaginedPerspective> {
+    const item: ImaginedPerspective = { ...structuredClone(input), id: randomUUID() };
+    this.imagined.push(item);
+    return structuredClone(item);
+  }
+
+  async listImaginedPerspectives(collectionId: string): Promise<ImaginedPerspective[]> {
+    return this.imagined.filter((x) => x.collectionId === collectionId).map((x) => structuredClone(x));
   }
 
   private quotes(sourceId: string, quotes: NewQuote[]): Quote[] {

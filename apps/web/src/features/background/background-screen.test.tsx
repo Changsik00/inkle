@@ -65,6 +65,7 @@ test("내 해석과 맞닿는 배경을 위에: 내 구절(나), 맞닿는 곳(A
   await others.click();
   await expect.element(page.getByText("1950년대 쿠바의 어촌.")).toBeVisible();
   await expect.element(page.getByRole("region", { name: "시대와 사회" })).toBeInTheDocument();
+  await expect.element(page.getByRole("link", { name: "다른 시선 보기" })).toHaveAttribute("href", `/sessions/${SESSION_ID}/perspectives`);
 });
 
 test("맞닿는 배경을 찾지 못했으면 그렇게 알리고 나머지를 펼쳐 둔다", async ({ worker }) => {

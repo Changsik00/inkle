@@ -11,6 +11,7 @@ import {
 import type { LlmCall } from "./ports";
 import { STALE_AFTER_MS } from "../domain/collection";
 import * as find from "./prompts/find.v2";
+import * as imagine from "./prompts/imagine.v1";
 import * as read from "./prompts/read.v1";
 import { FakeLlm, type FakeResponder } from "../testing/fakes/llm";
 import { FakePageFetcher } from "../testing/fakes/page-fetcher";
@@ -66,10 +67,13 @@ const readC: ReadOutput = {
 };
 
 /** 지시문에 담긴 주소로 어느 출처의 읽기인지 고른다. */
-function responder(opts: { find?: unknown[]; reads?: Record<string, unknown[]>; prevalence?: unknown[] }): FakeResponder {
+const imagined = (...texts: string[]): imagine.Output => ({ readings: texts.map((reading_ko) => ({ reading_ko })) });
+
+function responder(opts: { find?: unknown[]; reads?: Record<string, unknown[]>; prevalence?: unknown[]; imagine?: unknown[] }): FakeResponder {
   const queues = {
     find: [...(opts.find ?? [candidates(A, B, C)])],
     prevalence: [...(opts.prevalence ?? [{ labels: [] }])],
+    imagine: [...(opts.imagine ?? [imagined("AI 해석 하나", "AI 해석 둘")])],
     reads: Object.fromEntries(Object.entries(opts.reads ?? { [A]: [readA], [C]: [readC] }).map(([k, v]) => [k, [...v]])),
   };
   const next = (queue: unknown[] | undefined) => (queue && queue.length > 1 ? queue.shift() : queue?.[0]);
@@ -77,6 +81,7 @@ function responder(opts: { find?: unknown[]; reads?: Record<string, unknown[]>; 
     const stage = FakeLlm.stageOf(call);
     if (stage === "find") return next(queues.find);
     if (stage === "prevalence") return next(queues.prevalence);
+    if (stage === "imagine") return next(queues.imagine);
     const url = Object.keys(queues.reads).find((u) => call.prompt.includes(`글의 주소: ${u}`));
     return url ? next(queues.reads[url]) : { background: [], perspectives: [] };
   };
@@ -174,14 +179,15 @@ describe("collectBook", () => {
       ["평론가 김", true],
     ]);
 
-    // 찾기 1 + 읽기 2 (열지 못한 B 는 읽지 않는다). 보여 줄 수 있는 시선이 하나뿐이라 흔한 읽기는 부르지 않는다.
-    expect(d.llm.calls.map(FakeLlm.stageOf)).toEqual(["find", "read", "read"]);
+    // 찾기 1 + 읽기 2 (열지 못한 B 는 읽지 않는다). 보여 줄 수 있는 시선이 하나뿐이라 흔한 읽기는 부르지 않고,
+    // 다른 사람의 시선이 모자라 AI 가 만든 해석을 한 번 부른다.
+    expect(d.llm.calls.map(FakeLlm.stageOf)).toEqual(["find", "read", "read", "imagine"]);
     expect(await collections.findById(id)).toMatchObject({
       status: "done",
-      costUsd: 0.75,
+      costUsd: 1,
       candidateCount: 3,
       models: ["model-x"],
-      promptVersions: { find: find.version, read: read.version },
+      promptVersions: { find: find.version, read: read.version, imagine: imagine.version },
     });
   });
 
@@ -263,8 +269,8 @@ describe("collectBook", () => {
     const d = deps(new FakeLlm(responder({ find: [{ wrong: true }, candidates(A)] })));
     const id = await queued();
     expect((await collectBook(d, id)).status).toBe("done");
-    expect(d.llm.calls.map(FakeLlm.stageOf)).toEqual(["find", "find", "read"]);
-    expect((await collections.findById(id))?.costUsd).toBeCloseTo(0.3);
+    expect(d.llm.calls.map(FakeLlm.stageOf)).toEqual(["find", "find", "read", "imagine"]);
+    expect((await collections.findById(id))?.costUsd).toBeCloseTo(0.4);
   });
 
   it("찾기가 두 번 다 실패하면 수집은 실패하고 이유가 남는다", async () => {
@@ -344,6 +350,24 @@ describe("collectBook", () => {
       expect((await collections.findById(id))?.promptVersions).toMatchObject({ prevalence: "prevalence.v1" });
     });
 
+    it("작가 본인의 시선은 흔한 읽기에 넘기지 않고, 다수 의견을 말할 개수에도 세지 않는다", async () => {
+      const asAuthor = (i: number): ReadOutput => ({
+        background: [],
+        perspectives: [{ who: `작가 ${i}`, role: "author", reading_ko: `작가의 말 ${i}`, quotes: [q(text(i))] }],
+      });
+      const reads = { [urls[0]]: [asAuthor(0)], [urls[1]]: [readFor(1, true)], [urls[2]]: [readFor(2, true)], [urls[3]]: [readFor(3, true)] };
+      const llm = new FakeLlm(responder({ find: [candidates(...urls)], reads, prevalence: [{ labels: [] }] }));
+      await collectBook(deps(llm, pages()), await queued());
+      const prevalenceCall = llm.calls.find((c) => FakeLlm.stageOf(c) === "prevalence");
+      expect(prevalenceCall?.prompt).toContain("해석 1");
+      expect(prevalenceCall?.prompt).not.toContain("작가의 말 0");
+
+      // 작가 본인을 빼면 둘뿐이면 부르지 않는다
+      const fewer = new FakeLlm(responder({ find: [candidates(...urls.slice(0, 3))], reads }));
+      await collectBook(deps(fewer, pages()), await queued());
+      expect(fewer.calls.map(FakeLlm.stageOf)).not.toContain("prevalence");
+    });
+
     it("흔한 읽기 호출이 실패해도 수집은 끝나고 모두 알 수 없음", async () => {
       const llm = new FakeLlm(
         responder({
@@ -355,6 +379,59 @@ describe("collectBook", () => {
       const id = await queued();
       expect((await collectBook(deps(llm, pages()), id)).status).toBe("done");
       expect((await collections.listPerspectives(id)).every((p) => p.prevalence === "unknown")).toBe(true);
+    });
+  });
+
+  describe("AI 가 만든 해석", () => {
+    it("다른 사람의 시선이 모자란 만큼 만들고, 찾은 시선을 함께 넘긴다. 출처 없이 저장한다", async () => {
+      // 보여 줄 수 있는 다른 사람의 시선은 "평론가 김" 하나 → 둘을 만든다
+      const llm = new FakeLlm(responder({ imagine: [imagined("첫째 읽기", "둘째 읽기", "셋째 읽기")] }), { model: "model-y" });
+      const id = await queued();
+      await collectBook(deps(llm), id);
+
+      const call = llm.calls.find((c) => FakeLlm.stageOf(c) === "imagine");
+      expect(call?.tools).toBe("none");
+      expect(call?.prompt).toContain("2개");
+      expect(call?.prompt).toContain("평론가 김: 몸의 저항으로 읽는다");
+      expect(call?.prompt).not.toContain("지어낸 요약");
+      expect(await collections.listImaginedPerspectives(id)).toEqual([
+        { id: expect.any(String), collectionId: id, bookId, readingKo: "첫째 읽기", model: "model-y", promptVersion: imagine.version },
+        { id: expect.any(String), collectionId: id, bookId, readingKo: "둘째 읽기", model: "model-y", promptVersion: imagine.version },
+      ]);
+      expect(await collections.listPerspectives(id)).toHaveLength(2);
+    });
+
+    it("작가 본인의 시선은 세지 않는다", async () => {
+      const authorOnly: ReadOutput = {
+        background: [],
+        perspectives: [{ who: "작가", role: "author", reading_ko: "작가의 말", quotes: [q("이 소설을 몸의 저항에 관한 이야기로 읽었다")] }],
+      };
+      const llm = new FakeLlm(responder({ find: [candidates(C)], reads: { [C]: [authorOnly] } }));
+      await collectBook(deps(llm), await queued());
+      expect(llm.calls.find((c) => FakeLlm.stageOf(c) === "imagine")?.prompt).toContain("3개");
+    });
+
+    it("다른 사람의 시선이 셋 이상이면 부르지 않는다", async () => {
+      const urls = [A, C, "https://d.example.com/"];
+      const text = (i: number) => `독자 ${i} 는 이 책을 이렇게 읽었다고 길게 적었다.`;
+      const pages = new FakePageFetcher(Object.fromEntries(urls.map((u, i) => [u, FakePageFetcher.page(text(i))])));
+      const reads = Object.fromEntries(
+        urls.map((u, i) => [u, [{ background: [], perspectives: [{ who: `독자 ${i}`, role: "reader", reading_ko: "읽기", quotes: [q(text(i))] }] }]]),
+      );
+      const llm = new FakeLlm(responder({ find: [candidates(...urls)], reads }));
+      const id = await queued();
+      await collectBook(deps(llm, pages), id);
+      expect(llm.calls.map(FakeLlm.stageOf)).not.toContain("imagine");
+      expect(await collections.listImaginedPerspectives(id)).toEqual([]);
+      expect((await collections.findById(id))?.promptVersions).not.toHaveProperty("imagine");
+    });
+
+    it("두 번 다 실패해도 수집은 끝나고 AI 가 만든 해석은 없다", async () => {
+      const llm = new FakeLlm(responder({ imagine: [new Error("실패")] }));
+      const id = await queued();
+      expect((await collectBook(deps(llm), id)).status).toBe("done");
+      expect(llm.calls.filter((c) => FakeLlm.stageOf(c) === "imagine")).toHaveLength(2);
+      expect(await collections.listImaginedPerspectives(id)).toEqual([]);
     });
   });
 
@@ -384,8 +461,9 @@ describe("collectionReport", () => {
       showableBackground: 1,
       perspectives: 2,
       showablePerspectives: 1,
+      imagined: 2,
     });
-    expect(r?.collection).toMatchObject({ id, status: "done", costUsd: 0.75 });
+    expect(r?.collection).toMatchObject({ id, status: "done", costUsd: 1 });
     expect(r?.book.title).toBe("채식주의자");
   });
 

@@ -12,6 +12,8 @@ export default defineConfig({
   fullyParallel: false,
   // compose 의 개발 서버는 여러 흐름이 동시에 페이지를 처음 컴파일하면 화면 이동이 5초를 넘길 때가 있다 (spec-01-09).
   expect: { timeout: 10_000 },
+  // 흐름이 늘면서 한 흐름 전체가 30초(기본)를 넘길 때가 생겼다 (spec-01-10). 대부분 개발 서버의 컴파일을 기다리는 시간이다.
+  timeout: 60_000,
   use: { baseURL, trace: "retain-on-failure" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 });
