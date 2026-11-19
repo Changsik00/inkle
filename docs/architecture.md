@@ -148,7 +148,7 @@ flowchart TB
 | `LlmClient` | 지시문과 결과 형식(JSON Schema), 쓸 도구를 주고 결과·비용·모델을 받는다 | `ClaudeCodeCli` (이후 Claude API) | 현재 (spec-01-08) |
 | `PageFetcher` | 주소를 열어 페이지 전체 글자와 본문 글자를 받는다 | `HttpPageFetcher` (내부 주소 차단, 리디렉션 매번 검사, 문자 인코딩 감지, Readability) | 현재 (spec-01-08) |
 | `ConnectionRepository` | 연결 만들기(모임·판·수집)와 연결 저장, 판의 최근 연결 만들기 | `PostgresConnectionRepository` | 현재 (spec-01-09) |
-| 비교 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-10 ~) |
+| 비교 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-11 ~) |
 
 ## 3. 흐름
 
