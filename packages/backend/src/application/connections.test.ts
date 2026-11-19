@@ -10,7 +10,7 @@ import {
   type EnqueueConnectionsDeps,
 } from "./connections";
 import type { LlmCall } from "./ports";
-import * as connect from "./prompts/connect.v1";
+import * as connect from "./prompts/connect.v2";
 import { STALE_AFTER_MS } from "../domain/collection";
 import type { Session } from "../domain/session";
 import { FakeLlm, type FakeResponder } from "../testing/fakes/llm";

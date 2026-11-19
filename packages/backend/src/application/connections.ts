@@ -12,7 +12,7 @@ import type {
   LlmClient,
   SessionRepository,
 } from "./ports";
-import * as connect from "./prompts/connect.v1";
+import * as connect from "./prompts/connect.v2";
 import { requireUnlocked, type SessionDeps } from "./sessions";
 import { blocksNewCollection, isShowable, type BackgroundItem, type BackgroundTopic, type Collection } from "../domain/collection";
 import { arrangeBackground, checkConnections, type Connection, type ConnectionRun } from "../domain/connection";
