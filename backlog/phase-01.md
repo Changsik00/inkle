@@ -69,7 +69,7 @@
 | `spec-01-07` | interpretation | P? | Merged | `specs/spec-01-07-interpretation/` |
 | `spec-01-08` | collection | P? | Merged | `specs/spec-01-08-collection/` |
 | `spec-01-09` | background | P? | Merged | `specs/spec-01-09-background/` |
-| `spec-01-10` | perspectives | P? | Active | `specs/spec-01-10-perspectives/` |
+| `spec-01-10` | perspectives | P? | Merged | `specs/spec-01-10-perspectives/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`

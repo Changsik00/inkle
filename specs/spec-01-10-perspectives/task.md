@@ -72,5 +72,5 @@
 
 ## Task 8: Ship
 
-- [ ] `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build`
-- [ ] walkthrough.md, pr_description.md, `/hk-ship`
+- [x] `pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build`
+- [x] walkthrough.md, pr_description.md, `/hk-ship`
