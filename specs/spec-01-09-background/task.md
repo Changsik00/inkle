@@ -1,0 +1,88 @@
+# Task List: spec-01-09
+
+> 모든 task 는 한 commit 에 대응합니다 (One Task = One Commit).
+> 매 commit 직후 본 파일의 체크박스를 갱신해야 합니다.
+
+---
+
+## Task 1: spec 과 task
+
+- [x] `git checkout -b spec-01-09-background`, `sdd spec new background`
+- [x] spec.md, task.md 작성, Plan Accept
+- [x] Commit: `docs(spec-01-09): add spec and task for background`
+
+---
+
+## Task 2: 연결의 도메인 규칙
+
+- [ ] `domain/connection.ts`: 연결·연결 만들기 타입과 상태, 내 구절 대조(`matchQuote` 재사용, 질문 번호 찾기), 목록 밖 배경 번호 버리기, 화면 정렬(맞닿는 것 먼저, 나머지 주제별)
+- [ ] 테스트 먼저 (Red → Green)
+- [ ] Commit: `feat(spec-01-09): add connection rules`
+
+---
+
+## Task 3: 연결 만들기 (유스케이스, 저장소, 지시문)
+
+- [ ] 포트 `ConnectionRepository`, `SessionRepository.listByBook`
+- [ ] `prompts/connect.v1.ts`, `application/connections.ts`: `enqueueConnections`, `connectBackground`
+- [ ] 저장 뒤(`saveInterpretation`)와 수집 끝 뒤(`collectBook`)에 연결 넣기
+- [ ] `0005_connections.sql`, Postgres·메모리 저장소, 계약 테스트
+- [ ] 작업 처리기 `connect-background`, `container.ts`
+- [ ] Commit: `feat(spec-01-09): make connections between background and interpretation`
+
+---
+
+## Task 4: 배경 API (문)
+
+- [ ] `packages/contract/src/background.ts`: `get`, `recollect`
+- [ ] `application/connections.ts`: `backgroundView`, `recollect` (`requireUnlocked`)
+- [ ] `rpc/background.ts`, 라우터, OpenAPI 스냅샷
+- [ ] 테스트: 잠김·다른 사용자·응답 키 고정·글쓴이 필드·다시 모으기 조건
+- [ ] Commit: `feat(spec-01-09): add background api behind the gate`
+
+---
+
+## Task 5: 배경 화면
+
+- [ ] DESIGN.md 를 먼저 읽는다. 글쓴이 표시 컴포넌트 (DESIGN.md 의 시점 문장 고침)
+- [ ] `features/background/`: 맞닿는 배경, 다른 배경(접기), 인용과 옮김, 진행 상황과 다시 읽기, 확인하지 못함과 다시 모으기, 잠김 안내
+- [ ] 페이지 `/sessions/{id}/background`, 내 해석 화면의 "배경 보기"
+- [ ] 브라우저 테스트(MSW), `e2e/background.spec.ts`
+- [ ] Commit: `feat(spec-01-09): add background screen`
+
+---
+
+## Task 6: 실제 연결과 기록 (구독 사용량 사용)
+
+- [ ] 두 책에 수동 실험의 해석을 저장하고 실제로 연결을 만든다
+- [ ] 내 구절 대조 통과율, 시간, 비용, 수동 실험과 비교. 독자를 평가하는 문장이 없는지 확인
+- [ ] 문제가 있으면 지시문을 고쳐 판을 올리고 다시 돌린다
+- [ ] 스크린숏 `docs/design/screens/background*.png`, `docs/experiments/04-connections/README.md`
+- [ ] Commit: `docs(spec-01-09): record real connections for two books`
+
+---
+
+## Task 7: 문서
+
+- [ ] `docs/architecture.md` (포트, 흐름, 데이터, 문), `README.md` (화면 주소), `backlog/phase-01.md`
+- [ ] Commit: `docs(spec-01-09): document background`
+
+---
+
+## Task 8: Ship (필수)
+
+### 🚦 Pre-Push Quality Gate
+
+- [ ] **전체 테스트 실행** → 모두 PASS
+- [ ] lint, 타입 검사, 빌드, E2E
+
+### 📝 산출물 작성
+
+- [ ] **walkthrough.md 작성**
+- [ ] **pr_description.md 작성**
+- [ ] Commit: `docs(spec-01-09): ship walkthrough and pr description`
+
+### 🚀 Push & PR
+
+- [ ] `git push -u origin spec-01-09-background`
+- [ ] PR 생성 (`gh pr create` 또는 `/hk-pr-gh`)

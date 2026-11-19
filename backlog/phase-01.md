@@ -68,6 +68,7 @@
 | `spec-01-06` | design-system | P? | Merged | `specs/spec-01-06-design-system/` |
 | `spec-01-07` | interpretation | P? | Merged | `specs/spec-01-07-interpretation/` |
 | `spec-01-08` | collection | P? | Merged | `specs/spec-01-08-collection/` |
+| `spec-01-09` | background | P? | Active | `specs/spec-01-09-background/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
