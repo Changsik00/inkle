@@ -15,9 +15,9 @@
 
 ## Task 2: 연결의 도메인 규칙
 
-- [ ] `domain/connection.ts`: 연결·연결 만들기 타입과 상태, 내 구절 대조(`matchQuote` 재사용, 질문 번호 찾기), 목록 밖 배경 번호 버리기, 화면 정렬(맞닿는 것 먼저, 나머지 주제별)
-- [ ] 테스트 먼저 (Red → Green)
-- [ ] Commit: `feat(spec-01-09): add connection rules`
+- [x] `domain/connection.ts`: 연결·연결 만들기 타입과 상태, 내 구절 대조(`matchQuote` 재사용, 질문 번호 찾기), 목록 밖 배경 번호 버리기, 화면 정렬(맞닿는 것 먼저, 나머지 주제별)
+- [x] 테스트 먼저 (Red → Green)
+- [x] Commit: `feat(spec-01-09): add connection rules`
 
 ---
 
