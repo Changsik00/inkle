@@ -1,4 +1,5 @@
 // 화면 테스트에서 쓰는 API 응답 모양. 계약(@inkle/contract)의 스키마를 따른다.
+import type { OtherPerspectiveDto, PerspectivesViewDto } from "@inkle/contract/perspectives";
 import type { BackgroundItemDto, BackgroundViewDto } from "@inkle/contract/background";
 import type { BookDto } from "@inkle/contract/books";
 import type { InterpretationDto, SessionSummaryDto, SessionViewDto } from "@inkle/contract/sessions";
@@ -87,4 +88,31 @@ export function backgroundItemDto(overrides: Partial<BackgroundItemDto> = {}): B
 
 export function backgroundViewDto(overrides: Partial<BackgroundViewDto> = {}): BackgroundViewDto {
   return { collection: "done", connections: "done", connected: [], others: [], ...overrides };
+}
+
+export function otherPerspectiveDto(overrides: Partial<OtherPerspectiveDto> = {}): OtherPerspectiveDto {
+  return {
+    id: "00000000-0000-4000-8000-0000000000e1",
+    who: "평론가 김",
+    role: "critic",
+    reading: "노인의 패배를 정신의 승리로 읽는다.",
+    readingAuthor: "ai",
+    prevalence: "majority",
+    source: { url: "https://www.example.com/review", who: "평론가 김, 문학동네" },
+    quotes: [
+      {
+        text: "그는 졌지만 꺾이지 않았다",
+        author: "external",
+        lang: "ko",
+        translationKo: null,
+        translationAuthor: null,
+        sourceKind: "direct",
+      },
+    ],
+    ...overrides,
+  };
+}
+
+export function perspectivesViewDto(overrides: Partial<PerspectivesViewDto> = {}): PerspectivesViewDto {
+  return { collection: "done", others: [], author: [], imagined: [], ...overrides };
 }

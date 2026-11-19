@@ -44,10 +44,13 @@
 
 ## Task 5: 시선 화면
 
-- [ ] 배경 화면에서 함께 쓸 부분을 `features/collection/` 으로 옮김 (배경 화면 테스트 그대로 통과)
-- [ ] `features/perspectives/`, 페이지, 배경 화면의 "다른 시선 보기"
-- [ ] 브라우저 테스트, `e2e/perspectives.spec.ts`
-- [ ] Commit: `feat(spec-01-10): add perspectives screen`
+- [x] 배경 화면에서 함께 쓸 부분을 `features/collection/` 으로 옮김 (배경 화면 테스트 그대로 통과)
+- [x] `features/perspectives/`, 페이지, 배경 화면의 "다른 시선 보기"
+- [x] 브라우저 테스트, `e2e/perspectives.spec.ts`
+- 메모: 화면의 틀(모임 읽기, 머리말)은 `features/collection/session-frame.tsx` 로 함께 쓴다. E2E 에서 두 가지를 고쳤다:
+  시험용 책 제목이 같은 밀리초에 겹쳐 "이미 등록된 책"이 됨(무작위 꼬리), 흐름 하나가 30초를 넘김(60초).
+  API·웹 컨테이너가 새 파일을 못 읽어 재시작이 필요했다.
+- [x] Commit: `feat(spec-01-10): add perspectives screen`
 
 ---
 
