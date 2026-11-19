@@ -14,6 +14,7 @@ describe("엔드포인트 문서", () => {
       "GET /health",
       "GET /sessions/{sessionId}",
       "GET /sessions/{sessionId}/background",
+      "GET /sessions/{sessionId}/perspectives",
       "POST /books",
       "POST /books/{bookId}/sessions",
       "POST /sessions/{sessionId}/background/recollect",

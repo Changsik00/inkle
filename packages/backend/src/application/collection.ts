@@ -60,6 +60,17 @@ export async function enqueueCollection(
   return { status: "queued", collectionId: collection.id, jobId };
 }
 
+// ── 화면에 내주는 수집 상태 (ADR-004 §7: 내용이나 개수 없이 상태만)
+
+export type CollectionState = "collecting" | "done" | "failed" | "none";
+
+/** 멈춘 대기·진행 중은 실패로 본다. 다시 모으기를 누를 수 있게 (blocksNewCollection 과 같은 기준) */
+export function collectionState(c: Collection | null, now: Date): CollectionState {
+  if (!c) return "none";
+  if (c.status === "done" || c.status === "failed") return c.status;
+  return blocksNewCollection(c, now) ? "collecting" : "failed";
+}
+
 export const collectBookPayload = z.object({ collectionId: z.string() });
 
 // ── 수집

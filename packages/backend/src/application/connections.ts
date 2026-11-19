@@ -1,7 +1,7 @@
 // 연결의 유스케이스 (ADR-002 독자 단위, ADR-004 §7). 내 해석이 저장된 뒤에만 만든다.
 // 재료는 그 책의 끝난 수집 가운데 가장 최근 것의 보여 줄 수 있는 배경이다.
 import { z } from "zod";
-import { enqueueCollection } from "./collection";
+import { collectionState, enqueueCollection, type CollectionState } from "./collection";
 import { ask, newLedger, roundedCost } from "./llm-ask";
 import type {
   BookRepository,
@@ -150,7 +150,6 @@ export async function connectBackground(deps: ConnectDeps, runId: string): Promi
 
 // ── 배경 보기 (문을 거친다, ADR-004 §7)
 
-export type CollectionState = "collecting" | "done" | "failed" | "none";
 export type ConnectionState = "waiting" | "making" | "done" | "failed";
 
 /** 화면에 내주는 배경 항목: 대조를 통과한 인용만, 출처와 함께 */
@@ -163,13 +162,7 @@ export type BackgroundView = {
   others: { topic: BackgroundTopic; items: ShownBackgroundItem[] }[];
 };
 
-/** 멈춘 대기·진행 중은 실패로 본다. 다시 모으기를 누를 수 있게 (blocksNewCollection 과 같은 기준) */
-function collectionState(c: Collection | null, now: Date): CollectionState {
-  if (!c) return "none";
-  if (c.status === "done" || c.status === "failed") return c.status;
-  return blocksNewCollection(c, now) ? "collecting" : "failed";
-}
-
+/** 멈춘 대기·진행 중은 실패로 본다 (수집 상태와 같은 기준) */
 function connectionState(run: ConnectionRun | null, collection: Collection | null, now: Date): ConnectionState {
   // 수집이 끝나지 않았거나, 이 수집으로 만든 것이 아직 없다
   if (!collection || collection.status !== "done" || !run || run.collectionId !== collection.id) return "waiting";

@@ -1862,6 +1862,414 @@ exports[`엔드포인트 문서 > 문서 스냅샷 1`] = `
         "tags": undefined,
       },
     },
+    "/sessions/{sessionId}/perspectives": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "perspectives.get",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "author": {
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "quotes": {
+                            "items": {
+                              "properties": {
+                                "author": {
+                                  "const": "external",
+                                },
+                                "lang": {
+                                  "type": "string",
+                                },
+                                "sourceKind": {
+                                  "enum": [
+                                    "direct",
+                                    "editorial",
+                                    "requote",
+                                  ],
+                                  "type": "string",
+                                },
+                                "text": {
+                                  "type": "string",
+                                },
+                                "translationAuthor": {
+                                  "anyOf": [
+                                    {
+                                      "const": "ai",
+                                    },
+                                    {
+                                      "type": "null",
+                                    },
+                                  ],
+                                },
+                                "translationKo": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                    },
+                                    {
+                                      "type": "null",
+                                    },
+                                  ],
+                                },
+                              },
+                              "required": [
+                                "text",
+                                "author",
+                                "lang",
+                                "translationKo",
+                                "translationAuthor",
+                                "sourceKind",
+                              ],
+                              "type": "object",
+                            },
+                            "type": "array",
+                          },
+                          "reading": {
+                            "type": "string",
+                          },
+                          "readingAuthor": {
+                            "const": "ai",
+                          },
+                          "source": {
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                              },
+                              "who": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "url",
+                              "who",
+                            ],
+                            "type": "object",
+                          },
+                          "who": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "who",
+                          "reading",
+                          "readingAuthor",
+                          "source",
+                          "quotes",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "collection": {
+                      "enum": [
+                        "collecting",
+                        "done",
+                        "failed",
+                        "none",
+                      ],
+                      "type": "string",
+                    },
+                    "imagined": {
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "reading": {
+                            "type": "string",
+                          },
+                          "readingAuthor": {
+                            "const": "ai",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "reading",
+                          "readingAuthor",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "others": {
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "format": "uuid",
+                            "type": "string",
+                          },
+                          "prevalence": {
+                            "enum": [
+                              "majority",
+                              "some",
+                              "rare",
+                              "unknown",
+                            ],
+                            "type": "string",
+                          },
+                          "quotes": {
+                            "items": {
+                              "properties": {
+                                "author": {
+                                  "const": "external",
+                                },
+                                "lang": {
+                                  "type": "string",
+                                },
+                                "sourceKind": {
+                                  "enum": [
+                                    "direct",
+                                    "editorial",
+                                    "requote",
+                                  ],
+                                  "type": "string",
+                                },
+                                "text": {
+                                  "type": "string",
+                                },
+                                "translationAuthor": {
+                                  "anyOf": [
+                                    {
+                                      "const": "ai",
+                                    },
+                                    {
+                                      "type": "null",
+                                    },
+                                  ],
+                                },
+                                "translationKo": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                    },
+                                    {
+                                      "type": "null",
+                                    },
+                                  ],
+                                },
+                              },
+                              "required": [
+                                "text",
+                                "author",
+                                "lang",
+                                "translationKo",
+                                "translationAuthor",
+                                "sourceKind",
+                              ],
+                              "type": "object",
+                            },
+                            "type": "array",
+                          },
+                          "reading": {
+                            "type": "string",
+                          },
+                          "readingAuthor": {
+                            "const": "ai",
+                          },
+                          "role": {
+                            "enum": [
+                              "critic",
+                              "reader",
+                              "other",
+                            ],
+                            "type": "string",
+                          },
+                          "source": {
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                              },
+                              "who": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "url",
+                              "who",
+                            ],
+                            "type": "object",
+                          },
+                          "who": {
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "id",
+                          "who",
+                          "role",
+                          "reading",
+                          "readingAuthor",
+                          "prevalence",
+                          "source",
+                          "quotes",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "collection",
+                    "others",
+                    "author",
+                    "imagined",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "LOCKED",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "내 해석을 먼저 써야 볼 수 있다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 403,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "403",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "모임을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "모임의 다른 시선: 다른 사람의 읽기, 작가 본인의 말, AI 가 만든 해석",
+        "tags": undefined,
+      },
+    },
   },
   "servers": [
     {

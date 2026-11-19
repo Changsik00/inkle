@@ -4,6 +4,7 @@
 import { backgroundContract } from "./background";
 import { booksContract } from "./books";
 import { healthContract } from "./health";
+import { perspectivesContract } from "./perspectives";
 import { sessionsContract } from "./sessions";
 
 export const contract = {
@@ -11,6 +12,7 @@ export const contract = {
   books: booksContract,
   sessions: sessionsContract,
   background: backgroundContract,
+  perspectives: perspectivesContract,
 };
 
 export type Contract = typeof contract;

@@ -34,11 +34,11 @@
 
 ## Task 4: 시선 API (문)
 
-- [ ] 수집 상태 계산을 배경과 함께 쓰도록 옮김
-- [ ] `packages/contract/src/perspectives.ts`: `get`
-- [ ] `application/perspectives.ts`: `perspectivesView` (`requireUnlocked`)
-- [ ] `rpc/perspectives.ts`, 라우터, OpenAPI 스냅샷, 테스트 (잠김, 404, 응답 모양)
-- [ ] Commit: `feat(spec-01-10): add perspectives api behind the gate`
+- [x] 수집 상태 계산을 배경과 함께 쓰도록 옮김
+- [x] `packages/contract/src/perspectives.ts`: `get`
+- [x] `application/perspectives.ts`: `perspectivesView` (`requireUnlocked`)
+- [x] `rpc/perspectives.ts`, 라우터, OpenAPI 스냅샷, 테스트 (잠김, 404, 응답 모양)
+- [x] Commit: `feat(spec-01-10): add perspectives api behind the gate`
 
 ---
 

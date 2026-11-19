@@ -2,6 +2,7 @@ import type { BackgroundItemDto } from "@inkle/contract/background";
 import { backgroundView, recollect, type ShownBackgroundItem } from "../application/connections";
 import { currentUser } from "../application/users";
 import { os } from "./os";
+import { quoteDto } from "./quote-dto";
 
 const itemDto = (item: ShownBackgroundItem): BackgroundItemDto => ({
   id: item.id,
@@ -9,14 +10,7 @@ const itemDto = (item: ShownBackgroundItem): BackgroundItemDto => ({
   claim: item.claimKo,
   claimAuthor: "ai",
   source: item.source,
-  quotes: item.quotes.map((q) => ({
-    text: q.text,
-    author: "external",
-    lang: q.lang,
-    translationKo: q.translationKo,
-    translationAuthor: q.translationKo === null ? null : "ai",
-    sourceKind: q.sourceKind,
-  })),
+  quotes: item.quotes.map(quoteDto),
 });
 
 // 사용자는 요청에서 받지 않고 서버가 정한다 (ADR-003 §4). 모두 문(門)을 거친다.
