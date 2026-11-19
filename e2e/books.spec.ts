@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { testBookTitle } from "./test-book";
 
 // 실행마다 다른 제목을 써서 이전 실행의 자료와 겹치지 않게 한다.
-const title = `E2E 시험용 책 ${Date.now()}`;
+const title = testBookTitle();
 
 test("책을 등록하면 책 정보로 가고 목록에 나타난다. 같은 책은 다시 만들어지지 않는다", async ({ page }) => {
   await page.goto("/");

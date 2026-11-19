@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { testBookTitle } from "./test-book";
 
-const title = `E2E 시험용 책 ${Date.now()}`;
+const title = testBookTitle();
 const FIRST = "이 책은 결국 무엇에 대한 이야기라고 읽었나요?";
 
-// 작업 프로세스 없이 돈다: 수집은 대기에 머문다. 실제 수집은 spec-01-09 Task 6 에서 손으로 확인한다.
+// 작업 프로세스 없이 돈다: 수집은 대기에 머물고, 끝나면 닫힌다 (e2e/test-book.ts). 실제 수집은 spec-01-09 Task 6 에서 손으로 확인했다.
 test("내 해석 전에는 배경이 잠기고, 저장하면 배경 화면으로 이어진다", async ({ page }) => {
   await page.goto("/books/new");
   await page.getByLabel("제목").fill(title);

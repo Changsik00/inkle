@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { testBookTitle } from "./test-book";
 
-const title = `E2E 시험용 책 ${Date.now()}`;
+const title = testBookTitle();
 const FIRST = "이 책은 결국 무엇에 대한 이야기라고 읽었나요?";
 
 test("모임을 열고 내 해석을 쓴다: 임시본, 저장, 고쳐 쓰기, 지난 모임", async ({ page }) => {

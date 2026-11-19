@@ -11,7 +11,8 @@
     "job:enqueue": "tsx src/cli/enqueue-job.ts",
     "typecheck": "tsc --noEmit",
     "collect": "tsx src/cli/collect.ts",
-    "collect:report": "tsx src/cli/collect-report.ts"
+    "collect:report": "tsx src/cli/collect-report.ts",
+    "e2e:abandon": "tsx src/cli/abandon-test-collections.ts"
   },
   "dependencies": {
     "@inkle/backend": "workspace:*"
