@@ -59,7 +59,7 @@ pnpm worker                     # 작업 프로세스 (호스트, 다른 터미�
 | `pnpm lint` | lint |
 | `pnpm typecheck` | 타입 검사 |
 | `pnpm test:unit` | DB 없이 도는 테스트만 (유스케이스, 메모리 저장소, API 처리, 의존 규칙, 화면 컴포넌트) |
-| `pnpm test:e2e` | 흐름 테스트 (Playwright). 먼저 `docker compose up -d --wait`. 개발 DB 에 시험용 책(`E2E 시험용 책 …`)이 남는다 |
+| `pnpm test:e2e` | 흐름 테스트 (Playwright). 먼저 `docker compose up -d --wait`. 개발 DB 에 시험용 책(`E2E 시험용 책 …`)이 남는다. 그 책들의 대기 중인 수집은 시작과 끝에 닫는다 (`pnpm e2e:abandon`). 도는 동안 작업 프로세스를 띄우지 않는다 |
 | `pnpm test` | 전체 테스트 (Node 와 브라우저 프로젝트). DB 가 떠 있어야 한다 (`docker compose up -d --wait db`). 개발 DB 가 아니라 `inkle_test` 데이터베이스를 비우고 쓴다 |
 
 ## 환경 변수

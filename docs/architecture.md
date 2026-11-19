@@ -304,6 +304,8 @@ pnpm test                         # 전부 (inkle_test 데이터베이스를 비
 pnpm test:e2e                     # 흐름
 ```
 
+흐름 테스트는 개발 DB 에 시험용 책(`E2E 시험용 책 …`)을 등록하고 모임을 열어, 그 책의 수집이 대기열에 들어간다. Playwright 가 시작과 끝에 이 책들의 **대기 중인** 수집과 작업을 실패로 닫는다 (`e2e/test-book.ts` → `pnpm e2e:abandon`, `infrastructure/db/abandon-test-collections.ts`). 작업 프로세스가 가짜 책을 실제로 모으지 않도록 하는 것이다. 테스트가 도는 동안 작업 프로세스를 띄우면 그 사이에 가져갈 수 있으니 띄우지 않는다.
+
 ## 6. 프론트
 
 ADR-007.

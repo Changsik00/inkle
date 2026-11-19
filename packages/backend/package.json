@@ -9,6 +9,7 @@
     "./server": "./src/server/http-server.ts",
     "./worker": "./src/worker/handlers.ts",
     "./db": "./src/infrastructure/db/client.ts",
+    "./db/abandon-test-collections": "./src/infrastructure/db/abandon-test-collections.ts",
     "./migrate": "./src/infrastructure/db/migrate.ts",
     "./application/*": "./src/application/*.ts",
     "./testing/*": "./src/testing/*.ts"

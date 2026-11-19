@@ -1,4 +1,7 @@
+import { abandonTestCollections } from "./test-book";
+
 // 앱이 떠 있지 않으면 이유를 분명히 알리고 멈춘다.
+// 지난 실행이 중간에 끊겨 남긴 시험용 책의 수집도 먼저 닫는다.
 export default async function globalSetup() {
   const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
   try {
@@ -7,4 +10,5 @@ export default async function globalSetup() {
   } catch (e) {
     throw new Error(`앱에 닿지 못했다 (${baseURL}). 먼저 \`docker compose up -d --wait\` 를 실행한다. 원인: ${String(e)}`);
   }
+  abandonTestCollections();
 }
