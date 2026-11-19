@@ -154,5 +154,18 @@ export function describeCollectionRepositoryContract(name: string, create: () =>
       expect(await f.collections.listPerspectives(c2.id)).toEqual([]);
       expect(await f.collections.listSources(c2.id)).toEqual([]);
     });
+
+    it("AI 가 만든 해석은 따로 넣고 읽는다. 외부 사람의 시선 목록에는 섞이지 않는다", async () => {
+      const c = await f.collections.create(f.bookId);
+      const other = await f.collections.create(f.bookId);
+      const provenance = { collectionId: c.id, bookId: f.bookId, model: "model-a", promptVersion: "imagine.v1" };
+      const first = await f.collections.addImaginedPerspective({ ...provenance, readingKo: "가족의 침묵에 대한 이야기로 읽을 수 있다" });
+      const second = await f.collections.addImaginedPerspective({ ...provenance, readingKo: "몸과 식물의 경계에 대한 우화" });
+      await f.collections.addImaginedPerspective({ ...provenance, collectionId: other.id, readingKo: "다른 수집" });
+
+      expect(first).toEqual({ ...provenance, id: expect.any(String), readingKo: "가족의 침묵에 대한 이야기로 읽을 수 있다" });
+      expect(await f.collections.listImaginedPerspectives(c.id)).toEqual([first, second]);
+      expect(await f.collections.listPerspectives(c.id)).toEqual([]);
+    });
   });
 }

@@ -5,6 +5,7 @@ import type {
   BackgroundItem,
   BackgroundTopic,
   Collection,
+  ImaginedPerspective,
   Perspective,
   PerspectiveRole,
   Prevalence,
@@ -119,6 +120,7 @@ export type NewPerspective = Provenance & {
   readingKo: string;
   quotes: NewQuote[];
 };
+export type NewImaginedPerspective = Omit<ImaginedPerspective, "id">;
 export type CollectionOutcome = Pick<Collection, "models" | "promptVersions" | "costUsd" | "candidateCount">;
 
 export interface CollectionRepository {
@@ -141,7 +143,11 @@ export interface CollectionRepository {
   setPrevalence(perspectiveId: string, prevalence: Prevalence): Promise<void>;
   /** 인용 포함, 넣은 순서대로 */
   listBackgroundItems(collectionId: string): Promise<BackgroundItem[]>;
+  /** 외부 사람의 시선만 (AI 가 만든 해석은 빼고) */
   listPerspectives(collectionId: string): Promise<Perspective[]>;
+  addImaginedPerspective(item: NewImaginedPerspective): Promise<ImaginedPerspective>;
+  /** 넣은 순서대로 */
+  listImaginedPerspectives(collectionId: string): Promise<ImaginedPerspective[]>;
 }
 
 // ── 연결 (ADR-002 독자 단위)

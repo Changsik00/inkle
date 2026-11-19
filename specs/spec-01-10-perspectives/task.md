@@ -24,11 +24,11 @@
 
 ## Task 3: 흔함 단계와 AI 가 만든 해석
 
-- [ ] `0006_imagined_perspectives.sql`, 포트와 Postgres·메모리 저장소(AI 가 만든 해석 쓰기, 종류 읽기), 계약 테스트
-- [ ] `application/collection.ts`: 흔함 단계에 작가 본인 제외, 마지막에 `imagine.v1`
-- [ ] `prompts/imagine.v1.ts`, 대역 LLM 의 단계 구분
-- [ ] 테스트: 대역 LLM 으로 부름·안 부름·실패
-- [ ] Commit: `feat(spec-01-10): add imagined perspectives when real ones are few`
+- [x] `0006_imagined_perspectives.sql`, 포트와 Postgres·메모리 저장소(AI 가 만든 해석 쓰기, 종류 읽기), 계약 테스트
+- [x] `application/collection.ts`: 흔함 단계에 작가 본인 제외, 마지막에 `imagine.v1`
+- [x] `prompts/imagine.v1.ts`, 대역 LLM 의 단계 구분
+- [x] 테스트: 대역 LLM 으로 부름·안 부름·실패
+- [x] Commit: `feat(spec-01-10): add imagined perspectives when real ones are few`
 
 ---
 
