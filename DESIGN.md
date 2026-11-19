@@ -261,8 +261,8 @@ inkle 은 책을 읽은 뒤 내 해석을 먼저 쓰고, 그 해석을 작품의
 - **보조 버튼 (`button-outline`):** 종이 바탕, 1px 선.
 - **입력란 (`input`):** 흰 바탕, 1px `input` 선, 둥글기 `sm`. 오류일 때는 선과 아래 문장만 `destructive`.
 - **책 행 (`book-row`, `book-row-meta`):** 책 제목은 명조(`title-book`), 아래 줄에 작가 · 장르(`caption`, 보조 글자). 행 사이에 1px 선. 그림자와 카드 테두리 없음.
-- **인용 (`quote-block`, `quote-rule`):** 명조, 왼쪽 2px 선(`rule-strong`), 아래에 누가 어디서 한 말인지 (`caption`).
-- **내 글 (`text-me`), AI 글 (`text-ai`):** 글 묶음 위에 "내가 씀" / "AI 가 씀" 표시를 붙인다 (컴포넌트는 spec-01-10 에서 만든다).
+- **인용 (`quote-block`, `quote-rule`):** 명조, 왼쪽 2px 선(`rule-strong`), 아래에 누가 어디서 한 말인지 (`caption`) 컴포넌트는 `ExternalQuote` (같은 파일). 한국어가 아닌 인용은 원문 아래에 옮김을 AI 글로 둔다.
+- **내 글 (`text-me`), AI 글 (`text-ai`):** 글 묶음 위에 "내가 씀" / "AI 가 씀" 표시를 붙인다. 컴포넌트는 `apps/web/src/ui/authored.tsx` 의 `MyText`, `AiText`, `AuthorMark` (spec-01-09). 옮김처럼 뜻이 다르면 표시 글자만 바꾼다 ("AI 가 옮김").
 - **오류 문장 (`error-text`):** 입력란 아래, `body-sm`.
 - **보조 버튼 (`button-secondary`), 행 위에 올렸을 때 (`row-hover`), 옅은 안내 상자 (`muted-panel`), 평평한 면 (`panel`), 떠 있는 메뉴 (`menu`):** shadcn/ui 부품이 쓰는 면. 그림자 없이 선과 면으로만.
 - **선 (`divider`, `input-outline`, `focus-ring`):** 목록 구분선 1px, 입력란 테두리 1px, 키보드 초점 2px.
@@ -313,4 +313,3 @@ AI 에이전트와 사람이 화면을 만들거나 고칠 때 따른다.
 
 - **다크 모드:** 아직 없다. 같은 토큰 이름에 다른 값을 주는 묶음(`.dark`)으로 더한다.
 - **움직임:** 정하지 않았다. 쓴다면 150–200ms, 화면 전환 없이 상태 변화에만.
-- **글쓴이 표시 컴포넌트:** 토큰과 규칙만 있다. 컴포넌트는 spec-01-10.

@@ -1,4 +1,5 @@
 // 화면 테스트에서 쓰는 API 응답 모양. 계약(@inkle/contract)의 스키마를 따른다.
+import type { BackgroundItemDto, BackgroundViewDto } from "@inkle/contract/background";
 import type { BookDto } from "@inkle/contract/books";
 import type { InterpretationDto, SessionSummaryDto, SessionViewDto } from "@inkle/contract/sessions";
 
@@ -61,4 +62,29 @@ export function sessionSummaryDto(overrides: Partial<SessionSummaryDto> = {}): S
     createdAt: "2026-11-18T00:00:00.000Z",
     ...overrides,
   };
+}
+
+export function backgroundItemDto(overrides: Partial<BackgroundItemDto> = {}): BackgroundItemDto {
+  return {
+    id: "00000000-0000-4000-8000-0000000000d1",
+    topic: "author_intent",
+    claim: "헤밍웨이는 이 작품에 상징이 없다고 말했다.",
+    claimAuthor: "ai",
+    source: { url: "https://www.mentalfloss.com/article/64363", who: "기자, Mental Floss" },
+    quotes: [
+      {
+        text: "There isn't any symbolism. The sea is the sea.",
+        author: "external",
+        lang: "en",
+        translationKo: "상징은 없다. 바다는 바다다.",
+        translationAuthor: "ai",
+        sourceKind: "direct",
+      },
+    ],
+    ...overrides,
+  };
+}
+
+export function backgroundViewDto(overrides: Partial<BackgroundViewDto> = {}): BackgroundViewDto {
+  return { collection: "done", connections: "done", connected: [], others: [], ...overrides };
 }

@@ -48,10 +48,11 @@ test("저장하면 쓴 답을 보내고, 저장했다고 알린 뒤 읽기 모�
   expect(localStorage.length).toBe(0);
 });
 
-test("저장한 해석은 읽기 모드로 보이고, 고쳐 쓰기를 누르면 그 글로 입력란이 채워진다", async () => {
+test("저장한 해석은 읽기 모드로 보이고 배경 보기로 이어진다. 고쳐 쓰기를 누르면 그 글로 입력란이 채워진다", async () => {
   const view = sessionViewDto({ stage: "interpretation_saved", interpretation: interpretationDto() });
   await renderWithProviders(<InterpretationForm view={view} />);
   await expect.element(page.getByText("꿈을 놓지 않는 이야기")).toBeInTheDocument();
+  await expect.element(page.getByRole("link", { name: "배경 보기" })).toHaveAttribute("href", `/sessions/${SESSION_ID}/background`);
   await page.getByRole("button", { name: "고쳐 쓰기" }).click();
   await expect.element(page.getByLabelText("이 책은 결국 무엇에 대한 이야기라고 읽었나요?")).toHaveValue("꿈을 놓지 않는 이야기");
 });

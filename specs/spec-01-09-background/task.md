@@ -47,11 +47,13 @@
 
 ## Task 5: 배경 화면
 
-- [ ] DESIGN.md 를 먼저 읽는다. 글쓴이 표시 컴포넌트 (DESIGN.md 의 시점 문장 고침)
-- [ ] `features/background/`: 맞닿는 배경, 다른 배경(접기), 인용과 옮김, 진행 상황과 다시 읽기, 확인하지 못함과 다시 모으기, 잠김 안내
-- [ ] 페이지 `/sessions/{id}/background`, 내 해석 화면의 "배경 보기"
-- [ ] 브라우저 테스트(MSW), `e2e/background.spec.ts`
-- [ ] Commit: `feat(spec-01-09): add background screen`
+- [x] DESIGN.md 를 먼저 읽는다. 글쓴이 표시 컴포넌트 (DESIGN.md 의 시점 문장 고침)
+- [x] `features/background/`: 맞닿는 배경, 다른 배경(접기), 인용과 옮김, 진행 상황과 다시 읽기, 확인하지 못함과 다시 모으기, 잠김 안내
+- [x] 페이지 `/sessions/{id}/background`, 내 해석 화면의 "배경 보기"
+- [x] 브라우저 테스트(MSW), `e2e/background.spec.ts`
+- 메모: 글쓴이 표시는 `ui/authored.tsx` (`MyText`, `AiText`, `AuthorMark`, `ExternalQuote`). 다른 배경은 `<details>` 로 접는다.
+  E2E 를 여럿 동시에 돌리면 개발 서버의 첫 컴파일 때문에 화면 이동이 5초를 넘겨 가끔 실패했다 → `playwright.config.ts` 의 기다림을 10초로 (네 번 연속 통과).
+- [x] Commit: `feat(spec-01-09): add background screen`
 
 ---
 
