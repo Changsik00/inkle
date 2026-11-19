@@ -16,9 +16,9 @@
 
 ## Task 2: 시선의 도메인 규칙
 
-- [ ] `domain/collection.ts`: 시선의 종류(외부 사람 / AI 가 만든 해석), `prevalenceOf`(작가 본인·AI 는 없음), 흔함을 매길 대상 고르기, `needsImagined`, `arrangePerspectives`(다른 사람 흔함 순 / 작가 본인 / AI)
-- [ ] 테스트 먼저 (Red → Green)
-- [ ] Commit: `feat(spec-01-10): add perspective rules`
+- [x] `domain/collection.ts`: 시선의 종류(외부 사람 / AI 가 만든 해석), `prevalenceOf`(작가 본인·AI 는 없음), 흔함을 매길 대상 고르기, `needsImagined`, `arrangePerspectives`(다른 사람 흔함 순 / 작가 본인 / AI)
+- [x] 테스트 먼저 (Red → Green)
+- [x] Commit: `feat(spec-01-10): add perspective rules`
 
 ---
 

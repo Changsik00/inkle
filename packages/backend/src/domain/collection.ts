@@ -121,6 +121,17 @@ export type Perspective = Provenance & {
   quotes: Quote[];
 };
 
+/**
+ * AI 가 만든 해석 (ADR-004 §6, ADR-002 §2). 실제 사람의 시선이 모자랄 때만 덧붙인다.
+ * 출처와 인용이 없고 글쓴이는 AI 다. 흔함 정도는 언제나 알 수 없음이라 갖지 않는다.
+ */
+export type ImaginedPerspective = Provenance & {
+  id: string;
+  bookId: string;
+  /** AI 가 쓴 한국어 읽기 */
+  readingKo: string;
+};
+
 /** 대조를 통과한 인용이 하나라도 있어야 화면에 보여 줄 수 있다 (phase-01 성공 기준 4). */
 export function isShowable(item: { quotes: Pick<Quote, "verified">[] }): boolean {
   return item.quotes.some((q) => q.verified);
@@ -141,4 +152,38 @@ export function applyPrevalence(
   return Object.fromEntries(
     perspectiveIds.map((id) => [id, enough && Object.hasOwn(labels, id) ? labels[id] : "unknown"]),
   );
+}
+
+// ── 흔함 정도는 다른 사람의 읽기에만 (spec-01-10). 작가 본인의 말이 흔한 읽기인지는 뜻이 없다.
+
+/** 화면에 내줄 흔함 정도. 작가 본인이면 없음 (저장된 값이 있어도). */
+export function prevalenceOf(p: Pick<Perspective, "role" | "prevalence">): Prevalence | null {
+  return p.role === "author" ? null : p.prevalence;
+}
+
+/** 흔함을 매길 시선: 보여 줄 수 있고 작가 본인이 아닌 것. "다수 의견"을 말할 개수도 이것으로 센다. */
+export function prevalenceTargets<T extends Pick<Perspective, "role"> & { quotes: Pick<Quote, "verified">[] }>(perspectives: T[]): T[] {
+  return perspectives.filter((p) => p.role !== "author" && isShowable(p));
+}
+
+/** 다른 사람(작가 본인 제외)의 시선이 이보다 적으면 AI 가 만든 해석을 덧붙인다 (ADR-004 §6). */
+export const MIN_REAL_PERSPECTIVES = 3;
+
+/** 덧붙일 AI 가 만든 해석의 수. 다른 사람의 시선이 기준에 닿도록 모자란 만큼. */
+export function needsImagined(otherPerspectiveCount: number): number {
+  return Math.max(0, MIN_REAL_PERSPECTIVES - otherPerspectiveCount);
+}
+
+const PREVALENCE_ORDER: Record<Prevalence, number> = { majority: 0, some: 1, rare: 2, unknown: 3 };
+
+/** 화면 배치: 다른 사람은 흔한 것부터(같은 값 안에서는 받은 순서), 작가 본인은 따로. */
+export function arrangePerspectives<T extends Pick<Perspective, "role" | "prevalence">>(
+  perspectives: T[],
+): { others: T[]; author: T[] } {
+  const others = perspectives
+    .filter((p) => p.role !== "author")
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => PREVALENCE_ORDER[a.p.prevalence] - PREVALENCE_ORDER[b.p.prevalence] || a.i - b.i)
+    .map(({ p }) => p);
+  return { others, author: perspectives.filter((p) => p.role === "author") };
 }
