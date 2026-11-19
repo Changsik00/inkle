@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-18 (spec-01-08, 자료 수집).
+> 마지막 갱신: 2026-11-20 (spec-01-09, 배경과 연결).
 
 ## 1. 한눈에
 
@@ -31,7 +31,7 @@ flowchart LR
 | web | `apps/web` | compose, `127.0.0.1:3000` | `pnpm dev` | 화면. `/api/*` 는 API 서버로 넘긴다 (`apps/web/next.config.ts` 의 rewrites, `API_ORIGIN`) | ADR-007, ADR-009 |
 | api | `apps/api` | compose, `127.0.0.1:4000` | `pnpm db:migrate && pnpm api` | HTTP API (계약의 주소, `/api/openapi.json`). 뜰 때 마이그레이션 적용 | ADR-009 |
 | db | - | compose, `127.0.0.1:54329` | - | 모든 자료와 작업 대기열 | ADR-001 |
-| 작업 프로세스 | `apps/worker` | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (자료 수집 `collect-book`, 시험용 `noop`) | ADR-001, ADR-004 |
+| 작업 프로세스 | `apps/worker` | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (자료 수집 `collect-book`, 연결 만들기 `connect-background`, 시험용 `noop`). 조립은 `container.workerDeps` | ADR-001, ADR-004 |
 | Claude Code CLI | - | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음. 빈 임시 디렉토리에서 MCP 서버와 사용자 설정 없이 실행 | ADR-004 |
 
 - 컨테이너는 개발용 이미지 하나(`Dockerfile`)에서 시작 명령만 다르다 (ADR-010).
@@ -47,7 +47,7 @@ inkle/
 ├─ apps/
 │  ├─ web/                @inkle/web — Next.js 화면
 │  │  ├─ src/app/         라우트 (자료를 읽지 않는 틀), globals.css (테마 토큰)
-│  │  ├─ src/features/    기능별 화면 (books, system)
+│  │  ├─ src/features/    기능별 화면 (books, sessions, background, writing, system)
 │  │  ├─ src/ui/          shadcn/ui 공통 부품
 │  │  ├─ src/api-client/  HTTP 클라이언트 (화면이 서버를 부르는 유일한 통로)
 │  │  ├─ src/providers.tsx, src/product.ts
@@ -147,7 +147,8 @@ flowchart TB
 | `CollectionRepository` | 수집과 출처·배경 항목·시선·인용 저장, 책의 최근 수집 | `PostgresCollectionRepository` | 현재 (spec-01-08) |
 | `LlmClient` | 지시문과 결과 형식(JSON Schema), 쓸 도구를 주고 결과·비용·모델을 받는다 | `ClaudeCodeCli` (이후 Claude API) | 현재 (spec-01-08) |
 | `PageFetcher` | 주소를 열어 페이지 전체 글자와 본문 글자를 받는다 | `HttpPageFetcher` (내부 주소 차단, 리디렉션 매번 검사, 문자 인코딩 감지, Readability) | 현재 (spec-01-08) |
-| 비교, 연결 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-09 ~) |
+| `ConnectionRepository` | 연결 만들기(모임·판·수집)와 연결 저장, 판의 최근 연결 만들기 | `PostgresConnectionRepository` | 현재 (spec-01-09) |
+| 비교 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-10 ~) |
 
 ## 3. 흐름
 
@@ -183,7 +184,7 @@ sequenceDiagram
 phase-01 성공 기준 5. 모임의 단계는 저장된 내 해석이 있는지로 정해진다 (`writing` → `interpretation_saved`).
 
 - 문(門)은 애플리케이션 층의 `requireUnlocked` 하나다 (`packages/backend/src/application/sessions.ts`). 내 해석 전이면 `locked`, 다른 사용자의 모임이면 `not_found`.
-- 배경·다른 시선·비교를 읽는 API(spec-01-09, 10)는 모두 이 함수를 거친다.
+- 배경·다른 시선·비교를 읽는 API 는 모두 이 함수를 거친다. 지금은 배경(`GET /api/sessions/{id}/background`, `POST …/background/recollect`, spec-01-09). 잠긴 모임에는 수집 상태도 내주지 않는다 (`403 LOCKED`).
 - 모임 조회(`GET /api/sessions/{id}`)는 단계와 무관하게 책, 질문 묶음, 최근 내 해석만 담는다. 다음 단계의 자료는 담지 않는다.
 
 ### 작업 (현재: 자료 수집, 시험용 작업)
@@ -235,6 +236,32 @@ sequenceDiagram
 - 대조를 통과한 인용이 하나도 없는 항목은 저장하되 내주지 않는다 (`isShowable`). 결과는 내 해석이 저장된 모임에만 내준다 (ADR-004 §7, spec-01-09).
 - 확인 명령: `pnpm collect <bookId> [--force]`, `pnpm collect:report <bookId> [--quotes]`.
 
+### 배경과 연결 (현재: spec-01-09)
+
+ADR-002 의 연결: 배경 항목 하나가 내 해석의 어느 부분과 맞닿는지. 독자 단위이고 내 해석의 **판 하나**에 대해 만든다.
+
+```mermaid
+sequenceDiagram
+    participant B as 브라우저
+    participant A as API (문)
+    participant Q as 대기열
+    participant W as 작업 프로세스
+    participant L as LlmClient
+    B->>A: PUT 내 해석 (새 판)
+    A->>Q: connect-background — 그 책의 수집이 끝났을 때 (enqueueConnections)
+    W->>Q: collect-book 이 끝나면 그 책의 모임들에 넣는다 (enqueueConnectionsForBook)
+    W->>L: connect.v2 (내 답 + 보여 줄 수 있는 배경, 도구 없음)
+    W->>W: 내 구절을 내 답과 대조 (matchQuote), 목록 밖 배경 번호는 버림
+    W->>W: 연결 저장 (판, 수집, 모델, 지시문 판, 비용)
+    B->>A: GET /sessions/{id}/background (진행 중이면 3초마다)
+    A-->>B: 수집·연결 상태, 맞닿는 배경, 주제별 나머지
+```
+
+- 연결의 근거는 내 답에서 그대로 옮긴 구절이고, 출처 인용과 같은 규칙으로 대조한다 (`domain/connection.ts` 의 `checkConnections`). 통과하지 못한 연결은 저장하되 내주지 않는다.
+- 같은 판·같은 수집으로는 한 번만 만든다. 새 판을 저장하면 새로 만들고, 이전 판의 연결은 남는다 (ADR-005).
+- 오래 멈춘 수집·연결 만들기는 `failed` 로 내준다. 수집이 실패했거나 없으면 화면의 "다시 모으기"가 `recollect` 를 부른다.
+- 화면은 `/sessions/{id}/background` (`apps/web/src/features/background/`). 글쓴이 표시는 `apps/web/src/ui/authored.tsx`.
+
 ## 4. 데이터
 
 ADR-002. 자료는 두 층이다.
@@ -244,7 +271,8 @@ ADR-002. 자료는 두 층이다.
 | 책 단위 | 책 | 없음 | 현재 (spec-01-04) |
 | 책 단위 | 수집, 출처(페이지 전체 글자 보관), 배경 항목, 시선, 인용 | 없음 | 현재 (spec-01-08) |
 | 독자 단위 | 모임, 내 해석(판) | 있음 (ADR-003) | 현재 (spec-01-07) |
-| 독자 단위 | 연결, 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
+| 독자 단위 | 연결 만들기, 연결 (모임을 거쳐 사용자) | 있음 (ADR-003) | 현재 (spec-01-09) |
+| 독자 단위 | 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
 | 운영 | 사용자, 작업 대기열, 적용한 마이그레이션 | - | 현재 |
 
 - 모든 글에 글쓴이(나 / AI / 외부 사람)를 따로 저장한다 (ADR-002 §3).
@@ -300,7 +328,7 @@ flowchart LR
 | 테스트 | API 처리와 HTTP 클라이언트는 Vitest(Node), 컴포넌트는 Vitest 브라우저 모드 + MSW, 흐름은 Playwright |
 | 기타 | React Compiler |
 
-화면의 의존 규칙은 ADR-007 §7. 글쓰기 공통 규칙(ADR-007 §5)은 `apps/web/src/features/writing/use-draft.ts` (spec-01-07). 글쓴이 표시 컴포넌트는 spec-01-10 에서 만든다.
+화면의 의존 규칙은 ADR-007 §7. 글쓰기 공통 규칙(ADR-007 §5)은 `apps/web/src/features/writing/use-draft.ts` (spec-01-07). 글쓴이 표시 컴포넌트는 `apps/web/src/ui/authored.tsx` (`MyText`, `AiText`, `AuthorMark`, `ExternalQuote`, spec-01-09).
 
 ## 7. 결정 목록
 
