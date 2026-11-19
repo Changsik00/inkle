@@ -65,8 +65,8 @@
 
 ## Task 7: 문서
 
-- [ ] `docs/architecture.md`, `README.md`, ADR-004 §6 기준 문장
-- [ ] Commit: `docs(spec-01-10): update docs for perspectives`
+- [x] `docs/architecture.md`, `README.md`, ADR-004 §6 기준 문장
+- [x] Commit: `docs(spec-01-10): update docs for perspectives`
 
 ---
 

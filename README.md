@@ -41,7 +41,7 @@ docker compose up -d --wait     # 화면(web), API 서버(api), DB. API 서버�
 pnpm worker                     # 작업 프로세스 (호스트, 다른 터미널에서)
 ```
 
-- 화면: http://localhost:3000 (책 목록), `/books/new` (책 등록), `/books/{bookId}` (책 정보, 모임 시작), `/sessions/{sessionId}/interpretation` (내 해석 쓰기), `/sessions/{sessionId}/background` (배경, 내 해석을 저장한 뒤)
+- 화면: http://localhost:3000 (책 목록), `/books/new` (책 등록), `/books/{bookId}` (책 정보, 모임 시작), `/sessions/{sessionId}/interpretation` (내 해석 쓰기), `/sessions/{sessionId}/background` (배경), `/sessions/{sessionId}/perspectives` (다른 시선). 둘 다 내 해석을 저장한 뒤
 - 상태 확인: http://localhost:3000/api/health (API 서버 직접: http://localhost:4000/api/health)
 - 엔드포인트 문서 (OpenAPI): http://localhost:3000/api/openapi.json
 - DB: `127.0.0.1:54329` (이 기기 안쪽에만 열린다. 사용자 `inkle`, 비밀번호 없음)
