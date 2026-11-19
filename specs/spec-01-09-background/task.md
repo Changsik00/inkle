@@ -59,11 +59,12 @@
 
 ## Task 6: 실제 연결과 기록 (구독 사용량 사용)
 
-- [ ] 두 책에 수동 실험의 해석을 저장하고 실제로 연결을 만든다
-- [ ] 내 구절 대조 통과율, 시간, 비용, 수동 실험과 비교. 독자를 평가하는 문장이 없는지 확인
-- [ ] 문제가 있으면 지시문을 고쳐 판을 올리고 다시 돌린다
-- [ ] 스크린숏 `docs/design/screens/background*.png`, `docs/experiments/04-connections/README.md`
-- [ ] Commit: `docs(spec-01-09): record real connections for two books`
+- [x] 두 책에 수동 실험의 해석을 저장하고 실제로 연결을 만든다
+- [x] 내 구절 대조 통과율, 시간, 비용, 수동 실험과 비교. 독자를 평가하는 문장이 없는지 확인
+- [x] 문제가 있으면 지시문을 고쳐 판을 올리고 다시 돌린다
+  - 메모: `connect.v1` 이 질문 문장을 옮긴 연결 1개(대조가 거름), 배경을 되풀이하는 "맞닿는 곳" → `connect.v2`. 같은 답을 판 2 로 저장해 다시 만들었다 (판 1 의 연결은 남음). 실행 전에 E2E 시험용 책의 대기 수집 21건을 실패 처리했다
+- [x] 스크린숏 `docs/design/screens/background*.png`, `docs/experiments/04-connections/README.md`
+- [x] Commit: `docs(spec-01-09): record real connections for two books`
 
 ---
 
