@@ -6,6 +6,7 @@
   "description": "HTTP 계약: 엔드포인트, 요청·응답, 오류의 유일한 원본 (ADR-007 §3)",
   "exports": {
     ".": "./src/index.ts",
+    "./background": "./src/background.ts",
     "./books": "./src/books.ts",
     "./health": "./src/health.ts",
     "./sessions": "./src/sessions.ts"

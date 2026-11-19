@@ -981,6 +981,619 @@ exports[`엔드포인트 문서 > 문서 스냅샷 1`] = `
         "tags": undefined,
       },
     },
+    "/sessions/{sessionId}/background": {
+      "get": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "background.get",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "collection": {
+                      "enum": [
+                        "collecting",
+                        "done",
+                        "failed",
+                        "none",
+                      ],
+                      "type": "string",
+                    },
+                    "connected": {
+                      "items": {
+                        "properties": {
+                          "connection": {
+                            "properties": {
+                              "myQuote": {
+                                "type": "string",
+                              },
+                              "myQuoteAuthor": {
+                                "const": "me",
+                              },
+                              "note": {
+                                "type": "string",
+                              },
+                              "noteAuthor": {
+                                "const": "ai",
+                              },
+                              "questionId": {
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "myQuote",
+                              "myQuoteAuthor",
+                              "questionId",
+                              "note",
+                              "noteAuthor",
+                            ],
+                            "type": "object",
+                          },
+                          "item": {
+                            "properties": {
+                              "claim": {
+                                "type": "string",
+                              },
+                              "claimAuthor": {
+                                "const": "ai",
+                              },
+                              "id": {
+                                "format": "uuid",
+                                "type": "string",
+                              },
+                              "quotes": {
+                                "items": {
+                                  "properties": {
+                                    "author": {
+                                      "const": "external",
+                                    },
+                                    "lang": {
+                                      "type": "string",
+                                    },
+                                    "sourceKind": {
+                                      "enum": [
+                                        "direct",
+                                        "editorial",
+                                        "requote",
+                                      ],
+                                      "type": "string",
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                    },
+                                    "translationAuthor": {
+                                      "anyOf": [
+                                        {
+                                          "const": "ai",
+                                        },
+                                        {
+                                          "type": "null",
+                                        },
+                                      ],
+                                    },
+                                    "translationKo": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                        },
+                                        {
+                                          "type": "null",
+                                        },
+                                      ],
+                                    },
+                                  },
+                                  "required": [
+                                    "text",
+                                    "author",
+                                    "lang",
+                                    "translationKo",
+                                    "translationAuthor",
+                                    "sourceKind",
+                                  ],
+                                  "type": "object",
+                                },
+                                "type": "array",
+                              },
+                              "source": {
+                                "properties": {
+                                  "url": {
+                                    "type": "string",
+                                  },
+                                  "who": {
+                                    "type": "string",
+                                  },
+                                },
+                                "required": [
+                                  "url",
+                                  "who",
+                                ],
+                                "type": "object",
+                              },
+                              "topic": {
+                                "enum": [
+                                  "era",
+                                  "author_life",
+                                  "author_intent",
+                                  "other",
+                                ],
+                                "type": "string",
+                              },
+                            },
+                            "required": [
+                              "id",
+                              "topic",
+                              "claim",
+                              "claimAuthor",
+                              "source",
+                              "quotes",
+                            ],
+                            "type": "object",
+                          },
+                        },
+                        "required": [
+                          "item",
+                          "connection",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "connections": {
+                      "enum": [
+                        "waiting",
+                        "making",
+                        "done",
+                        "failed",
+                      ],
+                      "type": "string",
+                    },
+                    "others": {
+                      "items": {
+                        "properties": {
+                          "items": {
+                            "items": {
+                              "properties": {
+                                "claim": {
+                                  "type": "string",
+                                },
+                                "claimAuthor": {
+                                  "const": "ai",
+                                },
+                                "id": {
+                                  "format": "uuid",
+                                  "type": "string",
+                                },
+                                "quotes": {
+                                  "items": {
+                                    "properties": {
+                                      "author": {
+                                        "const": "external",
+                                      },
+                                      "lang": {
+                                        "type": "string",
+                                      },
+                                      "sourceKind": {
+                                        "enum": [
+                                          "direct",
+                                          "editorial",
+                                          "requote",
+                                        ],
+                                        "type": "string",
+                                      },
+                                      "text": {
+                                        "type": "string",
+                                      },
+                                      "translationAuthor": {
+                                        "anyOf": [
+                                          {
+                                            "const": "ai",
+                                          },
+                                          {
+                                            "type": "null",
+                                          },
+                                        ],
+                                      },
+                                      "translationKo": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                          },
+                                          {
+                                            "type": "null",
+                                          },
+                                        ],
+                                      },
+                                    },
+                                    "required": [
+                                      "text",
+                                      "author",
+                                      "lang",
+                                      "translationKo",
+                                      "translationAuthor",
+                                      "sourceKind",
+                                    ],
+                                    "type": "object",
+                                  },
+                                  "type": "array",
+                                },
+                                "source": {
+                                  "properties": {
+                                    "url": {
+                                      "type": "string",
+                                    },
+                                    "who": {
+                                      "type": "string",
+                                    },
+                                  },
+                                  "required": [
+                                    "url",
+                                    "who",
+                                  ],
+                                  "type": "object",
+                                },
+                                "topic": {
+                                  "enum": [
+                                    "era",
+                                    "author_life",
+                                    "author_intent",
+                                    "other",
+                                  ],
+                                  "type": "string",
+                                },
+                              },
+                              "required": [
+                                "id",
+                                "topic",
+                                "claim",
+                                "claimAuthor",
+                                "source",
+                                "quotes",
+                              ],
+                              "type": "object",
+                            },
+                            "type": "array",
+                          },
+                          "topic": {
+                            "enum": [
+                              "era",
+                              "author_life",
+                              "author_intent",
+                              "other",
+                            ],
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "topic",
+                          "items",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "required": [
+                    "collection",
+                    "connections",
+                    "connected",
+                    "others",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "LOCKED",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "내 해석을 먼저 써야 볼 수 있다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 403,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "403",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "모임을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "모임의 배경: 상태, 내 해석과 맞닿는 배경, 나머지 배경",
+        "tags": undefined,
+      },
+    },
+    "/sessions/{sessionId}/background/recollect": {
+      "post": {
+        "deprecated": undefined,
+        "description": undefined,
+        "operationId": "background.recollect",
+        "parameters": [
+          {
+            "allowEmptyValue": undefined,
+            "allowReserved": undefined,
+            "explode": undefined,
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+            "style": undefined,
+          },
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "collection": {
+                      "enum": [
+                        "collecting",
+                        "done",
+                        "failed",
+                        "none",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "collection",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "OK",
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "LOCKED",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "내 해석을 먼저 써야 볼 수 있다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 403,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "403",
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "code": {
+                          "const": "NOT_FOUND",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": true,
+                        },
+                        "message": {
+                          "default": "모임을 찾을 수 없다",
+                          "type": "string",
+                        },
+                        "status": {
+                          "const": 404,
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                    {
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                        },
+                        "data": {},
+                        "defined": {
+                          "const": false,
+                        },
+                        "message": {
+                          "type": "string",
+                        },
+                        "status": {
+                          "type": "number",
+                        },
+                      },
+                      "required": [
+                        "defined",
+                        "code",
+                        "status",
+                        "message",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+            },
+            "description": "404",
+          },
+        },
+        "summary": "그 책의 수집이 실패했거나 없으면 다시 모은다. 끝났거나 모으는 중이면 아무것도 하지 않는다",
+        "tags": undefined,
+      },
+    },
     "/sessions/{sessionId}/interpretation": {
       "put": {
         "deprecated": undefined,

@@ -68,6 +68,7 @@
 | `spec-01-06` | design-system | P? | Merged | `specs/spec-01-06-design-system/` |
 | `spec-01-07` | interpretation | P? | Merged | `specs/spec-01-07-interpretation/` |
 | `spec-01-08` | collection | P? | Merged | `specs/spec-01-08-collection/` |
+| `spec-01-09` | background | P? | Merged | `specs/spec-01-09-background/` |
 <!-- sdd:specs:end -->
 
 > 상태 허용값: `Backlog` / `In Progress` / `Merged`
@@ -193,6 +194,7 @@
   - `docs/goals.md` §원칙 "사실과 해석을 구분한다"
   - ADR-002, ADR-004, ADR-005
 - **연관 모듈**: LLM 연동, 책 도메인
+- **결과** (2026-11-20): 연결(`connection_runs`, `connections`, 마이그레이션 0005). 내 해석의 판마다 `connect.v2` 로 맞닿는 배경을 고르고, 내 구절을 내 답과 문자열로 대조. API `GET /sessions/{id}/background`, `POST …/recollect` (문). 화면 `/sessions/{id}/background`, 글쓴이 표시 `ui/authored.tsx`. 실제 실행은 `docs/experiments/04-connections/README.md`.
 
 ### spec-01-10 — 다른 시선과 비교
 

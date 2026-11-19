@@ -43,6 +43,13 @@ export function describeSessionRepositoryContract(name: string, create: () => Pr
       await f.sessions.create({ userId: f.userId, bookId: f.otherBookId });
       expect((await f.sessions.listForBook(f.bookId, f.userId)).map((s) => s.id)).toEqual([second.id, first.id]);
     });
+
+    it("listByBook 은 사용자와 무관하게 그 책의 모든 모임을 만든 순서로 (작업 프로세스용)", async () => {
+      const mine = await f.sessions.create({ userId: f.userId, bookId: f.bookId });
+      const theirs = await f.sessions.create({ userId: f.otherUserId, bookId: f.bookId });
+      await f.sessions.create({ userId: f.userId, bookId: f.otherBookId });
+      expect((await f.sessions.listByBook(f.bookId)).map((s) => s.id)).toEqual([mine.id, theirs.id]);
+    });
   });
 
   describe(`InterpretationRepository 계약: ${name}`, () => {

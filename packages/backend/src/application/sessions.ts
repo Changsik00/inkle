@@ -1,6 +1,14 @@
 // 모임과 내 해석의 유스케이스. 사용자는 호출하는 쪽이 정해 넘긴다 (currentUser, ADR-003 §4).
 import { enqueueCollection } from "./collection";
-import type { BookRepository, CollectionRepository, InterpretationRepository, JobRepository, SessionRepository } from "./ports";
+import { enqueueConnections } from "./connections";
+import type {
+  BookRepository,
+  CollectionRepository,
+  ConnectionRepository,
+  InterpretationRepository,
+  JobRepository,
+  SessionRepository,
+} from "./ports";
 import { isBookId, type Book } from "../domain/book";
 import { isUuid } from "../domain/id";
 import { validateAnswers, type Answer, type Interpretation, type InterpretationViolation } from "../domain/interpretation";
@@ -13,6 +21,8 @@ export type SessionDeps = {
   interpretations: InterpretationRepository;
   /** 모임을 열면 그 책의 자료 수집을 대기열에 넣는다 (ADR-004 §7) */
   collections: CollectionRepository;
+  /** 내 해석을 저장하면 배경과의 연결 만들기를 넣는다 (ADR-004 §7) */
+  connections: ConnectionRepository;
   jobs: JobRepository;
 };
 
@@ -97,6 +107,8 @@ export async function saveInterpretation(
     questionSetId: set.id,
     answers: checked.answers,
   });
+  // 새 판마다 연결을 새로 만든다. 수집이 아직이면 수집이 끝날 때 넣는다.
+  await enqueueConnections(deps, session);
   return { status: "saved", interpretation };
 }
 

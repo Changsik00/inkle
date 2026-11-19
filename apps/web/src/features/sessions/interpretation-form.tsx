@@ -7,6 +7,7 @@ import {
   type InterpretationDto,
   type SessionViewDto,
 } from "@inkle/contract/sessions";
+import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 import { api, ApiError } from "@/api-client";
@@ -37,7 +38,7 @@ export function InterpretationForm({ view }: { view: SessionViewDto }) {
         {justSaved !== null && (
           <div role="status" className="flex flex-col gap-1 border-l-2 border-rule-strong pl-4">
             <p className="text-label">저장했어요</p>
-            <p className="text-body-sm text-muted-foreground">배경과 다른 시선은 다음 단계에서 볼 수 있어요. 지금은 준비 중이에요.</p>
+            <p className="text-body-sm text-muted-foreground">이제 배경을 볼 수 있어요. 내 해석과 맞닿는 배경을 찾는 데 몇 분 걸릴 수 있어요.</p>
           </div>
         )}
         <p className="text-caption text-muted-foreground">
@@ -55,7 +56,10 @@ export function InterpretationForm({ view }: { view: SessionViewDto }) {
               </div>
             ))}
         </dl>
-        <div>
+        <div className="flex flex-wrap gap-3">
+          <Button asChild>
+            <Link href={`/sessions/${view.id}/background`}>배경 보기</Link>
+          </Button>
           <Button variant="outline" onClick={() => setEditing(true)}>
             고쳐 쓰기
           </Button>

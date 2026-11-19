@@ -12,6 +12,7 @@ import type {
   Quote,
   Source,
 } from "../domain/collection";
+import type { CheckedConnection, Connection, ConnectionRun } from "../domain/connection";
 import type { Answer, Interpretation } from "../domain/interpretation";
 import type { Job } from "../domain/job";
 import type { Session } from "../domain/session";
@@ -60,6 +61,8 @@ export interface SessionRepository {
   findForUser(id: string, userId: string): Promise<Session | null>;
   /** 그 사용자가 이 책으로 연 모임, 최근 순 */
   listForBook(bookId: string, userId: string): Promise<Session[]>;
+  /** 이 책으로 연 모든 사용자의 모임. 작업 프로세스만 쓴다 (수집이 끝나면 연결을 넣으려고). 화면에 내주지 않는다 */
+  listByBook(bookId: string): Promise<Session[]>;
 }
 
 export interface InterpretationRepository {
@@ -139,4 +142,24 @@ export interface CollectionRepository {
   /** 인용 포함, 넣은 순서대로 */
   listBackgroundItems(collectionId: string): Promise<BackgroundItem[]>;
   listPerspectives(collectionId: string): Promise<Perspective[]>;
+}
+
+// ── 연결 (ADR-002 독자 단위)
+
+export type NewConnectionRun = Pick<ConnectionRun, "sessionId" | "interpretationVersion" | "collectionId" | "promptVersion">;
+export type ConnectionRunOutcome = { model: string | null; costUsd: number };
+
+export interface ConnectionRepository {
+  /** 대기 상태로 만든다 */
+  createRun(input: NewConnectionRun): Promise<ConnectionRun>;
+  findRun(id: string): Promise<ConnectionRun | null>;
+  /** 이 모임의 이 판으로 만든 가장 최근 연결 만들기 (수집과 무관) */
+  latestRun(sessionId: string, interpretationVersion: number): Promise<ConnectionRun | null>;
+  markRunRunning(id: string): Promise<void>;
+  markRunDone(id: string, outcome: ConnectionRunOutcome): Promise<void>;
+  markRunFailed(id: string, error: string, outcome: ConnectionRunOutcome): Promise<void>;
+  /** 넣은 순서대로 남는다 */
+  addConnections(runId: string, sessionId: string, connections: CheckedConnection[]): Promise<Connection[]>;
+  /** 대조에 실패한 것도 포함, 넣은 순서대로 */
+  listConnections(runId: string): Promise<Connection[]>;
 }

@@ -2,12 +2,14 @@ import { afterAll, describe, expect, it } from "vitest";
 import { registerBook } from "../../application/books";
 import { PostgresBookRepository } from "./postgres-book-repository";
 import { PostgresCollectionRepository } from "./postgres-collection-repository";
+import { PostgresConnectionRepository } from "./postgres-connection-repository";
 import { PostgresInterpretationRepository, PostgresSessionRepository } from "./postgres-session-repository";
 import { PostgresHealthProbe } from "./postgres-health-probe";
 import { PostgresJobRepository } from "./postgres-job-repository";
 import { PostgresUserRepository } from "./postgres-user-repository";
 import { describeBookRepositoryContract } from "../../testing/contracts/book-repository.contract";
-import { describeCollectionRepositoryContract } from "../../testing/contracts/collection-repository.contract";
+import { describeCollectionRepositoryContract, sourceInput } from "../../testing/contracts/collection-repository.contract";
+import { describeConnectionRepositoryContract } from "../../testing/contracts/connection-repository.contract";
 import { describeJobRepositoryContract } from "../../testing/contracts/job-repository.contract";
 import { describeSessionRepositoryContract, type SessionFixture } from "../../testing/contracts/session-repository.contract";
 import { describeUserRepositoryContract } from "../../testing/contracts/user-repository.contract";
@@ -60,6 +62,37 @@ describeSessionRepositoryContract("Postgres", sessionFixture);
 describeCollectionRepositoryContract("Postgres", async () => {
   const f = await sessionFixture();
   return { collections: new PostgresCollectionRepository(sql), bookId: f.bookId, otherBookId: f.otherBookId };
+});
+
+describeConnectionRepositoryContract("Postgres", async () => {
+  const f = await sessionFixture();
+  const session = await f.sessions.create({ userId: f.userId, bookId: f.bookId });
+  for (const text of ["첫째 판", "둘째 판"]) {
+    await f.interpretations.appendVersion({ sessionId: session.id, questionSetId: "fiction-v1", answers: [{ questionId: "q1", text }] });
+  }
+  const collections = new PostgresCollectionRepository(sql);
+  const collection = await collections.create(f.bookId);
+  const other = await collections.create(f.bookId);
+  const source = await collections.addSource(sourceInput(collection.id, f.bookId));
+  const item = () =>
+    collections.addBackgroundItem({
+      collectionId: collection.id,
+      bookId: f.bookId,
+      sourceId: source.id,
+      topic: "era",
+      claimKo: "배경 설명",
+      model: "model-a",
+      promptVersion: "read.v1",
+      quotes: [],
+    });
+  const [a, b] = [await item(), await item()];
+  return {
+    connections: new PostgresConnectionRepository(sql),
+    sessionId: session.id,
+    collectionId: collection.id,
+    otherCollectionId: other.id,
+    backgroundItemIds: [a.id, b.id],
+  };
 });
 
 describe("내 해석 판의 동시성", () => {

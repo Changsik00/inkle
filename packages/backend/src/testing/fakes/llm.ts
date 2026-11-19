@@ -21,9 +21,10 @@ export class FakeLlm implements LlmClient {
     return { output: answer, costUsd: this.options.costUsd ?? 0.1, model: this.options.model ?? "fake-model" };
   }
 
-  /** 지시문 첫 줄로 단계를 가늠한다: 찾기 / 읽기 / 흔한 읽기 */
-  static stageOf(call: LlmCall): "find" | "read" | "prevalence" {
+  /** 지시문으로 단계를 가늠한다: 찾기 / 읽기 / 흔한 읽기 / 연결 */
+  static stageOf(call: LlmCall): "find" | "read" | "prevalence" | "connect" {
     if (call.tools === "web-search") return "find";
+    if (call.prompt.includes("<내 해석>")) return "connect";
     return call.prompt.includes("<본문>") ? "read" : "prevalence";
   }
 }

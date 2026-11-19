@@ -35,6 +35,12 @@ export class PostgresSessionRepository implements SessionRepository {
       order by created_at desc, id`;
     return rows.map(toSession);
   }
+
+  async listByBook(bookId: string): Promise<Session[]> {
+    const rows = await this.sql`
+      select id, user_id, book_id, created_at from sessions where book_id = ${bookId} order by created_at, id`;
+    return rows.map(toSession);
+  }
 }
 
 const interpretationRow = z.object({
