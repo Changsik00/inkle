@@ -23,12 +23,14 @@
 
 ## Task 3: 연결 만들기 (유스케이스, 저장소, 지시문)
 
-- [ ] 포트 `ConnectionRepository`, `SessionRepository.listByBook`
-- [ ] `prompts/connect.v1.ts`, `application/connections.ts`: `enqueueConnections`, `connectBackground`
-- [ ] 저장 뒤(`saveInterpretation`)와 수집 끝 뒤(`collectBook`)에 연결 넣기
-- [ ] `0005_connections.sql`, Postgres·메모리 저장소, 계약 테스트
-- [ ] 작업 처리기 `connect-background`, `container.ts`
-- [ ] Commit: `feat(spec-01-09): make connections between background and interpretation`
+- [x] 포트 `ConnectionRepository`, `SessionRepository.listByBook`
+- [x] `prompts/connect.v1.ts`, `application/connections.ts`: `enqueueConnections`, `connectBackground`
+- [x] 저장 뒤(`saveInterpretation`)와 수집 끝 뒤(`collectBook`)에 연결 넣기
+- [x] `0005_connections.sql`, Postgres·메모리 저장소, 계약 테스트
+- [x] 작업 처리기 `connect-background`, `container.ts`
+- 메모: 수집이 끝난 뒤 연결 넣기는 `collectBook` 이 아니라 작업 처리기(`collect-book`)에서 한다. 수집 유스케이스가 모임을 몰라도 된다.
+  LLM 에 묻기(`ask`)는 `application/llm-ask.ts` 로 옮겨 수집과 함께 쓴다. `container.collector` 는 `workerDeps` 로 바꿨다 (작업 프로세스 전체).
+- [x] Commit: `feat(spec-01-09): make connections between background and interpretation`
 
 ---
 

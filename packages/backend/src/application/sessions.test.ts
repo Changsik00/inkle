@@ -10,6 +10,7 @@ import {
 } from "./sessions";
 import { InMemoryBookRepository } from "../testing/in-memory/in-memory-book-repository";
 import { InMemoryCollectionRepository } from "../testing/in-memory/in-memory-collection-repository";
+import { InMemoryConnectionRepository } from "../testing/in-memory/in-memory-connection-repository";
 import { InMemoryJobRepository } from "../testing/in-memory/in-memory-job-repository";
 import { InMemoryInterpretationRepository, InMemorySessionRepository } from "../testing/in-memory/in-memory-session-repository";
 
@@ -25,6 +26,7 @@ beforeEach(async () => {
     sessions: new InMemorySessionRepository(),
     interpretations: new InMemoryInterpretationRepository(),
     collections: new InMemoryCollectionRepository(),
+    connections: new InMemoryConnectionRepository(),
     jobs: new InMemoryJobRepository(),
   };
   const r = await registerBook(deps.books, { title: "노인과 바다", author: "헤밍웨이" });
@@ -122,6 +124,21 @@ describe("saveInterpretation", () => {
   it("다른 사용자의 모임에는 저장하지 못한다", async () => {
     const s = await started();
     expect(await saveInterpretation(deps, OTHER, s.id, [{ questionId: "about", text: "x" }])).toEqual({ status: "not_found" });
+  });
+
+  it("수집이 끝났으면 저장할 때마다 그 판의 연결 만들기를 넣는다 (ADR-004 §7). 수집 전이면 넣지 않는다", async () => {
+    const s = await started();
+    await deps.jobs.claimNext(); // 모임 시작이 넣은 수집 작업
+    await saveInterpretation(deps, ME, s.id, [{ questionId: "about", text: "수집 전에 쓴 해석" }]);
+    expect(await deps.jobs.claimNext()).toBeNull();
+
+    const collection = (await deps.collections.latestForBook(bookId))!;
+    await deps.collections.markRunning(collection.id);
+    await deps.collections.markDone(collection.id, { models: [], promptVersions: {}, costUsd: 0, candidateCount: 0 });
+    await saveInterpretation(deps, ME, s.id, [{ questionId: "about", text: "고쳐 쓴 해석" }]);
+    expect(await deps.jobs.claimNext()).toMatchObject({ kind: "connect-background" });
+    expect(await deps.connections.latestRun(s.id, 2)).toMatchObject({ status: "queued", collectionId: collection.id });
+    expect(await deps.connections.latestRun(s.id, 1)).toBeNull();
   });
 });
 

@@ -24,6 +24,10 @@ export class InMemorySessionRepository implements SessionRepository {
       .map((x) => structuredClone(x))
       .reverse();
   }
+
+  async listByBook(bookId: string): Promise<Session[]> {
+    return this.sessions.filter((x) => x.bookId === bookId).map((x) => structuredClone(x));
+  }
 }
 
 export class InMemoryInterpretationRepository implements InterpretationRepository {
