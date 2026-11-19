@@ -79,14 +79,14 @@
 
 ### 🚦 Pre-Push Quality Gate
 
-- [ ] **전체 테스트 실행** → 모두 PASS
-- [ ] lint, 타입 검사, 빌드, E2E
+- [x] **전체 테스트 실행** → 모두 PASS
+- [x] lint, 타입 검사, 빌드, E2E
 
 ### 📝 산출물 작성
 
-- [ ] **walkthrough.md 작성**
-- [ ] **pr_description.md 작성**
-- [ ] Commit: `docs(spec-01-09): ship walkthrough and pr description`
+- [x] **walkthrough.md 작성**
+- [x] **pr_description.md 작성**
+- [x] Commit: `docs(spec-01-09): ship walkthrough and pr description`
 
 ### 🚀 Push & PR
 
