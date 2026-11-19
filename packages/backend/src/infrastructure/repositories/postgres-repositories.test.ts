@@ -1,11 +1,13 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { registerBook } from "../../application/books";
 import { PostgresBookRepository } from "./postgres-book-repository";
+import { PostgresCollectionRepository } from "./postgres-collection-repository";
 import { PostgresInterpretationRepository, PostgresSessionRepository } from "./postgres-session-repository";
 import { PostgresHealthProbe } from "./postgres-health-probe";
 import { PostgresJobRepository } from "./postgres-job-repository";
 import { PostgresUserRepository } from "./postgres-user-repository";
 import { describeBookRepositoryContract } from "../../testing/contracts/book-repository.contract";
+import { describeCollectionRepositoryContract } from "../../testing/contracts/collection-repository.contract";
 import { describeJobRepositoryContract } from "../../testing/contracts/job-repository.contract";
 import { describeSessionRepositoryContract, type SessionFixture } from "../../testing/contracts/session-repository.contract";
 import { describeUserRepositoryContract } from "../../testing/contracts/user-repository.contract";
@@ -54,6 +56,11 @@ async function sessionFixture(): Promise<SessionFixture> {
 }
 
 describeSessionRepositoryContract("Postgres", sessionFixture);
+
+describeCollectionRepositoryContract("Postgres", async () => {
+  const f = await sessionFixture();
+  return { collections: new PostgresCollectionRepository(sql), bookId: f.bookId, otherBookId: f.otherBookId };
+});
 
 describe("내 해석 판의 동시성", () => {
   it("같은 모임에 동시에 저장해도 판 번호가 겹치지 않는다", async () => {

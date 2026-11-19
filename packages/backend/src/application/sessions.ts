@@ -1,5 +1,6 @@
 // 모임과 내 해석의 유스케이스. 사용자는 호출하는 쪽이 정해 넘긴다 (currentUser, ADR-003 §4).
-import type { BookRepository, InterpretationRepository, SessionRepository } from "./ports";
+import { enqueueCollection } from "./collection";
+import type { BookRepository, CollectionRepository, InterpretationRepository, JobRepository, SessionRepository } from "./ports";
 import { isBookId, type Book } from "../domain/book";
 import { isUuid } from "../domain/id";
 import { validateAnswers, type Answer, type Interpretation, type InterpretationViolation } from "../domain/interpretation";
@@ -10,6 +11,9 @@ export type SessionDeps = {
   books: BookRepository;
   sessions: SessionRepository;
   interpretations: InterpretationRepository;
+  /** 모임을 열면 그 책의 자료 수집을 대기열에 넣는다 (ADR-004 §7) */
+  collections: CollectionRepository;
+  jobs: JobRepository;
 };
 
 export type SessionView = {
@@ -32,7 +36,10 @@ export async function startSession(
 ): Promise<{ status: "created"; session: Session } | { status: "book_not_found" }> {
   const book = isBookId(bookId) ? await deps.books.findById(bookId) : null;
   if (!book) return { status: "book_not_found" };
-  return { status: "created", session: await deps.sessions.create({ userId, bookId: book.id }) };
+  const session = await deps.sessions.create({ userId, bookId: book.id });
+  // 독자가 내 해석을 쓰는 동안 뒤에서 모은다. 이미 있으면 넣지 않는다.
+  await enqueueCollection(deps, book.id);
+  return { status: "created", session };
 }
 
 export async function getSessionView(deps: SessionDeps, userId: string, sessionId: string): Promise<SessionView | null> {

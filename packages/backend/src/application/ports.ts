@@ -1,6 +1,17 @@
 // 애플리케이션이 바깥 세계에 기대하는 것 (ADR-006 §2). 구현은 src/infrastructure/ 에 있다.
 // 인자와 결과는 도메인 타입이다. SQL, 행, 연결 객체는 여기에 나타나지 않는다.
 import type { Book, Genre } from "../domain/book";
+import type {
+  BackgroundItem,
+  BackgroundTopic,
+  Collection,
+  Perspective,
+  PerspectiveRole,
+  Prevalence,
+  Provenance,
+  Quote,
+  Source,
+} from "../domain/collection";
 import type { Answer, Interpretation } from "../domain/interpretation";
 import type { Job } from "../domain/job";
 import type { Session } from "../domain/session";
@@ -57,4 +68,75 @@ export interface InterpretationRepository {
   latest(sessionId: string): Promise<Interpretation | null>;
   /** 모든 판, 오래된 순 */
   listVersions(sessionId: string): Promise<Interpretation[]>;
+}
+
+// ── 자료 수집 (ADR-004)
+
+/** LLM 이 쓸 수 있는 도구. 찾기 단계만 웹 검색을 쓴다 (ADR-004 §2). */
+export type LlmTools = "web-search" | "none";
+
+export type LlmCall = {
+  prompt: string;
+  /** 결과 형식. JSON 스키마 */
+  jsonSchema: Record<string, unknown>;
+  tools: LlmTools;
+};
+
+/** output 은 아직 검사하지 않은 값이다. 형식이 없으면 null. 부른 쪽이 다시 검사한다. */
+export type LlmResult = { output: unknown; costUsd: number; model: string };
+
+/** LLM 을 부르는 경계 (ADR-004 §1). 실패(종료 코드, 시간 초과, 오류 응답)는 던진다. */
+export interface LlmClient {
+  run(call: LlmCall): Promise<LlmResult>;
+}
+
+export type FetchedPage =
+  | { status: "ok"; finalUrl: string; pageText: string; articleText: string }
+  | { status: "unreachable"; reason: string };
+
+/** 출처 페이지를 앱이 직접 연다 (ADR-004 §2 의 2단계). 접근 제한을 우회하지 않는다. */
+export interface PageFetcher {
+  fetch(url: string): Promise<FetchedPage>;
+}
+
+export type NewSource = Omit<Source, "id" | "fetchedAt">;
+export type NewQuote = Omit<Quote, "id" | "sourceId">;
+export type NewBackgroundItem = Provenance & {
+  bookId: string;
+  sourceId: string;
+  topic: BackgroundTopic;
+  claimKo: string;
+  quotes: NewQuote[];
+};
+export type NewPerspective = Provenance & {
+  bookId: string;
+  sourceId: string;
+  who: string;
+  role: PerspectiveRole;
+  readingKo: string;
+  quotes: NewQuote[];
+};
+export type CollectionOutcome = Pick<Collection, "models" | "promptVersions" | "costUsd" | "candidateCount">;
+
+export interface CollectionRepository {
+  /** 대기 상태로 만든다 */
+  create(bookId: string): Promise<Collection>;
+  findById(id: string): Promise<Collection | null>;
+  /** 그 책의 가장 최근 수집 */
+  latestForBook(bookId: string): Promise<Collection | null>;
+  markRunning(id: string): Promise<void>;
+  markDone(id: string, outcome: CollectionOutcome): Promise<void>;
+  markFailed(id: string, error: string, outcome: CollectionOutcome): Promise<void>;
+
+  addSource(source: NewSource): Promise<Source>;
+  /** 넣은 순서대로 */
+  listSources(collectionId: string): Promise<Source[]>;
+  /** 인용과 함께 넣는다 */
+  addBackgroundItem(item: NewBackgroundItem): Promise<BackgroundItem>;
+  addPerspective(item: NewPerspective): Promise<Perspective>;
+  /** 처음 넣을 때 흔한 읽기는 알 수 없음이다. 나중에 붙인다 */
+  setPrevalence(perspectiveId: string, prevalence: Prevalence): Promise<void>;
+  /** 인용 포함, 넣은 순서대로 */
+  listBackgroundItems(collectionId: string): Promise<BackgroundItem[]>;
+  listPerspectives(collectionId: string): Promise<Perspective[]>;
 }

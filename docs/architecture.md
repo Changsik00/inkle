@@ -2,7 +2,7 @@
 
 > 시스템이 어떻게 생겼는지 한곳에서 본다. 각 결정의 이유와 대안은 ADR 에 있다 (`docs/decisions/README.md`).
 > **현재**는 코드에 있는 것, **예정**은 ADR 로 정했지만 아직 만들지 않은 것이다.
-> 마지막 갱신: 2026-11-18 (spec-01-07, 모임과 내 해석).
+> 마지막 갱신: 2026-11-18 (spec-01-08, 자료 수집).
 
 ## 1. 한눈에
 
@@ -21,8 +21,8 @@ flowchart LR
     WEB -->|/api/* rewrites| API
     API --> DB
     WK --> DB
-    WK -.->|예정| CLI
-    WK -.->|예정: 페이지 가져오기| EXT[출처 웹 페이지]
+    WK -->|claude -p| CLI
+    WK -->|페이지 가져오기| EXT[출처 웹 페이지]
     CLI -.->|웹 검색| NET[(웹)]
 ```
 
@@ -31,8 +31,8 @@ flowchart LR
 | web | `apps/web` | compose, `127.0.0.1:3000` | `pnpm dev` | 화면. `/api/*` 는 API 서버로 넘긴다 (`apps/web/next.config.ts` 의 rewrites, `API_ORIGIN`) | ADR-007, ADR-009 |
 | api | `apps/api` | compose, `127.0.0.1:4000` | `pnpm db:migrate && pnpm api` | HTTP API (계약의 주소, `/api/openapi.json`). 뜰 때 마이그레이션 적용 | ADR-009 |
 | db | - | compose, `127.0.0.1:54329` | - | 모든 자료와 작업 대기열 | ADR-001 |
-| 작업 프로세스 | `apps/worker` | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (지금은 시험용 작업만) | ADR-001, ADR-004 |
-| Claude Code CLI | - | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음 (예정, spec-01-08) | ADR-004 |
+| 작업 프로세스 | `apps/worker` | 호스트 | `pnpm worker` | 대기열의 작업을 처리 (자료 수집 `collect-book`, 시험용 `noop`) | ADR-001, ADR-004 |
+| Claude Code CLI | - | 호스트 | - | LLM 호출. 구독 로그인, API 키 없음. 빈 임시 디렉토리에서 MCP 서버와 사용자 설정 없이 실행 | ADR-004 |
 
 - 컨테이너는 개발용 이미지 하나(`Dockerfile`)에서 시작 명령만 다르다 (ADR-010).
 - 작업 프로세스가 호스트에서 뜨는 이유: CLI 를 이 기기의 로그인으로 쓰기 때문이다 (ADR-004 §가정의 확인 결과).
@@ -117,7 +117,7 @@ ADR-006. 의존은 바깥에서 안쪽으로만 간다.
 flowchart TB
     E[진입점<br/>apps/api · apps/worker] --> S[조립<br/>container.ts]
     E --> A[애플리케이션<br/>유스케이스 · 포트]
-    S --> I[인프라<br/>Postgres 저장소 · 예정: CLI, 페이지 가져오기]
+    S --> I[인프라<br/>Postgres 저장소 · Claude Code CLI · 페이지 가져오기]
     S --> A
     I --> A
     A --> D[도메인<br/>타입 · 규칙]
@@ -144,9 +144,10 @@ flowchart TB
 | `BookRepository` | 책 만들기, 찾기(번호, 정규화한 키), 목록 | `PostgresBookRepository` | 현재 |
 | `SessionRepository` | 모임 만들기, 사용자 것만 찾기, 책별 목록 | `PostgresSessionRepository` | 현재 |
 | `InterpretationRepository` | 내 해석의 판 덧붙이기, 최근 판, 모든 판 | `PostgresInterpretationRepository` | 현재 |
-| 출처, 배경, 시선, 비교 … 저장소 | ADR-002 의 자료 | Postgres | 예정 (spec-01-08 ~) |
-| `LlmClient` | 지시문과 결과 형식을 주고 결과를 받는다 | Claude Code CLI (이후 Claude API) | 예정 (spec-01-08) |
-| `PageFetcher` | 주소를 열어 본문 글자를 받는다 | HTTP 요청 + 본문 추출 | 예정 (spec-01-08) |
+| `CollectionRepository` | 수집과 출처·배경 항목·시선·인용 저장, 책의 최근 수집 | `PostgresCollectionRepository` | 현재 (spec-01-08) |
+| `LlmClient` | 지시문과 결과 형식(JSON Schema), 쓸 도구를 주고 결과·비용·모델을 받는다 | `ClaudeCodeCli` (이후 Claude API) | 현재 (spec-01-08) |
+| `PageFetcher` | 주소를 열어 페이지 전체 글자와 본문 글자를 받는다 | `HttpPageFetcher` (내부 주소 차단, 리디렉션 매번 검사, 문자 인코딩 감지, Readability) | 현재 (spec-01-08) |
+| 비교, 연결 … 저장소 | ADR-002 의 독자 단위 자료 | Postgres | 예정 (spec-01-09 ~) |
 
 ## 3. 흐름
 
@@ -185,7 +186,7 @@ phase-01 성공 기준 5. 모임의 단계는 저장된 내 해석이 있는지�
 - 배경·다른 시선·비교를 읽는 API(spec-01-09, 10)는 모두 이 함수를 거친다.
 - 모임 조회(`GET /api/sessions/{id}`)는 단계와 무관하게 책, 질문 묶음, 최근 내 해석만 담는다. 다음 단계의 자료는 담지 않는다.
 
-### 작업 (현재: 시험용 작업)
+### 작업 (현재: 자료 수집, 시험용 작업)
 
 ```mermaid
 sequenceDiagram
@@ -205,9 +206,34 @@ sequenceDiagram
 
 등록되지 않은 종류의 작업과 처리기의 예외는 `failed` 와 이유로 남는다.
 
-### 자료 수집 (예정: spec-01-08)
+### 자료 수집 (현재: spec-01-08)
 
-ADR-004 §2. 찾기(LLM, 웹 검색만) → 가져오기(코드) → 읽기(LLM, 도구 없음) → 대조(코드, 문자열). 대조를 통과한 인용이 없는 항목은 내주지 않는다. 책 단위로 저장해 재사용한다 (ADR-002). 결과는 내 해석이 저장된 모임에만 내준다 (ADR-004 §7).
+ADR-004 §2. 모임을 시작하면(`startSession`) 그 책의 수집을 대기열에 넣는다 (`enqueueCollection`). 책에 끝난 수집이나 진행 중인 수집이 있으면 넣지 않는다. 대기·진행 중으로 2시간 넘게 멈춘 수집은 막지 않는다 (`blocksNewCollection`).
+
+```mermaid
+sequenceDiagram
+    participant W as 작업 프로세스 (collect-book)
+    participant U as application/collection.ts
+    participant L as LlmClient (claude -p)
+    participant F as PageFetcher
+    participant R as CollectionRepository
+    W->>U: collectBook(deps, collectionId)
+    U->>L: 찾기 (find.v2, 웹 검색만) — 후보 주소 최대 10
+    loop 출처마다 (정규화한 주소, 중복 제거, 최대 8)
+        U->>F: fetch(url)
+        F-->>U: 페이지 전체 글자, 본문 글자 (또는 열지 못함)
+        U->>L: 읽기 (read.v1, 도구 없음) — 배경 항목·시선·인용
+        U->>U: 대조 (matchQuote: 페이지 전체 또는 본문에 그대로 있는가)
+        U->>R: addSource, addBackgroundItem, addPerspective
+    end
+    U->>L: 흔함 정도 (prevalence.v1, 보여 줄 시선이 셋 이상일 때만)
+    U->>R: markDone (모델, 지시문 판, 비용 추정치, 후보 수)
+```
+
+- 단계마다 한 번 묻고, 형식 오류나 실패면 한 번 더 묻는다. 지시문은 `packages/backend/src/application/prompts/*.v{N}.ts` (판, zod 결과 형식, `render()`).
+- 대조는 공백을 모두 지우고 따옴표·말줄임표를 통일한 뒤 문자열로 찾는다 (`domain/quote-match.ts`). 10자 미만 인용은 통과하지 않는다.
+- 대조를 통과한 인용이 하나도 없는 항목은 저장하되 내주지 않는다 (`isShowable`). 결과는 내 해석이 저장된 모임에만 내준다 (ADR-004 §7, spec-01-09).
+- 확인 명령: `pnpm collect <bookId> [--force]`, `pnpm collect:report <bookId> [--quotes]`.
 
 ## 4. 데이터
 
@@ -216,7 +242,7 @@ ADR-002. 자료는 두 층이다.
 | 층 | 자료 | 사용자 식별자 | 상태 |
 |---|---|:---:|---|
 | 책 단위 | 책 | 없음 | 현재 (spec-01-04) |
-| 책 단위 | 출처, 배경 항목, 시선 | 없음 | 예정 |
+| 책 단위 | 수집, 출처(페이지 전체 글자 보관), 배경 항목, 시선, 인용 | 없음 | 현재 (spec-01-08) |
 | 독자 단위 | 모임, 내 해석(판) | 있음 (ADR-003) | 현재 (spec-01-07) |
 | 독자 단위 | 연결, 비교, 끝의 한 번 고르기, 토론, 노트 | 있음 (ADR-003) | 예정 |
 | 운영 | 사용자, 작업 대기열, 적용한 마이그레이션 | - | 현재 |
