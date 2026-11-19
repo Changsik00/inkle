@@ -1,6 +1,7 @@
 // 연결의 유스케이스 (ADR-002 독자 단위, ADR-004 §7). 내 해석이 저장된 뒤에만 만든다.
 // 재료는 그 책의 끝난 수집 가운데 가장 최근 것의 보여 줄 수 있는 배경이다.
 import { z } from "zod";
+import { enqueueCollection } from "./collection";
 import { ask, newLedger, roundedCost } from "./llm-ask";
 import type {
   BookRepository,
@@ -12,8 +13,9 @@ import type {
   SessionRepository,
 } from "./ports";
 import * as connect from "./prompts/connect.v1";
-import { blocksNewCollection, isShowable } from "../domain/collection";
-import { checkConnections, type ConnectionRun } from "../domain/connection";
+import { requireUnlocked, type SessionDeps } from "./sessions";
+import { blocksNewCollection, isShowable, type BackgroundItem, type BackgroundTopic, type Collection } from "../domain/collection";
+import { arrangeBackground, checkConnections, type Connection, type ConnectionRun } from "../domain/connection";
 import { isUuid } from "../domain/id";
 import { questionSetById } from "../domain/question-set";
 import type { Session } from "../domain/session";
@@ -144,4 +146,88 @@ export async function connectBackground(deps: ConnectDeps, runId: string): Promi
   } catch (e) {
     return await fail(e instanceof Error ? e.message : String(e));
   }
+}
+
+// ── 배경 보기 (문을 거친다, ADR-004 §7)
+
+export type CollectionState = "collecting" | "done" | "failed" | "none";
+export type ConnectionState = "waiting" | "making" | "done" | "failed";
+
+/** 화면에 내주는 배경 항목: 대조를 통과한 인용만, 출처와 함께 */
+export type ShownBackgroundItem = Pick<BackgroundItem, "id" | "topic" | "claimKo" | "quotes"> & { source: { url: string; who: string } };
+
+export type BackgroundView = {
+  collection: CollectionState;
+  connections: ConnectionState;
+  connected: { item: ShownBackgroundItem; connection: Connection & { questionId: string } }[];
+  others: { topic: BackgroundTopic; items: ShownBackgroundItem[] }[];
+};
+
+/** 멈춘 대기·진행 중은 실패로 본다. 다시 모으기를 누를 수 있게 (blocksNewCollection 과 같은 기준) */
+function collectionState(c: Collection | null, now: Date): CollectionState {
+  if (!c) return "none";
+  if (c.status === "done" || c.status === "failed") return c.status;
+  return blocksNewCollection(c, now) ? "collecting" : "failed";
+}
+
+function connectionState(run: ConnectionRun | null, collection: Collection | null, now: Date): ConnectionState {
+  // 수집이 끝나지 않았거나, 이 수집으로 만든 것이 아직 없다
+  if (!collection || collection.status !== "done" || !run || run.collectionId !== collection.id) return "waiting";
+  if (run.status === "done" || run.status === "failed") return run.status;
+  return blocksNewCollection(run, now) ? "making" : "failed";
+}
+
+export async function backgroundView(
+  deps: SessionDeps,
+  userId: string,
+  sessionId: string,
+  now: Date = new Date(),
+): Promise<{ status: "ok"; view: BackgroundView } | { status: "locked" } | { status: "not_found" }> {
+  const gate = await requireUnlocked(deps, userId, sessionId);
+  if (gate.status !== "unlocked") return gate;
+  const { session, interpretation } = gate;
+
+  const collection = await deps.collections.latestForBook(session.bookId);
+  const run = await deps.connections.latestRun(session.id, interpretation.version);
+  const view: BackgroundView = {
+    collection: collectionState(collection, now),
+    connections: connectionState(run, collection, now),
+    connected: [],
+    others: [],
+  };
+  if (!collection || collection.status !== "done") return { status: "ok", view };
+
+  const [items, sources] = await Promise.all([deps.collections.listBackgroundItems(collection.id), deps.collections.listSources(collection.id)]);
+  const sourceById = new Map(sources.map((s) => [s.id, s]));
+  const shown: ShownBackgroundItem[] = items.filter(isShowable).map((item) => {
+    const source = sourceById.get(item.sourceId);
+    return {
+      id: item.id,
+      topic: item.topic,
+      claimKo: item.claimKo,
+      quotes: item.quotes.filter((q) => q.verified),
+      source: { url: source?.finalUrl ?? source?.url ?? "", who: source?.who ?? "" },
+    };
+  });
+  const connections = view.connections === "done" && run ? await deps.connections.listConnections(run.id) : [];
+  const arranged = arrangeBackground(shown, connections);
+  view.connected = arranged.connected.flatMap(({ item, connection }) =>
+    connection.questionId === null ? [] : [{ item, connection: { ...connection, questionId: connection.questionId } }],
+  );
+  view.others = arranged.others;
+  return { status: "ok", view };
+}
+
+/** 그 책의 수집이 실패했거나(멈춤 포함) 없을 때만 다시 넣는다. 끝났거나 모으는 중이면 그대로 둔다. */
+export async function recollect(
+  deps: SessionDeps,
+  userId: string,
+  sessionId: string,
+  now: Date = new Date(),
+): Promise<{ status: "ok"; collection: CollectionState } | { status: "locked" } | { status: "not_found" }> {
+  const gate = await requireUnlocked(deps, userId, sessionId);
+  if (gate.status !== "unlocked") return gate;
+  const r = await enqueueCollection(deps, gate.session.bookId, { now });
+  if (r.status === "queued") return { status: "ok", collection: "collecting" };
+  return { status: "ok", collection: collectionState(r.collection, now) };
 }

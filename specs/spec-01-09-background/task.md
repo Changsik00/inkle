@@ -36,11 +36,12 @@
 
 ## Task 4: 배경 API (문)
 
-- [ ] `packages/contract/src/background.ts`: `get`, `recollect`
-- [ ] `application/connections.ts`: `backgroundView`, `recollect` (`requireUnlocked`)
-- [ ] `rpc/background.ts`, 라우터, OpenAPI 스냅샷
-- [ ] 테스트: 잠김·다른 사용자·응답 키 고정·글쓴이 필드·다시 모으기 조건
-- [ ] Commit: `feat(spec-01-09): add background api behind the gate`
+- [x] `packages/contract/src/background.ts`: `get`, `recollect`
+- [x] `application/connections.ts`: `backgroundView`, `recollect` (`requireUnlocked`)
+- [x] `rpc/background.ts`, 라우터, OpenAPI 스냅샷
+- [x] 테스트: 잠김·다른 사용자·응답 키 고정·글쓴이 필드·다시 모으기 조건
+- 메모: 오래 멈춘 수집·연결 만들기는 `failed` 로 내준다 (다시 모으기를 누를 수 있게). 응답은 화면 배치(맞닿는 것 / 주제별 나머지)대로 준다.
+- [x] Commit: `feat(spec-01-09): add background api behind the gate`
 
 ---
 

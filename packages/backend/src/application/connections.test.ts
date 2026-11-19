@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { registerBook } from "./books";
 import {
+  backgroundView,
   CONNECT_BACKGROUND_JOB,
   connectBackground,
   enqueueConnections,
@@ -10,6 +11,7 @@ import {
 } from "./connections";
 import type { LlmCall } from "./ports";
 import * as connect from "./prompts/connect.v1";
+import { STALE_AFTER_MS } from "../domain/collection";
 import type { Session } from "../domain/session";
 import { FakeLlm, type FakeResponder } from "../testing/fakes/llm";
 import { InMemoryBookRepository } from "../testing/in-memory/in-memory-book-repository";
@@ -22,7 +24,7 @@ const ME = "00000000-0000-4000-8000-000000000001";
 const OTHER = "00000000-0000-4000-8000-000000000002";
 const ANSWER = "영혜가 고기를 거부하는 것은 가부장적인 집안에 대한 조용한 저항이라고 읽었다.";
 
-type Deps = ConnectDeps & EnqueueConnectionsDeps & { jobs: InMemoryJobRepository };
+type Deps = ConnectDeps & EnqueueConnectionsDeps & { jobs: InMemoryJobRepository; sessions: InMemorySessionRepository };
 
 let d: Deps;
 let bookId: string;
@@ -223,5 +225,20 @@ describe("connectBackground", () => {
     await connectBackground(d, runId);
     expect(await connectBackground(d, runId)).toEqual({ status: "skipped" });
     expect(await connectBackground(d, "abc")).toEqual({ status: "skipped" });
+  });
+});
+
+describe("backgroundView", () => {
+  it("오래 멈춘 수집과 연결 만들기는 실패로 본다 (다시 모으기를 누를 수 있게)", async () => {
+    await saved();
+    await d.collections.create(bookId);
+    const later = new Date(Date.now() + STALE_AFTER_MS + 1000);
+    expect(await backgroundView(d, ME, session.id, later)).toMatchObject({ status: "ok", view: { collection: "failed" } });
+
+    await doneCollection();
+    const r = await enqueueConnections(d, session);
+    if (r.status !== "queued") throw new Error("대기열 실패");
+    expect(await backgroundView(d, ME, session.id)).toMatchObject({ view: { collection: "done", connections: "making" } });
+    expect(await backgroundView(d, ME, session.id, later)).toMatchObject({ view: { connections: "failed" } });
   });
 });

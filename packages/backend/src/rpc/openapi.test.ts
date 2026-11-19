@@ -13,8 +13,10 @@ describe("엔드포인트 문서", () => {
       "GET /books/{bookId}/sessions",
       "GET /health",
       "GET /sessions/{sessionId}",
+      "GET /sessions/{sessionId}/background",
       "POST /books",
       "POST /books/{bookId}/sessions",
+      "POST /sessions/{sessionId}/background/recollect",
       "PUT /sessions/{sessionId}/interpretation",
     ]);
   });
