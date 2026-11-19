@@ -56,10 +56,10 @@
 
 ## Task 6: 실제 확인과 기록
 
-- [ ] 개발 DB 에 `pnpm db:migrate`, 두 책의 모임에서 시선 화면 확인
-- [ ] `docs/experiments/05-perspectives/README.md`, 스크린숏 (『채식주의자』 모임)
-- [ ] 공개 전 확인: 실제 해석 원문 구절이 기록·스크린숏에 없음
-- [ ] Commit: `docs(spec-01-10): record perspectives on two books`
+- [x] 개발 DB 에 `pnpm db:migrate`, 두 책의 모임에서 시선 화면 확인
+- [x] `docs/experiments/05-perspectives/README.md`, 스크린숏 (『채식주의자』 모임)
+- [x] 공개 전 확인: 실제 해석 원문 구절이 기록·스크린숏에 없음
+- [x] Commit: `docs(spec-01-10): record perspectives on two books`
 
 ---
 
